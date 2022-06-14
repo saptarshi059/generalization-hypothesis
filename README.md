@@ -1,1 +1,1 @@
-# overfitting-hypothesis
+# generalization-hypothesis
