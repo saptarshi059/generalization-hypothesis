@@ -49,9 +49,12 @@ question = []
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
   for record in tqdm(raw_datasets['train']):
     run_main()
-else:
-  for record in tqdm(raw_datasets['validation']):
-    run_main()
+elif args.dataset == 'squad' or args.dataset == 'squad_v2':
+    for record in tqdm(raw_datasets['validation']):
+        run_main()
+elif args.dataset == 'cuad':
+    for record in tqdm(raw_datasets['test']):
+        run_main()
 
 with open(f'{args.model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.csv', "w") as f:
     writer = csv.writer(f)
