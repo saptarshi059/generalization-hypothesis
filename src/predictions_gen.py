@@ -14,7 +14,7 @@ def run_main():
   
   try:
     gold_answers.append(record['answers']['text'][0])
-  else:
+  except:
     gold_answers.append("") #For impossible questions.
 
   if args.model_checkpoint == 'rc-bidaf':
