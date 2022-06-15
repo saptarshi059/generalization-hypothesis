@@ -5,9 +5,10 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--pred_file', type=str)
+parser.add_argument('--metric', default='squad' ,type=str)
 args = parser.parse_args()
 
-metric = load_metric("squad")
+metric = load_metric(args.metric)
 
 s = pd.read_csv(args.pred_file, header=None)
 
