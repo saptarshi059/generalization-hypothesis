@@ -11,15 +11,26 @@ import csv
 
 def run_main():
   question.append(record['question'])
+  
+  try:
+    gold_answers.append(record['answers']['text'][0])
+  else:
+    gold_answers.append("") #For impossible questions.
+
   if args.model_checkpoint == 'rc-bidaf':
-    pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['best_span_str'])
+    
+    try:
+      pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['best_span_str'])
+    except:
+      pred_answers.append("")
+
   else: #For QANet
+    
     try:
       pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['answer']['value'])
     except:
       pred_answers.append("")
-  gold_answers.append(record['answers']['text'][0])
-
+  
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="rc-bidaf", type=str)
 parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
