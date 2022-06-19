@@ -51,7 +51,11 @@ elif args.dataset == 'cuad' or args.dataset == 'duorc':
         run_main()
 
 print('Saving predictions...')
+pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.pkl')
+
+'''
 with open(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.csv', "w") as f:
     writer = csv.writer(f)
     for row in zip(questions, pred_answers, gold_answers):
         writer.writerow(row)
+'''
