@@ -1,4 +1,5 @@
 from datasets import load_metric
+import pickle5 as pickle
 import pandas as pd
 import numpy as np
 import argparse
@@ -11,7 +12,7 @@ args = parser.parse_args()
 
 metric = load_metric(args.metric)
 
-s = pd.read_csv(args.pred_file, header=None)
+s = pickle.load(open(args.pred_file, 'rb'))
 
 pred = []
 true = []
