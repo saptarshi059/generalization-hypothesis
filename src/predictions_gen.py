@@ -40,7 +40,10 @@ model = pretrained.load_predictor(args.model_checkpoint, cuda_device=0)
 
 #!huggingface-cli login
 
-raw_datasets = load_dataset(args.dataset, use_auth_token=True)
+if args.dataset == 'duorc':
+  raw_datasets = load_dataset('duorc', 'SelfRC')
+else:
+  raw_datasets = load_dataset(args.dataset, use_auth_token=True)
 
 gold_answers = []
 pred_answers = []
@@ -52,7 +55,7 @@ if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
 elif args.dataset == 'squad' or args.dataset == 'squad_v2':
     for record in tqdm(raw_datasets['validation']):
         run_main()
-elif args.dataset == 'cuad':
+elif args.dataset == 'cuad' or args.dataset == 'duorc':
     for record in tqdm(raw_datasets['test']):
         run_main()
 
