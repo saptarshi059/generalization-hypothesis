@@ -7,6 +7,7 @@
 from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
 from datasets import load_dataset
 import csv
+import pandas as pd
 import torch
 import argparse
 from tqdm import tqdm
