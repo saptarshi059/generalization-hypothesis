@@ -16,5 +16,5 @@ for split in raw_datasets.keys():
 	c = []
 	for row in raw_datasets[split]:
 		q.append(len(row['question']))
-		c.append(len(row['context']))
+		c.append(len(row['context']) if args.dataset != 'duorc' else len(row['plot']))
 	print(f'{split} | Number of Records: {raw_datasets[split].num_rows} | Avg. question Length: {np.round(np.asarray(q).mean(),2)} | Avg. Context Length: {np.round(np.asarray(c).mean(),2)}')
