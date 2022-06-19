@@ -15,12 +15,12 @@ def run_main():
     questions.append(record['question'])
 
     try:
-        pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'])
+        pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'] if args.dataset != 'duorc' else nlp(question=record['question'], context=record['plot'])['answer'])
     except:
         pred_answers.append("") #For impossible answers
 
     try:
-        gold_answers.append(record['answers']['text'][0])
+        gold_answers.append(record['answers']['text'] if args.dataset != 'duorc' else record['answers'])
     except:
         gold_answers.append("") #For impossible answers 
 
@@ -46,7 +46,7 @@ if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
 elif args.dataset == 'squad' or args.dataset == 'squad_v2':
     for record in tqdm(raw_datasets['validation']):
         run_main()
-elif args.dataset == 'cuad':
+elif args.dataset == 'cuad' or args.dataset == 'duorc':
     for record in tqdm(raw_datasets['test']):
         run_main()
 
