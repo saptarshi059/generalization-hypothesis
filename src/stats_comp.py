@@ -16,5 +16,5 @@ for split in raw_datasets.keys():
 	c = []
 	for row in raw_datasets[split]:
 		q.append(len(row['question']))
-	  	c.append(len(row['context']))
+		c.append(len(row['context']))
 	print(f'{split} | Avg. question Length: {np.asarray(q).mean()} | Avg. Context Length: {np.asarray(c).mean()}')
