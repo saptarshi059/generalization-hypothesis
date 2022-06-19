@@ -13,21 +13,21 @@ def run_main():
   question.append(record['question'])
   
   try:
-    gold_answers.append(record['answers']['text'][0])
+    gold_answers.append(record['answers']['text'] if args.dataset != 'duorc' else record['answers'])
   except:
-    gold_answers.append("") #For impossible questions.
+    gold_answers.append("") #For impossible answers 
 
   if args.model_checkpoint == 'rc-bidaf':
     
     try:
-      pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['best_span_str'])
+      pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['best_span_str'] if args.dataset != 'duorc' else model.predict_json({"passage": record['plot'], "question": record['question']})['best_span_str'])
     except:
       pred_answers.append("")
 
   else: #For QANet
     
     try:
-      pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['answer']['value'])
+      pred_answers.append(model.predict_json({"passage": record['context'], "question": record['question']})['answer']['value'] if args.dataset != 'duorc' else model.predict_json({"passage": record['plot'], "question": record['question']})['answer']['value'])
     except:
       pred_answers.append("")
   
@@ -59,7 +59,5 @@ elif args.dataset == 'cuad' or args.dataset == 'duorc':
     for record in tqdm(raw_datasets['test']):
         run_main()
 
-with open(f'{args.model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.csv', "w") as f:
-    writer = csv.writer(f)
-    for row in zip(question, pred_answers, gold_answers):
-        writer.writerow(row)
+print('Saving predictions...')
+pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.pkl')

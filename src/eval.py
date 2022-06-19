@@ -37,36 +37,35 @@ if args.metric == 'squad':
 
 elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC as well
   for row in s.itertuples():
-    if type(row._2) == float and math.isnan(row._2):
+    if type(row.predictions) == float and math.isnan(row.predictions):
       pred.append({"id": str(row.Index), "prediction_text": "", 'no_answer_probability': 1.})
       pred_chars.append(0)
     else:
-      pred.append({"id": str(row.Index), "prediction_text": row._2, 'no_answer_probability': 0.})
-      pred_chars.append(len(row._2))
+      pred.append({"id": str(row.Index), "prediction_text": row.predictions, 'no_answer_probability': 0.})
+      pred_chars.append(len(row.predictions))
       
-    if type(row._3) == float and math.isnan(row._3):
+    if type(row.gold_answers) == float and math.isnan(row.gold_answers):
       true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [""]}})
       true_chars.append(0)
     else:
-      true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [row._3]}})
-      true_chars.append(len(row._3))
+      true.append({"id": str(row.Index), "answers": {'answer_start': [1 for i in range(len(row.gold_answers))], 'text': row.gold_answers}})  
+      true_chars.append([len(x) for x in row.gold_answers])
 
 elif args.metric == 'cuad':
   for row in s.itertuples():
-    if type(row._2) == float and math.isnan(row._2):
+    if type(row.predictions) == float and math.isnan(row.predictions):
       pred.append({"id": str(row.Index), "prediction_text": [" "]})
       pred_chars.append(0)
     else:
-      pred.append({"id": str(row.Index), "prediction_text": [row._2]})
-      pred_chars.append(len(row._2))
+      pred.append({"id": str(row.Index), "prediction_text": [row.predictions]})
+      pred_chars.append(len(row.predictions))
       
-    if type(row._3) == float and math.isnan(row._3):
+    if type(row.gold_answers) == float and math.isnan(row.gold_answers):
       true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [" "]}})
       true_chars.append(0)
     else:
-      true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [row._3]}})
-      true_chars.append(len(row._3))
-
+      true.append({"id": str(row.Index), "answers": {'answer_start': [1 for i in range(len(row.gold_answers))], 'text': row.gold_answers}})
+      true_chars.append([len(x) for x in row.gold_answers])
 
 true_chars = [item for sublist in true_chars for item in sublist]
     
