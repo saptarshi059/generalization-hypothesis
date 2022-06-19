@@ -6,6 +6,7 @@
 from allennlp_models import pretrained
 from datasets import load_dataset
 from tqdm import tqdm
+import pandas as pd
 import argparse
 import csv
 
