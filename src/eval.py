@@ -31,7 +31,7 @@ if args.metric == 'squad':
     except:
       pred_chars.append(0)
 
-    true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [row._3]}})  
+    true.append({"id": str(row.Index), "answers": {'answer_start': [1 for i in range(len(row._3))], 'text': row._3}})  
     true_chars.append(len(row._3))
 
 elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC as well
