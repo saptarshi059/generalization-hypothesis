@@ -37,14 +37,14 @@ if args.metric == 'squad':
 
 elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC as well
   for row in s.itertuples():
-    if type(row.predictions) == float and math.isnan(row.predictions):
+    if len(str(row.predictions)) == 0:
       pred.append({"id": str(row.Index), "prediction_text": "", 'no_answer_probability': 1.})
       pred_chars.append(0)
     else:
       pred.append({"id": str(row.Index), "prediction_text": row.predictions, 'no_answer_probability': 0.})
       pred_chars.append(len(str(row.predictions)))
       
-    if len(gold_answers) == 0:
+    if len(row.gold_answers) == 0:
       true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': []}})
       true_chars.append(0)
     else:
