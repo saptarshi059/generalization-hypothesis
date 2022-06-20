@@ -58,7 +58,7 @@ elif args.metric == 'cuad':
       pred_chars.append(0)
     else:
       pred.append({"id": str(row.Index), "prediction_text": [row.predictions]})
-      pred_chars.append(len(row.predictions))
+      pred_chars.append(len(str(row.predictions)))
       
     if type(row.gold_answers) == float and math.isnan(row.gold_answers):
       true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': [" "]}})
