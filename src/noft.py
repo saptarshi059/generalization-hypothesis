@@ -35,7 +35,11 @@ model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
 nlp = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=0)
-raw_datasets = load_dataset(args.dataset, use_auth_token=True)
+
+if args.dataset == 'duorc':
+  raw_datasets = load_dataset('duorc', 'SelfRC')
+else:
+  raw_datasets = load_dataset(args.dataset, use_auth_token=True)
 
 gold_answers = []
 pred_answers = []
