@@ -45,7 +45,7 @@ elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC as well
       pred_chars.append(len(str(row.predictions)))
       
     if len(row.gold_answers) == 0:
-      true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': []}})
+      true.append({"id": str(row.Index), "answers": {'answer_start': [1], 'text': ['']}})
       true_chars.append([0])
     else:
       true.append({"id": str(row.Index), "answers": {'answer_start': [1 for i in range(len(row.gold_answers))], 'text': row.gold_answers}})  
