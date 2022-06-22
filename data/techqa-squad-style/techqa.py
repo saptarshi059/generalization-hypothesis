@@ -49,9 +49,9 @@ class TechQA(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         TechQAConfig(
-            name="plain_text",
+            name="techqa-squad-style",
             version=datasets.Version("1.0.0", ""),
-            description="Plain text",
+            description="techqa-squad-style",
         ),
     ]
 
