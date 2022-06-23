@@ -32,26 +32,10 @@ _URLS = {
     "dev": _URL + "dev_Q_A_context.json",
 }
 
-
-class TechQAConfig(datasets.BuilderConfig):
-    """BuilderConfig for TechQA."""
-
-    def __init__(self, **kwargs):
-        """BuilderConfig for TechQA.
-
-        Args:
-          **kwargs: keyword arguments forwarded to super.
-        """
-        super(TechQAConfig, self).__init__(**kwargs)
-
-
 class TechQA(datasets.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
-        TechQAConfig(
-            name="techqa-squad-style",
-            version=datasets.Version("1.0.0", ""),
-            description="techqa-squad-style",
+        datasets.BuilderConfig(name="techqa-squad-style", version=datasets.Version("1.0.0"), description="techqa-squad-style",
         ),
     ]
 
@@ -125,21 +109,23 @@ class TechQA(datasets.GeneratorBasedBuilder):
     def _generate_examples(self, filepath):
         """This function returns the examples in the raw (text) form."""
         logger.info("generating examples from = %s", filepath)
-        key = 0
         with open(filepath, encoding="utf-8") as f:
-            techqa = json.load(f)
+            techqa = []
+            for line in f:
+                techqa.append(json.loads(line))    
+            c = 0
             for article in techqa:
                 title = article.get('QUESTION_TITLE', "")
-                context = paragraph["context"]  # do not strip leading blank spaces GH-2585
+                context = article["context"]  # do not strip leading blank spaces GH-2585
                 if article['ANSWERABLE'] == 'Y':
-                    answer_starts = [article['START_OFFSET']]
-                    answers = [article['ANSWER']]
+                    answer_starts = article['START_OFFSET']
+                    answers = article['ANSWER']
                 else:
                     answer_starts = []
                     answers = []
                 # Features currently used are "context", "question", and "answers".
                 # Others are extracted here for the ease of future expansions.
-                yield key, {
+                yield c, {
                     "title": title,
                     "context": context,
                     "question": article['QUESTION_TEXT'],
@@ -149,4 +135,4 @@ class TechQA(datasets.GeneratorBasedBuilder):
                         "text": answers,
                     },
                 }
-                key += 1
+                c+=1
