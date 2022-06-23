@@ -53,10 +53,10 @@ question = []
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
   for record in tqdm(raw_datasets['train']):
     run_main()
-elif args.dataset == 'squad' or args.dataset == 'squad_v2':
+elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
     for record in tqdm(raw_datasets['validation']):
         run_main()
-elif args.dataset == 'cuad' or args.dataset == 'duorc':
+elif args.dataset in ['cuad', 'duorc']:
     for record in tqdm(raw_datasets['test']):
         run_main()
 
