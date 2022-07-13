@@ -1,0 +1,111 @@
+word,sense_no,sense_def,example
+Server,1,host,For complete information: * For releases of IBM HTTP Server v7.
+Server,1,host,"Additional keywords: WebSphere Application Server WAS X'07EE' 07EE 000007EE LOCAL FIX * For the RC2030 scenario described above, set the MAXMSGL of the backout queue to be at least as large as that of the original queue."
+Server,1,host,Information that IBM WebSphere Support needs to debug SSL configuration and certificate issues related to the IBM HTTP Server * MustGather: SSL handshake and configuration problems [http://www.
+Server,1,host,wss?rs=177&context=SSEQTJ&uid=swg21006430] More extensive information on using the iKeyman GUI to create key database files and certificates is located here: * For releases of IBM HTTP Server v7.
+Server,1,host,"com SSLEnable SSLClientAuth None <Directory c:/Program Files/IBM HTTP Server/htdocs2 > Options Indexes AllowOverride None order allow,deny allow from all </Directory> DocumentRoot c:/program files/ibm http server/htdocs2 DirectoryIndex index2."
+Server,1,host,"com <Directory c:/Program Files/IBM HTTP Server/htdocs3 > Options Indexes AllowOverride None order allow,deny allow from all </Directory> DocumentRoot c:/program files/ibm http server/htdocs3 DirectoryIndex index3."
+Server,1,host,Confirm that the Global Security Kit is installed and meets the minimum requirements The Global Security Kit (GSKit) is a required component for the Secure Sockets Layer (SSL) enablement within the IBM HTTP Server.
+Server,1,host,"com <Directory c:/Program Files/IBM HTTP Server/htdocs2 > Options Indexes AllowOverride None order allow,deny allow from all </Directory> DocumentRoot c:/program files/ibm http server/htdocs2 DirectoryIndex index2."
+Server,1,host,Information that IBM WebSphere® Support needs to debug SSL configuration and certificate issues related to the IBM HTTP Server 1.
+Server,1,host,"Create a key database file and certificates needed to authenticate the Web server during an SSL handshake The iKeyman GUI, which is included within the IBM HTTP Server distribution, can be used to create a key database file (for example: key."
+Server,1,waiter,The server picked a blue enamel tin plate from a stack behind her and scooped out a bright yellow blob from the pot in front of her.
+Server,1,waiter,I am the served and I am the server.
+Server,1,waiter,"There was only one server, but there were two women working behind the counter where people fill orders for takeout."
+Server,1,waiter,"I dropped the phone as Holly, our server, appeared at the table."
+Server,1,waiter,"The twins were near catatonic when the server finally brought the check, pausing momentarily as if he had just realized they were a table full of kids."
+Server,1,waiter,"As soon as they sat down at the table, Toby waved the server toward them."
+Server,1,waiter,"Luke gave the server a sympathetic look and said, “We’ll probably need lots of bread.”"
+Server,1,waiter,"Ahmed was in and out, giving instructions to the server, listening in on conversations and adding a line or two."
+Server,1,waiter,"When the server came over, she put two napkins on the table and asked, “What can I get you to drink?”"
+Server,1,waiter,He takes his plate from the server and we find a seat.
+Application,1,program,"Default behaviour when no credentials are supplied in the application server If no credentials are supplied by the application on the createConnection call, and neither of the component managed or container managed security systems described below are configured, then WebSphere Application Server provides a blank username to MQ."
+Application,1,program,"In order to configure SSL/TLS transport security, you must establish the appropriate trust between the MQ queue manager and WebSphere Application Server."
+Application,1,program,2 for AIX for IBM Pure Application System - AIX License Required DOWNLOAD PACKAGE Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options What is Fix Central(FC)? [https://www.
+Application,1,program,"Additional keywords: WebSphere Application Server WAS X'07EE' 07EE 000007EE LOCAL FIX * For the RC2030 scenario described above, set the MAXMSGL of the backout queue to be at least as large as that of the original queue."
+Application,1,program,Application calls to MQOPEN for queues not known locally will fail with 2189 MQRC_CLUSTER_RESOLUTION_ERROR.
+Application,1,program,TECHNOTE (TROUBLESHOOTING) PROBLEM(ABSTRACT) This article covers the most common reasons why an application running in WebSphere Application Server receives a 2035 MQRC_NOT_AUTHORIZED error when connecting to MQ as a client over a network.
+Application,1,program,"com/webapp/wsbroker/redirect?version=phil&product=was-nd-dist&topic=umj_pasm] Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server for z/OS Java Messaging Service (JMS) z/OS, OS/390 8."
+Application,1,program,"For example by configuring an SSLPEER rule on the SVRCONN channel to match the Distinguished Name in the certificate of the WebSphere Application Server, and establishing trust in the issuer of that certificate."
+Application,1,program,0 > IBM MQ > Developing applications > Developing MQI applications with IBM MQ > Sample IBM MQ procedural programs > Sample procedural programs (platforms except z/OS) > Dead-letter queue handler sample WebSphere MQ > Application Programming Guide > Sample WebSphere MQ programs > Sample programs (platforms except z/OS) Dead-letter queue handler sample [http://publib.
+Application,1,program,Choose a user that you want WebSphere Application Server to be authenticated as.
+Application,2,request,C.P. waited for weeks to hear back from them about his application.
+Application,2,request,"The clerk, a thin young woman with bobbed hair, asks for his application, reviewing it before handing it to the judge."
+Application,2,request,We felt that this slight break in protocol was warranted but in no way prejudicial—in one way or another—to the application review.
+Application,2,request,"But if our application for permanent residency got denied by the government and we were shipped back to Iran, then Kia's citizenship status wouldn't make a difference."
+Application,2,request,"We had a number of opportunities to talk in jail and we discussed Walter’s application for bail while his appeal was pending, a move I wholeheartedly supported."
+Application,2,request,"She is supposed to be on the company health plan by now, but they claim to have lost her application form and to be beginning the paperwork all over again."
+Application,2,request,"The result of these discriminatory laws is that virtually every job application, whether for dog catcher, bus driver, Burger King cashier, or accountant, asks people with criminal records to “check the box.”"
+Application,2,request,"When she had registered with the Immigration and Naturalization Service upon filing her green card application, Luma had been fingerprinted; her fingers were placed on an ink pad and carefully rolled over the card beneath."
+Application,2,request,"I said yes, and he tore up my application."
+Application,2,request,"As I was filling out the application, my competitive side kicked in and I was convinced that my students had to win!"
+Application,3,use,"Merle Tuve, who was still struggling to produce high-energy particles with his obstreperous Tesla coil, saw little practical application for Lawrence’s curved variation on a linear accelerator."
+Application,3,use,"If telescopes with a magnification of 20X had had a practical application, they would have had them."
+Application,3,use,This morning Nemur had Burt take my report and the statistical data down to Hallston University to have some of the top men in the field verify my results and the application of my formulas.
+Application,3,use,"In the 1960s, however, interest in the large-scale problems of astronomy and cosmology was revived by a great increase in the number and range of astronomical observations brought about by the application of modern technology."
+Application,3,use,"We can readily understand Michelangelo’s discomfort, for Titian has rephrased his sculpture in utterly sensuous terms through the painterly application of sonorous color that is characteristic of his work."
+Application,3,use,His brown hair was combed into a moderately high pompadour and had the slick appearance that came with the overly ambitious application of Wild Root Cream Oil.
+Application,3,use,This was followed two years later by extensive application of residual sprays for the control of malaria mosquitoes.
+Application,3,use,Harry was so pleased to see it he felt he could even endure Filch’s wheezy criticisms of his tardiness and rants about how his timekeeping would improve with the regular application of thumbscrews.
+Application,3,use,"Instead of Star Trek trivia, they could probably tell me about every application of a weapon, yet could never even begin to fathom what it feels like to actually end a human life."
+Application,3,use,"Before the days of modern embalming, incense had a practical application."
+following,1,reference,Refer to the following link that describes how two queue managers communicate with each other in a distributed environment: http://publib.
+following,1,reference,ERROR DESCRIPTION * CSQX191I messages following a STOP QMGR command for cluster channels.
+following,1,reference,"* * At v700 and v701 the following problem * * has been identified: * * - Messages containing an RFH2 header or * * message properties, and both an XQH * * and MDE abend 5C6-00D40095 when put * * to a shared queue."
+following,1,reference,A 10 second wait period is then entered where one of the following should occur.
+following,1,reference,Can you please explain the following 3 scenarios: 1) Master Broker DEV LPar: 1234/5678 IIB Agent: OMEGQI MQ Agent: OMEGMQ Total IIB Brokers: 13 in each LPar On Queue Manager (QMGR) QMG1 under Lpar 1234 there are no consumer on KQI.
+following,1,reference,ERROR DESCRIPTION * CSQX438E messages with MQCC=2 MQRC=2161 (MQRC_Q_MGR_QUIESCING) following a STOP QMGR command for cluster channels.
+following,1,reference,msg Please see the following Presentation for the details on how to use the DLQ handler: How to Automate Handling of WebSphere MQ Dead Letter Messages [http://www.
+following,1,reference,"So for this issue, you need to add statements like the following to your KQIXML for each broker to be monitored, and for PARMGEN, you would update your WCONFIG(KQI$XML) member as follows: <MonitorBroker name= CEP2BRK alias= CEP2BRK envfileDirectory= /opt/local/lpp/mqsi/home/CEP2BRK > </MonitorBroker> Scenario #3: The agents are getting a reason code of 2035 from the broker's queue manager when opening the agent's reply queue, which means it is not authorized for opening the KQI."
+following,1,reference,In the dump you will see the following: .
+following,1,reference,For example the database toolkit might show the following error if it does not pick up the ODBCINI environment variable: * An SQL operation failed.
+following,2,pursue,"“Better follow up and see what he's doin'.” The procession moved off sedately in King Pellinore’s direction, following his erratic course by the fresh tracks in the snow."
+following,2,pursue,I’m almost near the car when I realize that he’s not following me again.
+following,2,pursue,"“Oh, wow,” I said, following her eyes to the painting in question."
+following,2,pursue,"Dizzy and very tired Sam, and Frodo following him, crawled up the last step, and sat down rubbing their legs and knees."
+following,2,pursue,"I'd planned on following Faith out the door, but at that, I stopped in front of the desk."
+following,2,pursue,"Cotton kept following us around saying, “What about this?” and holding up something dumb like a broken hamster cage or an empty paint can."
+following,2,pursue,"Instead of following strangers around, we went to the movies and plunged our hands together into the six- dollar Super Tuh of popcorn."
+following,2,pursue,"She didn’t know where they were, but they were following someone called Trashman."
+following,2,pursue,"As I dive, I notice lights following closely behind me—somebody’s hoverboard is skimming the ground in the darkness."
+following,2,pursue,"Once, walking along a row of houses, he turned a corner and made a quick dash up a set of stairs to shake off anyone who might be following him."
+Java,1,software,wss?uid=swg21502974] Cannot install the Java Visual Editor in RAD 64 bit [http://www.
+Java,1,software,"x after that date with extended support, Java SDK V5 is no longer included Refer to Required WebSphere Interim Fixes for WebSphere Portal V6."
+Java,1,software,1) * Sun Java System Web Server 7 Update 8 or 6.
+Java,1,software,"This fix changes the Java component of MQ, and will be included in FixPack 6."
+Java,1,software,com/software/webservers/appserv/was/]#1a#1b * Note: IBM Java SDK V5 reached end of service in 2015.
+Java,1,software,Create a Java system pref directory sudo mkdir -p /etc/.
+Java,1,software,wss?uid=swg27019359&amp;aid=1] Java Database Connectivity (JDBC) Drivers [/support/docview.
+Java,1,software,"com/products/edirectory/] * Sun Java System Directory Server 7, 6."
+Java,1,software,0 is not available and the installation will automatically default to the IBM 32-bit SDK Java 6.
+Java,1,software,0 for Java Authorization Contract for Containers (JACC) (Tivoli Access Manager product site) [http://www.
+Java,2,coffee,"So he did an end-around on the unfortunate taste by drowning his java in cream, for which Katherine gently teased him that afternoon."
+Java,2,coffee,"He looked at me, straight-faced and said: ""It's your first course: Coffee and tea and the java and me, a cup, a cup, a cup, a cup, a cup."""
+Java,2,coffee,"And java competitor Dunkin introduced its Dunkin’ Refreshers, drinks under 200 calories made with iced green tea, flavored fruit concentrate and B vitamins in flavors like Strawberry Dragonfruit and Peach Passion Fruit."
+Java,2,coffee,"South Korean barista Lee Kang-bin is taking coffee art to the next level, creating miniature imitations of famous paintings on foamy cups of java at his central Seoul cafe."
+Java,2,coffee,"For this writer, it’s Australia’s best cup of joe and easily one of the best vectors for java in the world."
+Java,2,coffee,"Though for fans of the fast food chain’s java, this is a pretty good subscription as a small cup of BK Café coffee costs $1 when ordered outside of the deal."
+Java,2,coffee,"Swing by its comfortable two-year-old location on Cerrillos Road for a cup of ink-black java, then, with senses duly sharpened, plunge into some bargain-hunting a few blocks away at El Museo Cultural Winter Market."
+Java,2,coffee,I later consulted coffee experts and now know how to track down a great cup of java anywhere.
+Java,2,coffee,"The nose is reminiscent of freshly brewed mocha java, and the silky-smooth body tastes of bittersweet chocolate, espresso, roasted malts and caramel, with just a hint of vanilla."
+Java,2,coffee,"That’s why java enthusiasts will be so grateful for this insulated coffee press for brewing coffee, complete with a pour spout cover to help avoid spills as they journey along those backroads."
+Windows,1,software,msg In Windows it is: C:\Program Files\IBM\WebSphere MQ\tools\c\Samples\dlq\amqsdlq.
+Windows,1,software,3 Platform Fix Pack 10 -------- -------------------- Windows U200226 AIX U800391 HP-UX (PA-RISC) U800392 Solaris (SPARC) U800393 iSeries SI17950 Linux (x86) U800394 Linux (zSeries) U800395 Linux (Power) Not applicable TEMPORARY FIX COMMENTS APAR INFORMATION * APAR NUMBER IY66462 * REPORTED COMPONENT NAME WEB MQ FOR AIX * REPORTED COMPONENT ID 5724B4101 * REPORTED RELEASE 530 * STATUS CLOSED PER * PE NoPE * HIPER NoHIPER * SPECIAL ATTENTION NoSpecatt * SUBMITTED DATE 2005-01-05 * CLOSED DATE 2005-01-07 * LAST MODIFIED DATE 2007-04-26 * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING: * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING: FIX INFORMATION APPLICABLE COMPONENT LEVELS * R530 PSY UP SUBSCRIBE You can track all active APARs for this component.
+Windows,1,software,My question is are there any tricks or registry settings that we should be concerned about when we perform recovery like this? 42:57 We are running in a Windows environment and I just wanted to know if there is any workaround to making multi-instance queue managers work if we cannot have domain controllers.
+Windows,1,software,11 -------- -------------------- Windows tbc_p600_0_2_11 AIX tbc_p600_0_2_11 HP-UX (PA-RISC) tbc_p600_0_2_11 HP-UX (Itanium) tbc_p600_0_2_11 Solaris (SPARC) tbc_p600_0_2_11 Solaris (x86-64) tbc_p600_0_2_11 iSeries tbc_p600_0_2_11 Linux (x86) tbc_p600_0_2_11 Linux (x86-64) tbc_p600_0_2_11 Linux (zSeries) tbc_p600_0_2_11 Linux (Power) tbc_p600_0_2_11 Linux (s390x) tbc_p600_0_2_11 v7.
+Windows,1,software,"Platforms affected: All Distributed (iSeries, all Unix and Windows) **************************************************************** PROBLEM SUMMARY: When an application issues an MQOPEN/MQPUT1 against a clustered queue which the local queue manager does not yet know about, subscriptions are created and sent to the full repositories of which the local queue manager is a member of."
+Windows,1,software,* An example scenario is: A test on WebSphere MQ for Windows (level 6.
+Windows,1,software,"We were able to recover all the queue manager objects via script, but one thing that we went into was that in Windows, we discovered that there are some configuration settings which are embedded in the registry itself, such as maxchannel."
+Windows,1,software,"For: RTPJ = partial for CLUSA even with all cluster channels active, there was a 10-second delay, which is different from the observation on Windows."
+Windows,1,software,"Platforms affected: All Distributed (iSeries, all Unix and Windows) **************************************************************** PROBLEM SUMMARY: If there is a problem when reallocating messages to other queue managers in the cluster after a cluster channel has ended such that there is no possible destination in the cluster, or the destination cannot be resolved, the command message is backed out to the command queue, and so is read again (and again."
+Windows,1,software,"MultiInstances), is it necessary to recommend/use an external NFS storage device, in order to meet the customer expectations in terms of HA? And if yes, how do we integrate them? 18:38 What needs to be changed within Windows registry to allow for the proper startup of WMQ Services on a “backup server” when manually failing over outside the control of something like MSCS? Given a configuration of two servers (A & B) both having WMQ installed and having used the hamvmqm utility to move the qmgr to a “common” drive that is only mapped on the “active” server - what needs to happen on server B within the registry to ensure that WMQ services are start up automatically? 21:30 We are running SUSE 10."
+Windows,2,framework,"“I wasn’t expecting company. Look at those windows, and that woodwork over there.”"
+Windows,2,framework,"Finally Baelish drew rein in front of a ramshackle building, three stories, timbered, its windows bright with lamplight in the gathering dusk."
+Windows,2,framework,"Living in her respectable house in the center of town, crowded by four other houses, each so near anyone could peer through the windows and whisper a judgment, Faye felt trapped."
+Windows,2,framework,"The boy looked at him questioningly when he saw the solid bars, but Dustfinger just laid a finger to his lips and looked up at one of the windows on the second floor."
+Windows,2,framework,"When I opened my eyes next, I saw that I was in a green room with no windows and very bright lights."
+Windows,2,framework,"All the windows were dark, and there were no other guards to be seen in the alley."
+Windows,2,framework,Most of the windows on the second floor had been broken by unruly students or in after-hours fights.
+Windows,2,framework,"The cathedral was dark now, the only illumination a weird orange glow eking through the stained-glass windows."
+Windows,2,framework,"The windows were all closed, but sun streamed in, heating up the room to a slow simmer and bringing forth the ripe stink of underwashed gentlemen."
+Windows,2,framework,The effect was that of stained-glass windows in sunlight.
