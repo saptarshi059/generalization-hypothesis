@@ -37,7 +37,7 @@ for word in df['word'].unique():
         indexB = comb[1]
 
         tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt') 
-        pooler_outputA = model(**tokenized_inputA).pooler_output
+        pooler_outputA = model(**tokenized_inputA.to(device)).pooler_output
 
         tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt') 
         pooler_outputB = model(**tokenized_inputB).pooler_output
