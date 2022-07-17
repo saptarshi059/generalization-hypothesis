@@ -44,7 +44,7 @@ for word in df['word'].unique():
 
         sim_scores[(word, df.iloc[comb[0]].sense_def, df.iloc[comb[1]].sense_def)].append(cos(pooler_outputA, pooler_outputB).item())
 
-print(f'Model: {model_checkpointl}')
+print(f'Model: {model_checkpoint}')
 
 for key, val in sim_scores.items():
     print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
