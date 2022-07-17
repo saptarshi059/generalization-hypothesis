@@ -40,7 +40,7 @@ for word in df['word'].unique():
         pooler_outputA = model(**tokenized_inputA.to(device)).pooler_output
 
         tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt') 
-        pooler_outputB = model(**tokenized_inputB).pooler_output
+        pooler_outputB = model(**tokenized_inputB.to(device)).pooler_output
 
         sim_scores[(word, df.iloc[comb[0]].sense_def, df.iloc[comb[1]].sense_def)].append(cos(pooler_outputA, pooler_outputB).item())
 
