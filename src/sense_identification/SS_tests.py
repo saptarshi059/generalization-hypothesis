@@ -22,6 +22,9 @@ model_checkpoint = args.model_name
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 model = AutoModel.from_pretrained(model_checkpoint)
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model.to(device)
+
 df = pd.read_csv(os.path.abspath(f'../../data/sense_data/{args.dataset}'))
 
 cos = torch.nn.CosineSimilarity()
