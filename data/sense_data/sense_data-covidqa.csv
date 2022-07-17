@@ -1,14 +1,14 @@
 word,sense_no,sense_def,example
-cell,1,bio,"Given that the C-type lectin receptor, dendritic cell-specific ICAM-grabbing non-integrin-related (DC-SIGNR, also known as CD209L or liver/lymph node-specific ICAM-grabbing non-integrin (L-SIGN)), can interact with pathogens including HIV-1 and is expressed at the maternal-fetal interface, we hypothesized that it could influence MTCT of HIV-1."
-cell,1,bio,"High maternal viral load, low CD4 cells count, vaginal delivery, low gestational age have all been identified as independent factors associated with MTCT of HIV-1 [1] ."
-cell,1,bio,"\n\nDendritic cell-specific ICAM-grabbing non-integrin-related (DC-SIGNR, also known as CD209L or liver/lymph node-specific ICAM-grabbing non-integrin (L-SIGN)) can interact with a plethora of pathogens including HIV-1 and is expressed in placental capillary endothelial cells [2] ."
-cell,1,bio,It has been proposed that interaction between DC-SIGNR and HIV-1 might enhance viral transfer to other susceptible cell types [2] but DC-SIGNR can also internalize and mediate proteasome-dependant degradation of viruses [4] that may differently affect the outcome of infection.
-cell,1,bio,We cultured HeLa cells in 6 wells plates (2610 5 cells) and transfected them the following day using lipofectamine (Invitrogen) according to the manufacturer.
-cell,1,bio,"Maternal age and CD4 cell count, child sex, mode of delivery, duration of membrane rupture and gestational age were similar among all groups."
-cell,1,bio,Chan and colleagues recently demonstrated that DC-SIGNR transfected CHO cells diminish SARS-CoV titers by enhanced capture and degradation of the virus in a proteasome-dependent manner [4] .
-cell,1,bio,"Since endothelial cells express MHC-I and II, degraded viral antigens could then be presented to immune cells to elicit an adaptive immune response [16, 17] ."
-cell,1,bio,"The HIV-1 coreceptor CCR5, but not CD4, is co-expressed with DC-SIGNR on placental and blood-brain barrier (BBB) endothelial cells [18, 19] ."
-cell,1,bio,"HIV-1 gp120 binding to CCR5 receptor on endothelial cells compromises BBB integrity and enhances monocytes adhesion and transmigration across the BBB [20, 21] ."
+cell,1,bio,"It has been proven that bacterial pathogens have a unique papain-like hydrolytic activity to block the normal host cell cycle progression as the core of an avirulence (Avr) protein (AvrPphB) from the plant pathogen Pseudomonas syringae, resembles the papain-like cysteine proteases."
+cell,1,bio,"The ongoing analysis of antigen-specific B cell responses has led to the development of new diagnostic, therapeutic, and research reagents."
+cell,1,bio,"Therefore, IFITM5 forms a hetero-oligomer in the cell membrane for its physiological function."
+cell,1,bio,"In the absence of 2BP (Figure 5-A, -C, and -D) , the mineralization was started 15 days after the initiation of the cell differentiation (Day 0)."
+cell,1,bio,Lung tissue supernatant was diluted 10-fold and added to a cell monolayer covered by semisolid agar containing 0.
+cell,1,bio,This is an additional reason for the need to purify the protein from the cell lysate under harsh denaturing conditions followed by protein refolding.
+cell,1,bio,"Text: Among the five hepatotropic hepatitis viruses, only hepatitis B virus (HBV) and its satellite hepatitis D virus (HDV) still wait for the development of an in vitro infection system in cell culture."
+cell,1,bio,"Since the highest expression was found in the cell lysate, it was used for further purification of the protein."
+cell,1,bio,"Under non-reducing conditions, the protein was unable to be detected by the anti-histidine Ab, even in the cell lysate (data not shown)."
+cell,1,bio,"The solutions to the crystal structures of surface proteins for a variety of pathogens, the conformational stabilization of these antigens, and the application of the methods summarized in this review, to probe antigen-specific B cell responses, have created new opportunities for systematic and rational vaccine design for HIV, RSV, EBV, malaria, and many other pathogens."
 cell,2,room,Dibdin glanced back at the other men in the cell before continuing.
 cell,2,room,"He felt like a prisoner, kept in a small cell that was hurtling through the sky at what he thought to be 160 miles an hour, headed— he didn’t know where—just headed somewhere until..."
 cell,2,room,From then on I kept looking out my cell window and from time to time it seemed I could see into my past and amuse myself with stories about my family and old friends.
@@ -16,7 +16,7 @@ cell,2,room,He lifted Robin and carried him to his own cell and put him on the n
 cell,2,room,"The doghouse was a small, sealed cell like a dark, frozen, airless tomb."
 cell,2,room,"Shin’s cell was a concrete square, barely large enough for him to lie down."
 cell,2,room,She circled the cell two or three times before sinking down onto the bench.
-cell,2,room,"These cells, with bars front and rear, had dense screens installed from ceiling to knee level to keep the occupants from throwing things out."
+cell,2,room,"They were in a narrow cell where the walls dripped with damp, and there was one stone bench for furniture."
 cell,2,room,"We’ve heard that if a political complains, the guards in charge of that cell will be in very hot water indeed—maybe even shot!"
 cell,2,room,"The men in the first cell were mostly sleeping, or dying, or dead."
 cell,3,phone,"As he transformed his bed back into a couch, his mom’s cell chimed."
@@ -44,7 +44,7 @@ expression,2,Non-verbal,"“Speaking of the weather...” he begins, and laughs 
 expression,2,Non-verbal,"Abruptly, the man changed his attitude and expression, took his hands from his pockets and smiled a smile that Bigger did not believe."
 expression,2,Non-verbal,"I feared what Mr. Norton would say to me, the expression that might come into his eyes."
 expression,2,Non-verbal,“Why not? His music seems ...” Bast’s expression was grim.
-expression,2,Non-verbal,"Naheed was scanning the room for Eliza, but she began to notice the teachers standing around the outside of the circle of students, their expressions solemn."
+expression,2,Non-verbal,It would be impossible to describe the expression of hate and baffled malignity—of anger and hellish rage—which came over the Count’s face.
 expression,2,Non-verbal,"There was something sleek and new about him, about the fine cut of his suit, but his supercilious expression was the same, as was his hoarse voice."
 expression,2,Non-verbal,Buddy asked with a satisfied expression as we walked across the green quadrangle to his room.
 expression,2,Non-verbal,That expression meant that things were at least kind of okay.
@@ -53,7 +53,7 @@ study,1,experiment,"METHODS AND FINDINGS: To investigate the potential role of D
 study,1,experiment,"To investigate the potential role of DC-SIGNR in MTCT of HIV-1, we carried out a genetic association study of DC-SIGNR in a well-characterized cohort of HIV-infected mothers and their infants recruited in Zimbabwe, and identified specific DC-SIGNR variants associated with increased risks of HIV transmission."
 study,1,experiment,The samples used in the present study were from mother-child pairs randomly assigned to the placebo group of the ZVITAMBO project.
 study,1,experiment,"The nucleotide sequence variation of the entire promoter, coding and part of 39-UTR regions of DC-SIGNR gene in the study population was determined previously [7] ."
-study,1,experiment,Written informed consent was obtained from all mothers who participated in the study and the ZVITAMBO trial and the investigation reported in this paper were approved by The 
+study,1,experiment,Written informed consent was obtained from all mothers who participated in the study and the ZVITAMBO trial and the investigation reported in this paper were approved by The
 study,1,experiment,"We carried out an association study of DC-SIGNR polymorphism in 197 infants born to untreated HIV-1-infected mothers recruited in Harare, Zimbabwe."
 study,1,experiment,Fifteen haplotype-tagged SNPs (htSNPs) corresponding to the 15 major DC-SIGNR haplotypes ( Figure 1 ) described among Zimbabweans [7] were genotyped in our study samples (Tables S2  and S3 ).
 study,1,experiment,H1 and H3 were the most frequent haplotypes observed in the study population and they share a cluster of mutations (Figure 1 ).
@@ -62,7 +62,7 @@ study,1,experiment,Full-term placenta samples were not available for the current
 study,2,room,"If there is a quiet area of the house, perhaps that could be transformed into a study room."
 study,2,room,"The collection will be digitised and accessible in the museum's study rooms, which were visited by 35,000 people last year, and will join their programme of national tours."
 study,2,room,Just 38% offered dedicated study rooms.
-study,2,room,"Booked a study space in the silent study room, and was practically bouncing in my seat for the first ball."
+study,2,room,"His dæmon, a large cat with fur of a thousand beautiful autumnal colors, stalked the corners of the study before leaping gracefully to Coram’s lap."
 study,2,room,"For every study room, there is likely to be a cafe or children's play area."
 study,2,room,"Although the Government does not intend to ban homework at secondary schools, ministers want to encourage pupils to do it at school by opening study rooms."
 study,2,room,"The lab is a small study room, painted deep blue with bookshelves and a table and chairs."
@@ -71,8 +71,8 @@ study,2,room,"At the end of the corridor, a sliding door leads to the study room
 study,2,room,"Inside, we were shown through study rooms with maybe 60 people diligently at desks."
 treatment,1,medical care,"A number of siRNA-based therapies are being evaluated in clinical trials for the treatment of different conditions, including lung diseases such as asthma and RSV infection."
 treatment,1,medical care,"In addition, after the hydroxylamine treatment (see lane 6), the fluorescence became weak because of the dissociation of 17-ODYA from IFITM5, which was the same mechanism as the dissociation of the palmitic acid from IFITM5 by reduction as described above (lane 2 of Figure 2-B) ."
-treatment,1,medical care,"Currently, no available treatments reduce the progression of COPD or suppress the inflammation in small airways and lung parenchyma."
-treatment,1,medical care,"Drug discovery studies and novel treatments of siRNAs are currently targeting a wide range of diseases, including various viral infections and cancers."
+treatment,1,medical care,RNAi-based approaches provide a promising therapeutic modality for the treatment of various lung diseases.
+treatment,1,medical care,Establishment of an accurate and easy method for detection of these viruses is essential for the prevention and treatment of associated infectious diseases.
 treatment,1,medical care,"As such, the identification of NTCP as a potential viral receptor for HBV may serve as an important initial step for this journey, leading to the development of an HBV infection system to facilitate the HBV research and hepatitis B treatment."
 treatment,1,medical care,The World Health organization (WHO) estimated that China had reached the targets of 85% treatment success by 1993 and 70% case detection rate by 2005 [2] .
 treatment,1,medical care,"Cytotoxic and molecular target drugs have been widely used in the treatment of advanced lung cancer; unfortunately, many cases are still refractory to chemotherapy."
@@ -99,13 +99,13 @@ host,1,organism,This observation might imply that CO is an indicator of airway i
 host,1,organism,"Moreover, gemcitabine strongly induced the expression of several ISGs including CXCL10, IRF7, IRF9, IFIT1, and DDX58, which were the major effectors in the innate immunity that defended the host against the virus infection."
 host,1,organism,"This ""cytokine storm"" leads to the severe respiratory symptoms and host immune injury."
 host,1,organism,"In addition, some viral vectors may insert their genome at random positions in the host chromosome, which eventually restrict the gene function [56] ."
-host,2,organizer,"The hosts met on the broad plains of the Reach, amidst golden fields of wheat ripe for harvest."
-host,2,organizer,"""Send him here after he's eaten. Have him bring quill and parchment. And find Tollett as well. Tell him to bring my axe. A guest gift for our host."""
+host,2,organizer,"It’s helpful to tell them- like the nightclub host who greets you, “Ladies and gentlemen: have we got a show for you tonight!”—that important, new, and unusual matters will be offered to their ears."
+host,2,organizer,Send him here after he's eaten. Have him bring quill and parchment. And find Tollett as well. Tell him to bring my axe. A guest gift for our host.
 host,2,organizer,"I was thrilled to realize that it was only one of the tremendous rebuilding tasks under the direction of young Dr. Azzam, who had just been my host."
 host,2,organizer,"The following night, our host decided to take us to a part of the Atlantic Ocean that was nearby."
-host,2,organizer,"""And now, O my host,"" said the Tarkaan, ""I have a mind to buy that boy of yours."""
+host,2,organizer,"And now, O my host,"" said the Tarkaan, ""I have a mind to buy that boy of yours."
 host,2,organizer,For a week our host had noted where the coveys were gathering.
 host,2,organizer,"Sometimes they act kind of erratic, which scares me a little, like the time they were convinced we should crash a party even though the host threatened to kill Juanga over his ex-boyfriend last year."
 host,2,organizer,Grandpa was just the friendliest host you ever saw.
-host,2,organizer,The poet kissed his host’s hand and asked permission to share some of his poetry.
+host,2,organizer,"No sooner had those formalities of greeting been com-pleted than the king had said to his host, ""Take me down to your crypt, Eddard. I would pay my respects."""
 host,2,organizer,Our host had been born in the main village and never left.
