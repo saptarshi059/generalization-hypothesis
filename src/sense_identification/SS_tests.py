@@ -30,19 +30,20 @@ args = parser.parse_args()
 
 model_checkpoint = args.model_name
 
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-model = AutoModel.from_pretrained(model_checkpoint)
+if model_checkpoint != 'sensebert-base-uncased':
+    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+    model = AutoModel.from_pretrained(model_checkpoint)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model.to(device)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.to(device)
 
 df = pd.read_csv(os.path.abspath(f'../../data/sense_data/{args.dataset}'))
 
-cos = torch.nn.CosineSimilarity()
 sim_scores = defaultdict(list)
 
 #Using pooler output
 if args.pooler == True:
+    cos = torch.nn.CosineSimilarity()
     for word in df['word'].unique():
         word_indices = df[df['word'] == word].index
         for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
