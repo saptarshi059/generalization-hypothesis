@@ -66,18 +66,23 @@ else:
             if word in tokenizer.vocab.keys():
                 if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                     return tokenizer.vocab[word]
-                elif ('Ġ'+ word.lower()) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
-                        word = 'Ġ' + word.lower()
-                        return tokenizer.vocab[word]
-                    else:
-                        word = 'Ġ' + word
-                        return tokenizer.vocab[word]
+            
+            if ('Ġ'+ word.lower()) in tokenizer.vocab.keys():
+                if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
+                    word = 'Ġ' + word.lower()
+                    return tokenizer.vocab[word]
+            
+            if ('Ġ'+ word) in tokenizer.vocab.keys():
+                if tokenizer.vocab['Ġ'+ word] in tokenization['input_ids'].tolist()[0]:
+                    word = 'Ġ' + word
+                    return tokenizer.vocab[word]
         else:
             if word in tokenizer.vocab.keys():
                 if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                     return tokenizer.vocab[word]
-                else:
+            
+            if word.lower() in tokenizer.vocab.keys():
+                if tokenizer.vocab[word.lower()] in tokenization['input_ids'].tolist()[0]:
                     return tokenizer.vocab[word.lower()]
 
 
