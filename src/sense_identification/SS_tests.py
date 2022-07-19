@@ -70,9 +70,9 @@ else:
                     if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
                         word = 'Ġ' + word.lower()
                         return tokenizer.vocab[word]
-                else:
-                    word = 'Ġ' + word
-                    return tokenizer.vocab[word]
+                    else:
+                        word = 'Ġ' + word
+                        return tokenizer.vocab[word]
         else:
             if word in tokenizer.vocab.keys():
                 if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
