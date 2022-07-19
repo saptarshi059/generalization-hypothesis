@@ -58,54 +58,97 @@ if args.pooler == True:
             sim_scores[(word, df.iloc[comb[0]].sense_def, df.iloc[comb[1]].sense_def)].append(cos(pooler_outputA, pooler_outputB).item())
 #Using contextualized entity output
 else:
-    cos = torch.nn.CosineSimilarity(dim=0)
-    sim_scores = defaultdict(list)
+    if model_checkpoint != 'sensebert-base-uncased':
+        cos = torch.nn.CosineSimilarity(dim=0)
+        sim_scores = defaultdict(list)
 
-    def find_vocab_idx(word, tokenization):
-        if 'roberta' in model_checkpoint:
-            if word in tokenizer.vocab.keys():
-                if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
-                    return tokenizer.vocab[word]
-            
-            if ('Ġ'+ word.lower()) in tokenizer.vocab.keys():
-                if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
-                    word = 'Ġ' + word.lower()
-                    return tokenizer.vocab[word]
-            
-            if ('Ġ'+ word) in tokenizer.vocab.keys():
-                if tokenizer.vocab['Ġ'+ word] in tokenization['input_ids'].tolist()[0]:
-                    word = 'Ġ' + word
-                    return tokenizer.vocab[word]
-        else:
-            if word in tokenizer.vocab.keys():
-                if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
-                    return tokenizer.vocab[word]
-            
-            if word.lower() in tokenizer.vocab.keys():
-                if tokenizer.vocab[word.lower()] in tokenization['input_ids'].tolist()[0]:
-                    return tokenizer.vocab[word.lower()]
+        def find_vocab_idx(word, tokenization):
+            if 'roberta' in model_checkpoint:
+                if word in tokenizer.vocab.keys():
+                    if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
+                        return tokenizer.vocab[word]
+                
+                if ('Ġ'+ word.lower()) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
+                        word = 'Ġ' + word.lower()
+                        return tokenizer.vocab[word]
+                
+                if ('Ġ'+ word) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['Ġ'+ word] in tokenization['input_ids'].tolist()[0]:
+                        word = 'Ġ' + word
+                        return tokenizer.vocab[word]
+            else:
+                if word in tokenizer.vocab.keys():
+                    if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
+                        return tokenizer.vocab[word]
+                
+                if word.lower() in tokenizer.vocab.keys():
+                    if tokenizer.vocab[word.lower()] in tokenization['input_ids'].tolist()[0]:
+                        return tokenizer.vocab[word.lower()]
 
 
-    for word in df['word'].unique():
-        word_indices = df[df['word'] == word].index
-        for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
-            indexA = comb[0]
-            indexB = comb[1]        
-            
-            tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt') 
-            contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
+        for word in df['word'].unique():
+            word_indices = df[df['word'] == word].index
+            for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
+                indexA = comb[0]
+                indexB = comb[1]        
+                
+                tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt') 
+                contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
 
-            tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt') 
-            contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
+                tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt') 
+                contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
 
-            wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
-            wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
-            
-            entity_embeddingA = contextualized_embeddingsA[0][tokenized_inputA['input_ids'].tolist()[0].index(wordA_vocab_idx)]       
-            entity_embeddingB = contextualized_embeddingsB[0][tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
-            
-            sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append(\
-                cos(entity_embeddingA, entity_embeddingB).item())
+                wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
+                wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
+                
+                entity_embeddingA = contextualized_embeddingsA[0][tokenized_inputA['input_ids'].tolist()[0].index(wordA_vocab_idx)]       
+                entity_embeddingB = contextualized_embeddingsB[0][tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
+                
+                sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append(\
+                    cos(entity_embeddingA, entity_embeddingB).item())
+
+    else:
+        import sys
+        import tensorflow as tf
+        sys.path.append('/content/sense-bert')
+        from sensebert import SenseBert
+
+        with tf.Session() as session:
+            cos = torch.nn.CosineSimilarity(dim=0)
+            sim_scores = defaultdict(list)
+            model = SenseBert("sensebert-base-uncased", session=session)  # or sensebert-large-uncased
+            tokenizer = model.tokenizer
+
+            def find_vocab_idx(word, input_ids):
+                if word in tokenizer.vocab.keys():
+                    if tokenizer.vocab[word] in input_ids[0]:
+                        return tokenizer.vocab[word]
+
+                if word.lower() in tokenizer.vocab.keys():
+                    if tokenizer.vocab[word.lower()] in input_ids[0]:
+                        return tokenizer.vocab[word.lower()]
+
+            for word in tqdm(df['word'].unique()):
+                word_indices = df[df['word'] == word].index
+                for comb in tqdm(list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2))):
+                    indexA = comb[0]
+                    indexB = comb[1]        
+
+                    input_idsA, input_maskA = model.tokenize(df.iloc[indexA].example) 
+                    contextualized_embeddingsA, _, _ = model.run(input_idsA, input_maskA)
+
+                    input_idsB, input_maskB = model.tokenize(df.iloc[indexB].example) 
+                    contextualized_embeddingsB, _, _ = model.run(input_idsB, input_maskB)
+
+                    wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, input_idsA)
+                    wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, input_idsB)
+
+                    entity_embeddingA = contextualized_embeddingsA[0][input_idsA[0].index(wordA_vocab_idx)]       
+                    entity_embeddingB = contextualized_embeddingsB[0][input_idsB[0].index(wordB_vocab_idx)]
+
+                    sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append(\
+                      cos(torch.FloatTensor(entity_embeddingA), torch.FloatTensor(entity_embeddingB)).item())
 
 print(f'Model: {model_checkpoint}')
 
