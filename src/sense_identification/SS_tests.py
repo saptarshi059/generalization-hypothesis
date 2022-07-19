@@ -25,7 +25,7 @@ def str2bool(v):
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str)
 parser.add_argument('--model_name', type=str)
-parse.add_argument('--pooler', type=str2bool)
+parser.add_argument('--pooler', type=str2bool)
 args = parser.parse_args()
 
 model_checkpoint = args.model_name
