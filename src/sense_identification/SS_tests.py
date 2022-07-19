@@ -89,6 +89,7 @@ else:
 
         for word in df['word'].unique():
             word_indices = df[df['word'] == word].index
+            print(word)
             for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
                 indexA = comb[0]
                 indexB = comb[1]        
@@ -150,7 +151,7 @@ else:
                     sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append(\
                       cos(torch.FloatTensor(entity_embeddingA), torch.FloatTensor(entity_embeddingB)).item())
 
-print(f'Models: {model_checkpoint}')
+print(f'Model: {model_checkpoint}')
 
 for key, val in sim_scores.items():
     print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
