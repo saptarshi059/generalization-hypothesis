@@ -112,7 +112,7 @@ else:
     else:
         import sys
         import tensorflow as tf
-        sys.path.append('/content/sense-bert')
+        sys.path.append('sense-bert')
         from sensebert import SenseBert
 
         with tf.Session() as session:
