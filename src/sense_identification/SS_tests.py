@@ -78,7 +78,7 @@ else:
             except:
                 return tokenizer.vocab[word.lower()]
 
-    for word in tqdm(df['word'].unique()):
+    for word in df['word'].unique():
         word_indices = df[df['word'] == word].index
         for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
             indexA = comb[0]
