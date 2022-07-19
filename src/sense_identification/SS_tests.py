@@ -63,28 +63,22 @@ else:
 
     def find_vocab_idx(word, tokenization):
         if 'roberta' in model_checkpoint:
-            try:
+            if word in tokenizer.vocab.keys():
                 if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                     return tokenizer.vocab[word]
-            except:
-                pass
-                
-            try:
-                if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
-                    word = 'Ġ' + word.lower()
+                elif ('Ġ'+ word.lower()) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['Ġ'+ word.lower()] in tokenization['input_ids'].tolist()[0]:
+                        word = 'Ġ' + word.lower()
+                        return tokenizer.vocab[word]
+                else:
+                    word = 'Ġ' + word
                     return tokenizer.vocab[word]
-            except:
-                pass
-            
-            word = 'Ġ' + word
-            return tokenizer.vocab[word]
-        
         else:
-            try:            
+            if word in tokenizer.vocab.keys():
                 if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
-                    return tokenizer.vocab[word]   
-            except:
-                return tokenizer.vocab[word.lower()]
+                    return tokenizer.vocab[word]
+                else:
+                    return tokenizer.vocab[word.lower()]
 
 
     for word in df['word'].unique():
