@@ -90,7 +90,6 @@ else:
 
         for word in df['word'].unique():
             word_indices = df[df['word'] == word].index
-            print(word)
             for comb in list(combinations(list(range(word_indices[0], word_indices[-1]+1)), 2)):
                 indexA = comb[0]
                 indexB = comb[1]        
