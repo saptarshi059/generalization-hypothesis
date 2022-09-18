@@ -1,0 +1,241 @@
+Model: bert-base-uncased
+('cell', 'bio', 'bio') 0.75
+('cell', 'bio', 'room') 0.37
+('cell', 'bio', 'phone') 0.4
+('cell', 'room', 'room') 0.73
+('cell', 'room', 'phone') 0.38
+('cell', 'phone', 'phone') 0.6
+('expression', 'bio', 'bio') 0.83
+('expression', 'bio', 'Non-verbal') 0.37
+('expression', 'Non-verbal', 'Non-verbal') 0.65
+('study', 'experiment', 'experiment') 0.8
+('study', 'experiment', 'room') 0.41
+('study', 'room', 'room') 0.66
+('treatment', 'medical care', 'medical care') 0.73
+('treatment', 'medical care', 'behavior') 0.39
+('treatment', 'behavior', 'behavior') 0.59
+('host', 'organism', 'organism') 0.81
+('host', 'organism', 'organizer') 0.42
+('host', 'organizer', 'organizer') 0.61
+
+Model: roberta-base
+('cell', 'bio', 'bio') 0.96
+('cell', 'bio', 'room') 0.89
+('cell', 'bio', 'phone') 0.87
+('cell', 'room', 'room') 0.95
+('cell', 'room', 'phone') 0.89
+('cell', 'phone', 'phone') 0.91
+('expression', 'bio', 'bio') 0.97
+('expression', 'bio', 'Non-verbal') 0.87
+('expression', 'Non-verbal', 'Non-verbal') 0.93
+('study', 'experiment', 'experiment') 0.96
+('study', 'experiment', 'room') 0.89
+('study', 'room', 'room') 0.96
+('treatment', 'medical care', 'medical care') 0.95
+('treatment', 'medical care', 'behavior') 0.87
+('treatment', 'behavior', 'behavior') 0.92
+('host', 'organism', 'organism') 0.96
+('host', 'organism', 'organizer') 0.88
+('host', 'organizer', 'organizer') 0.94
+
+Model: dmis-lab/biobert-v1.1
+('cell', 'bio', 'bio') 0.81
+('cell', 'bio', 'room') 0.71
+('cell', 'bio', 'phone') 0.74
+('cell', 'room', 'room') 0.83
+('cell', 'room', 'phone') 0.77
+('cell', 'phone', 'phone') 0.85
+('expression', 'bio', 'bio') 0.88
+('expression', 'bio', 'Non-verbal') 0.74
+('expression', 'Non-verbal', 'Non-verbal') 0.82
+('study', 'experiment', 'experiment') 0.85
+('study', 'experiment', 'room') 0.76
+('study', 'room', 'room') 0.88
+('treatment', 'medical care', 'medical care') 0.84
+('treatment', 'medical care', 'behavior') 0.78
+('treatment', 'behavior', 'behavior') 0.92
+('host', 'organism', 'organism') 0.87
+('host', 'organism', 'organizer') 0.76
+('host', 'organizer', 'organizer') 0.84
+
+Model: allenai/scibert_scivocab_uncased
+('cell', 'bio', 'bio') 0.73
+('cell', 'bio', 'room') 0.57
+('cell', 'bio', 'phone') 0.62
+('cell', 'room', 'room') 0.77
+('cell', 'room', 'phone') 0.66
+('cell', 'phone', 'phone') 0.76
+('expression', 'bio', 'bio') 0.8
+('expression', 'bio', 'Non-verbal') 0.59
+('expression', 'Non-verbal', 'Non-verbal') 0.76
+('study', 'experiment', 'experiment') 0.77
+('study', 'experiment', 'room') 0.65
+('study', 'room', 'room') 0.82
+('treatment', 'medical care', 'medical care') 0.76
+('treatment', 'medical care', 'behavior') 0.64
+('treatment', 'behavior', 'behavior') 0.85
+('host', 'organism', 'organism') 0.77
+('host', 'organism', 'organizer') 0.61
+('host', 'organizer', 'organizer') 0.81
+
+Model: bert-base-uncased
+('party', 'group', 'group') 0.69
+('party', 'group', 'occasion') 0.34
+('party', 'occasion', 'occasion') 0.67
+('Agreement', 'contract', 'contract') 0.83
+('Agreement', 'contract', 'understanding') 0.52
+('Agreement', 'understanding', 'understanding') 0.56
+('Company', 'organization', 'organization') 0.73
+('Company', 'organization', 'companionship') 0.36
+('Company', 'companionship', 'companionship') 0.58
+('Product', 'goods', 'goods') 0.68
+('Product', 'goods', 'consequence') 0.41
+('Product', 'consequence', 'consequence') 0.67
+('notice', 'announcement', 'announcement') 0.72
+('notice', 'announcement', 'observing') 0.38
+('notice', 'observing', 'observing') 0.67
+
+Model: roberta-base
+('party', 'group', 'group') 0.9
+('party', 'group', 'occasion') 0.84
+('party', 'occasion', 'occasion') 0.95
+('Agreement', 'contract', 'contract') 0.98
+('Agreement', 'contract', 'understanding') 0.84
+('Agreement', 'understanding', 'understanding') 0.91
+('Company', 'organization', 'organization') 0.95
+('Company', 'organization', 'companionship') 0.82
+('Company', 'companionship', 'companionship') 0.91
+('Product', 'goods', 'goods') 0.91
+('Product', 'goods', 'consequence') 0.82
+('Product', 'consequence', 'consequence') 0.94
+('notice', 'announcement', 'announcement') 0.91
+('notice', 'announcement', 'observing') 0.84
+('notice', 'observing', 'observing') 0.93
+
+Model: ProsusAI/finbert
+('party', 'group', 'group') 0.75
+('party', 'group', 'occasion') 0.37
+('party', 'occasion', 'occasion') 0.65
+('Agreement', 'contract', 'contract') 0.84
+('Agreement', 'contract', 'understanding') 0.52
+('Agreement', 'understanding', 'understanding') 0.6
+('Company', 'organization', 'organization') 0.79
+('Company', 'organization', 'companionship') 0.39
+('Company', 'companionship', 'companionship') 0.47
+('Product', 'goods', 'goods') 0.59
+('Product', 'goods', 'consequence') 0.42
+('Product', 'consequence', 'consequence') 0.71
+('notice', 'announcement', 'announcement') 0.75
+('notice', 'announcement', 'observing') 0.4
+('notice', 'observing', 'observing') 0.7
+
+Model: nlpaueb/legal-bert-base-uncased
+('party', 'group', 'group') 0.66
+('party', 'group', 'occasion') 0.56
+('party', 'occasion', 'occasion') 0.78
+('Agreement', 'contract', 'contract') 0.83
+('Agreement', 'contract', 'understanding') 0.62
+('Agreement', 'understanding', 'understanding') 0.71
+('Company', 'organization', 'organization') 0.84
+('Company', 'organization', 'companionship') 0.69
+('Company', 'companionship', 'companionship') 0.73
+('Product', 'goods', 'goods') 0.78
+('Product', 'goods', 'consequence') 0.64
+('Product', 'consequence', 'consequence') 0.79
+('notice', 'announcement', 'announcement') 0.78
+('notice', 'announcement', 'observing') 0.64
+('notice', 'observing', 'observing') 0.8
+
+Model: bert-base-uncased
+('Server', 'host', 'host') 0.78
+('Server', 'host', 'waiter') 0.48
+('Server', 'waiter', 'waiter') 0.8
+('Application', 'program', 'program') 0.71
+('Application', 'program', 'request') 0.4
+('Application', 'program', 'use') 0.35
+('Application', 'request', 'request') 0.72
+('Application', 'request', 'use') 0.41
+('Application', 'use', 'use') 0.53
+('following', 'reference', 'reference') 0.61
+('following', 'reference', 'pursue') 0.31
+('following', 'pursue', 'pursue') 0.58
+('Java', 'software', 'software') 0.84
+('Java', 'software', 'coffee') 0.48
+('Java', 'coffee', 'coffee') 0.67
+('Windows', 'software', 'software') 0.77
+('Windows', 'software', 'framework') 0.33
+('Windows', 'framework', 'framework') 0.71
+
+Model: roberta-base
+('Server', 'host', 'host') 0.94
+('Server', 'host', 'waiter') 0.89
+('Server', 'waiter', 'waiter') 0.95
+('Application', 'program', 'program') 0.93
+('Application', 'program', 'request') 0.87
+('Application', 'program', 'use') 0.86
+('Application', 'request', 'request') 0.95
+('Application', 'request', 'use') 0.89
+('Application', 'use', 'use') 0.92
+('following', 'reference', 'reference') 0.91
+('following', 'reference', 'pursue') 0.84
+('following', 'pursue', 'pursue') 0.92
+('Java', 'software', 'software') 0.94
+('Java', 'software', 'coffee') 0.84
+('Java', 'coffee', 'coffee') 0.91
+('Windows', 'software', 'software') 0.93
+('Windows', 'software', 'framework') 0.79
+('Windows', 'framework', 'framework') 0.94
+
+Model: allenai/scibert_scivocab_uncased
+('Server', 'host', 'host') 0.79
+('Server', 'host', 'waiter') 0.71
+('Server', 'waiter', 'waiter') 0.82
+('Application', 'program', 'program') 0.75
+('Application', 'program', 'request') 0.62
+('Application', 'program', 'use') 0.59
+('Application', 'request', 'request') 0.76
+('Application', 'request', 'use') 0.66
+('Application', 'use', 'use') 0.74
+('following', 'reference', 'reference') 0.67
+('following', 'reference', 'pursue') 0.55
+('following', 'pursue', 'pursue') 0.69
+('Java', 'software', 'software') 0.79
+('Java', 'software', 'coffee') 0.59
+('Java', 'coffee', 'coffee') 0.65
+('Windows', 'software', 'software') 0.71
+('Windows', 'software', 'framework') 0.62
+('Windows', 'framework', 'framework') 0.85
+
+Model: bert-base-uncased
+('film', 'movie', 'movie') 0.73
+('film', 'movie', 'verb') 0.5
+('film', 'verb', 'verb') 0.65
+('shoot', 'bullet', 'bullet') 0.64
+('shoot', 'bullet', 'record') 0.5
+('shoot', 'record', 'record') 0.59
+('hand', 'anatomy', 'anatomy') 0.52
+('hand', 'anatomy', 'situation') 0.41
+('hand', 'situation', 'situation') 0.5
+('couple', 'pair', 'pair') 0.57
+('couple', 'pair', 'few') 0.32
+('couple', 'few', 'few') 0.56
+('past', 'time', 'time') 0.6
+('past', 'time', 'pass') 0.36
+('past', 'pass', 'pass') 0.48
+
+Model: roberta-base
+('film', 'movie', 'movie') 0.97
+('film', 'movie', 'verb') 0.9
+('film', 'verb', 'verb') 0.93
+('shoot', 'bullet', 'bullet') 0.95
+('shoot', 'bullet', 'record') 0.92
+('shoot', 'record', 'record') 0.93
+('hand', 'anatomy', 'anatomy') 0.92
+('hand', 'anatomy', 'situation') 0.85
+('hand', 'situation', 'situation') 0.85
+('couple', 'pair', 'pair') 0.94
+('couple', 'pair', 'few') 0.87
+('couple', 'few', 'few') 0.94
+('past', 'time', 'time') 0.93
+('past', 'time', 'pass') 0.86
+('past', 'pass', 'pass') 0.89

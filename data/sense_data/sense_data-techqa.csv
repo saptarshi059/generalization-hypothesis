@@ -9,16 +9,16 @@ Server,1,host,Confirm that the Global Security Kit is installed and meets the mi
 Server,1,host,Usernames of 12 characters or less are passed to MQ by the appliaction server.
 Server,1,host,It is the username and password contained in this authentication alias that is then passed to MQ/JMS by the application server when the application connects.
 Server,1,host,"5 and earlier, this means that while the understanding provided in this technote over how usernames/passwords are passed from the application server to MQ is helpful for development environments, solving the security requirements of production environments usually also requires one of the following approaches: * Mutual SSL/TLS authentication."
-Server,1,waiter,The server picked a blue enamel tin plate from a stack behind her and scooped out a bright yellow blob from the pot in front of her.
-Server,1,waiter,I am the served and I am the server.
-Server,1,waiter,"There was only one server, but there were two women working behind the counter where people fill orders for takeout."
-Server,1,waiter,"I dropped the phone as Holly, our server, appeared at the table."
-Server,1,waiter,"The twins were near catatonic when the server finally brought the check, pausing momentarily as if he had just realized they were a table full of kids."
-Server,1,waiter,"As soon as they sat down at the table, Toby waved the server toward them."
-Server,1,waiter,"Luke gave the server a sympathetic look and said, “We’ll probably need lots of bread.”"
-Server,1,waiter,"Ahmed was in and out, giving instructions to the server, listening in on conversations and adding a line or two."
-Server,1,waiter,"When the server came over, she put two napkins on the table and asked, “What can I get you to drink?”"
-Server,1,waiter,He takes his plate from the server and we find a seat.
+Server,2,waiter,The server picked a blue enamel tin plate from a stack behind her and scooped out a bright yellow blob from the pot in front of her.
+Server,2,waiter,I am the served and I am the server.
+Server,2,waiter,"There was only one server, but there were two women working behind the counter where people fill orders for takeout."
+Server,2,waiter,"I dropped the phone as Holly, our server, appeared at the table."
+Server,2,waiter,"The twins were near catatonic when the server finally brought the check, pausing momentarily as if he had just realized they were a table full of kids."
+Server,2,waiter,"As soon as they sat down at the table, Toby waved the server toward them."
+Server,2,waiter,"Luke gave the server a sympathetic look and said, “We’ll probably need lots of bread.”"
+Server,2,waiter,"Ahmed was in and out, giving instructions to the server, listening in on conversations and adding a line or two."
+Server,2,waiter,"When the server came over, she put two napkins on the table and asked, “What can I get you to drink?”"
+Server,2,waiter,He takes his plate from the server and we find a seat.
 Application,1,program,"However, the Priority field retains the value specified by the application that put the message."
 Application,1,program,"In order to configure SSL/TLS transport security, you must establish the appropriate trust between the MQ queue manager and WebSphere Application Server."
 Application,1,program,2 for AIX for IBM Pure Application System - AIX License Required DOWNLOAD PACKAGE Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options What is Fix Central(FC)? [https://www.
