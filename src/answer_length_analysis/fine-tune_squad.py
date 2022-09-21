@@ -250,6 +250,7 @@ parser.add_argument('--epochs', default=3, type=int)
 parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
+parser.add_argument('--push_to_hub', default=False, type=str2bool)
 
 args = parser.parse_args()
 
@@ -341,4 +342,5 @@ else:
 
 print(metric.compute(predictions=formatted_predictions, references=references))
 
-trainer.push_to_hub()
+if args.push_to_hub == True:
+    trainer.push_to_hub()
