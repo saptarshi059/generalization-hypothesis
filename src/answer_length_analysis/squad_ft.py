@@ -100,14 +100,6 @@ def prepare_train_features(examples):
                     token_end_index -= 1
                 tokenized_examples["end_positions"].append(token_end_index + 1)
 
-    
-    #Creating the gold_span
-    gold_spans = np.zeros([len(tokenized_examples['input_ids']), max_length]) #Each "feature" has "max_length" number of tokens & we need the probability of each token for belonging to the gold span
-    for feature_number, s_idx, e_idx in zip(range(gold_spans.shape[0]), tokenized_examples['start_positions'], tokenized_examples['end_positions']):
-      if (e_idx - s_idx) != 0: #Consider only positive features i.e. those that contain answer spans
-        np.put(gold_spans[feature_number], list(range(s_idx, e_idx+1)), 1)
-    tokenized_examples['gold_spans'] = gold_spans
-    
     return tokenized_examples
 
 def prepare_validation_features(examples):
