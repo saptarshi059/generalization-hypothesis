@@ -272,7 +272,7 @@ validation_set = validation_dataset.remove_columns(["example_id", "offset_mappin
 validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
-model = AutoModelForQuestionAnswering(model_checkpoint)
+model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 output_dir = args.model_checkpoint.replace('uncased_', 'BERT_') + '_FT_SQuAD_V1'
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
