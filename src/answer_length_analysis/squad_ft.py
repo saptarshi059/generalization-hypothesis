@@ -212,7 +212,6 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--squad_version2', default=False, type=str2bool)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
-parser.add_argument('--trained_model_name', default="test-squad-trained-saptarshi", type=str)
 parser.add_argument('--batch_size', default=16, type=int)
 parser.add_argument('--max_length', default=384, type=int)
 parser.add_argument('--stride', default=128, type=int)
@@ -222,7 +221,7 @@ parser.add_argument('--epochs', default=3, type=int)
 parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
-parser.add_argument('--push_to_hub', default=False, type=str2bool)
+parser.add_argument('--random_state', default=42, type=int)
 
 args = parser.parse_args()
 
@@ -273,7 +272,7 @@ validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
 model = AutoModelForQuestionAnswering(model_checkpoint)
-output_dir = args.trained_model_name
+output_dir = args.model_checkpoint.replace('uncased_', 'BERT_') + '_FT_SQuAD_V1'
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
