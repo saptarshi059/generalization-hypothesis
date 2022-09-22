@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, AutoConfig, TrainingArguments, Trainer, logging, default_data_collator
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering, AutoConfig, logging, default_data_collator, get_scheduler
 from datasets import load_dataset, load_metric
+from torch.utils.data import DataLoader
+from accelerate import Accelerator
+from torch.optim import AdamW
 from tqdm.auto import tqdm
 import transformers
-import collections
 import numpy as np
+import collections
 import argparse
 import torch
-import os
-
-os.environ["WANDB_DISABLED"] = "true"
-logging.set_verbosity(50)
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -155,86 +154,59 @@ def prepare_validation_features(examples):
 
     return tokenized_examples
 
-def postprocess_qa_predictions(examples, features, raw_predictions):
-    all_start_logits, all_end_logits = raw_predictions #I'm discarding the 3rd element here because those are just the hidden states
-    # Build a map example to its corresponding features.
-    example_id_to_index = {k: i for i, k in enumerate(examples["id"])}
-    features_per_example = collections.defaultdict(list)
-    for i, feature in enumerate(features):
-        features_per_example[example_id_to_index[feature["example_id"]]].append(i)
+def compute_metrics(start_logits, end_logits, features, examples):
+    example_to_features = collections.defaultdict(list)
+    for idx, feature in enumerate(features):
+        example_to_features[feature["example_id"]].append(idx)
 
-    # The dictionaries we have to fill.
-    predictions = collections.OrderedDict()
-
-    # Logging.
-    #print(f"Post-processing {len(examples)} example predictions split into {len(features)} features.")
-
-    # Let's loop over all the examples!
-    for example_index, example in enumerate(tqdm(examples)):
-        # Those are the indices of the features associated to the current example.
-        feature_indices = features_per_example[example_index]
-
-        min_null_score = None # Only used if squad_v2 is True.
-        valid_answers = []
-        
+    predicted_answers = []
+    for example in tqdm(examples):
+        example_id = example["id"]
         context = example["context"]
-        # Looping through all the features associated to the current example.
-        for feature_index in feature_indices:
-            # We grab the predictions of the model for this feature.
-            start_logits = all_start_logits[feature_index]
-            end_logits = all_end_logits[feature_index]
-            # This is what will allow us to map some the positions in our logits to span of texts in the original
-            # context.
-            offset_mapping = features[feature_index]["offset_mapping"]
+        answers = []
 
-            # Update minimum null prediction.
-            cls_index = features[feature_index]["input_ids"].index(tokenizer.cls_token_id)
-            feature_null_score = start_logits[cls_index] + end_logits[cls_index]
-            if min_null_score is None or min_null_score < feature_null_score:
-                min_null_score = feature_null_score
+        # Loop through all features associated with that example
+        for feature_index in example_to_features[example_id]:
+            start_logit = start_logits[feature_index]
+            end_logit = end_logits[feature_index]
+            offsets = features[feature_index]["offset_mapping"]
 
-            # Go through all possibilities for the `n_best_size` greater start and end logits.
-            start_indexes = np.argsort(start_logits)[-1 : -n_best_size - 1 : -1].tolist()
-            end_indexes = np.argsort(end_logits)[-1 : -n_best_size - 1 : -1].tolist()
+            start_indexes = np.argsort(start_logit)[-1 : -n_best - 1 : -1].tolist()
+            end_indexes = np.argsort(end_logit)[-1 : -n_best - 1 : -1].tolist()
             for start_index in start_indexes:
                 for end_index in end_indexes:
-                    # Don't consider out-of-scope answers, either because the indices are out of bounds or correspond
-                    # to part of the input_ids that are not in the context.
+                    # Skip answers that are not fully in the context
+                    if offsets[start_index] is None or offsets[end_index] is None:
+                        continue
+                    # Skip answers with a length that is either < 0 or > max_answer_length
                     if (
-                        start_index >= len(offset_mapping)
-                        or end_index >= len(offset_mapping)
-                        or offset_mapping[start_index] is None
-                        or offset_mapping[end_index] is None
+                        end_index < start_index
+                        or end_index - start_index + 1 > max_answer_length
                     ):
                         continue
-                    # Don't consider answers with a length that is either < 0 or > max_answer_length.
-                    if end_index < start_index or end_index - start_index + 1 > max_answer_length:
-                        continue
 
-                    start_char = offset_mapping[start_index][0]
-                    end_char = offset_mapping[end_index][1]
-                    valid_answers.append(
-                        {
-                            "score": start_logits[start_index] + end_logits[end_index],
-                            "text": context[start_char: end_char]
-                        }
-                    )
-        
-        if len(valid_answers) > 0:
-            best_answer = sorted(valid_answers, key=lambda x: x["score"], reverse=True)[0]
-        else:
-            # In the very rare edge case we have not a single non-null prediction, we create a fake prediction to avoid
-            # failure.
-            best_answer = {"text": "", "score": 0.0}
-        
-        # Let's pick our final answer: the best one or the null answer (only for squad_v2)
-        if not squad_v2:
-            predictions[example["id"]] = best_answer["text"]
-        else:
-            answer = best_answer["text"] if best_answer["score"] > min_null_score else ""
-            predictions[example["id"]] = answer
+                    answer = {
+                        "text": context[offsets[start_index][0] : offsets[end_index][1]],
+                        "logit_score": start_logit[start_index] + end_logit[end_index],
+                    }
+                    answers.append(answer)
 
-    return predictions
+        # Select the answer with the best score
+        if len(answers) > 0:
+            best_answer = max(answers, key=lambda x: x["logit_score"])
+            predicted_answers.append(
+                {"id": example_id, "prediction_text": best_answer["text"]}
+            )
+        else:
+            predicted_answers.append({"id": example_id, "prediction_text": ""})
+
+    theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
+    return metric.compute(predictions=predicted_answers, references=theoretical_answers)
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 parser = argparse.ArgumentParser()
 
@@ -246,101 +218,117 @@ parser.add_argument('--max_length', default=384, type=int)
 parser.add_argument('--stride', default=128, type=int)
 parser.add_argument('--learning_rate', default=3e-5, type=float)
 parser.add_argument('--weight_decay', default=0.01, type=float)
-parser.add_argument('--epochs', default=2, type=int)
-parser.add_argument('--n_best', default=10, type=int)
+parser.add_argument('--epochs', default=3, type=int)
+parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
 parser.add_argument('--push_to_hub', default=False, type=str2bool)
 
 args = parser.parse_args()
 
+logging.set_verbosity(50)
+
+# Initializing all random number methods.
+g = torch.Generator()
+g.manual_seed(args.random_state)
+torch.manual_seed(args.random_state)
+random.seed(args.random_state)
+
 # This flag is the difference between SQUAD v1 or 2 (if you're using another dataset, it indicates if impossible
 # answers are allowed or not).
 squad_v2 = args.squad_version2
 model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
+
+accelerator = Accelerator(fp16=True)
+device = accelerator.device
+
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
+
 max_length = args.max_length # The maximum length of a feature (question and context)
 doc_stride = args.stride # The authorized overlap between two part of the context when splitting it is needed.
-pad_on_right = tokenizer.padding_side == "right"
-n_best_size = args.n_best
 max_answer_length = args.max_answer_length
+n_best = args.n_best
+
+pad_on_right = tokenizer.padding_side == "right"
 
 if args.trial_mode == True:
     print('Running Code in Trial Mode to see if everything works properly...')
-    datasets = load_dataset("squad_v2" if squad_v2 else "squad", split=['train[:160]','validation[:10]']) #Testing purposes
+    raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad", split=['train[:160]','validation[:10]']) #Testing purposes
+    train_dataset = raw_datasets[0].map(prepare_train_features, batched=True, remove_columns=raw_datasets[0].column_names)
+    validation_dataset = raw_datasets[1].map(prepare_validation_features, batched=True, remove_columns=raw_datasets[1].column_names)
 else:
-    datasets = load_dataset("squad_v2" if squad_v2 else "squad")
+    raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad")
+    train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True, remove_columns=raw_datasets['train'].column_names)
+    validation_dataset = raw_datasets['validation'].map(prepare_validation_features, batched=True, remove_columns=raw_datasets['validation'].column_names)
 
-if args.trial_mode == True:
-    sample_datasets_training_tokenized = datasets[0].map(prepare_train_features, batched=True, remove_columns=datasets[0].column_names)
-    sample_datasets_validation_tokenized = datasets[1].map(prepare_train_features, batched=True, remove_columns=datasets[1].column_names)
-else:
-    tokenized_datasets = datasets.map(prepare_train_features, batched=True, remove_columns=datasets["train"].column_names)
+metric = load_metric("squad")
 
-model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
+train_dataset.set_format("torch")
+train_dataloader = DataLoader(train_dataset, shuffle=True, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
-training_args = TrainingArguments(
-    output_dir = f"{model_checkpoint.replace('/','-')}-finetuned-squad",
-    evaluation_strategy = "epoch",
-    learning_rate=args.learning_rate,
-    per_device_train_batch_size=batch_size,
-    per_device_eval_batch_size=batch_size,
-    num_train_epochs=args.epochs,
-    weight_decay=args.weight_decay,
-    logging_strategy = "epoch",
-    optim="adamw_torch",
-    remove_unused_columns = False,
-    push_to_hub=True
-)
+validation_set = validation_dataset.remove_columns(["example_id", "offset_mapping"])
+validation_set.set_format("torch")
+eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
-if args.trial_mode == True:
-    train_data = sample_datasets_training_tokenized
-    eval_data = sample_datasets_validation_tokenized
-else:
-    train_data = tokenized_datasets['train']
-    eval_data = tokenized_datasets['validation']
+model = AutoModelForQuestionAnswering(model_checkpoint)
+output_dir = args.trained_model_name
 
-trainer = Trainer(
-    model,
-    training_args,
-    train_dataset=train_data,
-    eval_dataset=eval_data,
-    data_collator=data_collator,
-    tokenizer=tokenizer
-)
+optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
-trainer.train()
-trainer.save_model(args.trained_model_name)
+model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
+model.to(device)
 
-if args.trial_mode == True:
-    validation_features = datasets[1].map(prepare_validation_features, batched=True, remove_columns=datasets[1].column_names)
-else:
-    validation_features = datasets['validation'].map(prepare_validation_features, batched=True, remove_columns=datasets['validation'].column_names)
+num_train_epochs = args.epochs
+num_update_steps_per_epoch = len(train_dataloader)
+num_training_steps = num_train_epochs * num_update_steps_per_epoch
 
-raw_predictions = trainer.predict(validation_features)
+lr_scheduler = get_scheduler("linear", optimizer=optimizer, num_warmup_steps=0, num_training_steps=num_training_steps)
 
-validation_features.set_format(type=validation_features.format["type"], columns=list(validation_features.features.keys()))
+progress_bar = tqdm(range(num_training_steps))
 
-if args.trial_mode == True:
-    final_predictions = postprocess_qa_predictions(datasets[1], validation_features, raw_predictions.predictions)
-else:
-    final_predictions = postprocess_qa_predictions(datasets['validation'], validation_features, raw_predictions.predictions)
+for epoch in range(num_train_epochs):
+    # Training
+    model.train()
+    for step, batch in enumerate(train_dataloader):
+        outputs = model(**batch)
+        loss = outputs.loss
+        accelerator.backward(loss)
 
-metric = load_metric("squad_v2" if squad_v2 else "squad")
+        optimizer.step()
+        lr_scheduler.step()
+        optimizer.zero_grad()
+        progress_bar.update(1)
 
-if squad_v2:
-    formatted_predictions = [{"id": k, "prediction_text": v, "no_answer_probability": 0.0} for k, v in final_predictions.items()]
-else:
-    formatted_predictions = [{"id": k, "prediction_text": v} for k, v in final_predictions.items()]
+    # Evaluation
+    model.eval()
+    start_logits = []
+    end_logits = []
+    accelerator.print("Evaluation!")
+    for batch in tqdm(eval_dataloader):
+        with torch.no_grad():
+            outputs = model(**batch)
 
-if args.trial_mode == True:
-    references = [{"id": ex["id"], "answers": ex["answers"]} for ex in datasets[1]]
-else:
-    references = [{"id": ex["id"], "answers": ex["answers"]} for ex in datasets['validation']]
+        start_logits.append(accelerator.gather(outputs.start_logits).cpu().numpy())
+        end_logits.append(accelerator.gather(outputs.end_logits).cpu().numpy())
 
-print(metric.compute(predictions=formatted_predictions, references=references))
+    start_logits = np.concatenate(start_logits)
+    end_logits = np.concatenate(end_logits)
+    start_logits = start_logits[: len(validation_dataset)]
+    end_logits = end_logits[: len(validation_dataset)]
 
-if args.push_to_hub == True:
-    trainer.push_to_hub()
+    if args.trial_mode == True:
+        metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets[1])
+    else:
+        metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
+    
+    print(f"epoch {epoch}:", metrics)
+
+    # Save and upload
+    accelerator.wait_for_everyone()
+    unwrapped_model = accelerator.unwrap_model(model)
+    unwrapped_model.save_pretrained(output_dir, save_function=accelerator.save)
+    if accelerator.is_main_process:
+        tokenizer.save_pretrained(output_dir)
+        #repo.push_to_hub(commit_message=f"Training in progress epoch {epoch}", blocking=False)
