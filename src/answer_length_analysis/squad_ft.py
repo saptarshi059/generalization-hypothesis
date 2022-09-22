@@ -10,6 +10,7 @@ import transformers
 import numpy as np
 import collections
 import argparse
+import random
 import torch
 
 def str2bool(v):
