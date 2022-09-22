@@ -241,7 +241,7 @@ model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 
 accelerator = Accelerator(fp16=True)
-device = accelerator.device
+#device = accelerator.device
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
@@ -278,7 +278,7 @@ output_dir = args.model_checkpoint.replace('uncased_', 'BERT_') + '_FT_SQuAD_V1'
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
-model.to(device)
+#model.to(device)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
