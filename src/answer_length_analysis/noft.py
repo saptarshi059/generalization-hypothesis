@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
+from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer, logging
 from datasets import load_dataset
 import csv
 import pandas as pd
@@ -9,7 +9,7 @@ import torch
 import argparse
 from tqdm import tqdm
 
-transformers.logging.set_verbosity_info(50)
+logging.set_verbosity_info(50)
 
 def run_main():
     questions.append(record['question'])
@@ -27,6 +27,7 @@ def run_main():
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
 parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
+parser.add_argument('--predictions_file_name', default="roberta-covidqa-preds.csv", type=str)
 args = parser.parse_args()
 
 model_checkpoint = args.model_checkpoint
@@ -55,4 +56,4 @@ elif args.dataset in ['cuad', 'duorc']:
         run_main()
     
 print('Saving predictions...')
-pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.pkl')
+pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{args.predictions_file_name}_predictions.pkl')
