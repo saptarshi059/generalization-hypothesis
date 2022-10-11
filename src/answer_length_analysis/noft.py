@@ -43,7 +43,7 @@ questions = []
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
     run_main(raw_datasets['train'])
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
-    run_main()(raw_datasets['validation'])
+    run_main(raw_datasets['validation'])
 elif args.dataset in ['cuad', 'duorc']:
     run_main(raw_datasets['test']) 
 
