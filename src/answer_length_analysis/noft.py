@@ -9,18 +9,18 @@ import torch
 import argparse
 from tqdm import tqdm
 
-def run_main(full_dataset):
-    questions.append(full_dataset['question'])
-    gold_answers.append([x['text'][0] for x in full_dataset['answers']])
-    
-    if args.dataset in ['duorc']:
-        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['plot'], handle_impossible_answer=True)])
-    elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
-        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
-    else:
-        prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'])
-        print('predictions done...')
-        pred_answers.append([x['answer'] for x in tqdm(prediction_dictionaries)])
+def run_main():
+    questions.append(record['question'])
+
+    try:
+        pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'] if args.dataset != 'duorc' else nlp(question=record['question'], context=record['plot'])['answer'])
+    except:
+        pred_answers.append("") #For impossible answers
+
+    try:
+        gold_answers.append(record['answers']['text'] if args.dataset != 'duorc' else record['answers'])
+    except:
+        gold_answers.append("") #For impossible answers     
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
@@ -43,11 +43,14 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-    run_main(raw_datasets['train'])
+    for record in tqdm(raw_datasets['train']):
+        run_main()
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
-    run_main(raw_datasets['validation'])
+    for record in tqdm(raw_datasets['validation']):
+        run_main()
 elif args.dataset in ['cuad', 'duorc']:
-    run_main(raw_datasets['test']) 
-
+    for record in tqdm(raw_datasets['test']):
+        run_main()
+    
 print('Saving predictions...')
 pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.pkl')
