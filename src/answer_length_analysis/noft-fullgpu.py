@@ -14,7 +14,7 @@ startTime = datetime.now()
 
 logging.set_verbosity(50)
 
-def run_main():
+def run_main(full_dataset):
     questions.append(full_dataset['question'])
     gold_answers.append([x['text'][0] for x in full_dataset['answers']])
 
@@ -23,6 +23,7 @@ def run_main():
     elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
         pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
     else:
+        print('here')
         prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'])
         print('predictions done...')
         pred_answers.append([x['answer'] for x in tqdm(prediction_dictionaries)])
