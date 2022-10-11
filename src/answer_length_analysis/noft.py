@@ -18,6 +18,7 @@ def run_main(full_dataset):
     elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
         pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
     else:
+        print('here')
         prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'])
         print('predictions done...')
         pred_answers.append([x['answer'] for x in tqdm(prediction_dictionaries)])
@@ -43,7 +44,7 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-    run_main(raw_datasets['train'])
+    run_main(raw_datasets['train'][0:5])
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
     run_main(raw_datasets['validation'])
 elif args.dataset in ['cuad', 'duorc']:
