@@ -46,7 +46,7 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-    for record in tqdm(raw_datasets['train']):
+    for record in tqdm(raw_datasets['train'].select([0])):
         run_main(record)
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
     for record in tqdm(raw_datasets['validation']):
