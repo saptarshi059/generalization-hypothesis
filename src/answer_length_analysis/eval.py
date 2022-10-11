@@ -20,7 +20,7 @@ true = []
 pred_chars = []
 true_chars = []
 
-if args.metric == 'squad':
+if args.metric == 'squad': # Use squad for covid-qa as well
   for row in s.itertuples():
     try:
       pred.append({"id": str(row.Index), "prediction_text": row.predictions})
@@ -35,7 +35,7 @@ if args.metric == 'squad':
     true.append({"id": str(row.Index), "answers": {'answer_start': [1 for i in range(len(row.gold_answers))], 'text': row.gold_answers}})  
     true_chars.append([len(x) for x in row.gold_answers])
 
-elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC as well
+elif args.metric == 'squad_v2': # Use SQuADv2 for DuoRC & techqa as well
   for row in s.itertuples():
     if len(str(row.predictions)) == 0:
       pred.append({"id": str(row.Index), "prediction_text": "", 'no_answer_probability': 1.})
