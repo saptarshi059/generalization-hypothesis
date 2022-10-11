@@ -18,7 +18,8 @@ def run_main(full_dataset):
     elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
         pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
     else:
-        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'])])
+        prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'])
+        pred_answers.append([x['answer'] for x in prediction_dictionaries])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
