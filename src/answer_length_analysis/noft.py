@@ -46,8 +46,7 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-    for record in tqdm(raw_datasets['train'][0:5]):
-        print(record)
+    for record in tqdm(raw_datasets['train']):
         run_main(record)
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
     for record in tqdm(raw_datasets['validation']):
@@ -60,4 +59,5 @@ print('Saving predictions...')
 if '../' not in model_checkpoint:
     pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{model_checkpoint.replace("/","_")}_{args.dataset.replace("/","_")}_predictions.pkl')
 else:
+    print(re.search("BERT.*", model_checkpoint).group(0))
     pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(f'{re.search("BERT.*", model_checkpoint).group(0)}_{args.dataset.replace("/","_")}_predictions.pkl')
