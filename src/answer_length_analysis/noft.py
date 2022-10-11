@@ -9,6 +9,8 @@ import torch
 import argparse
 from tqdm import tqdm
 
+transformers.logging.set_verbosity_info(50)
+
 def run_main():
     questions.append(record['question'])
 
