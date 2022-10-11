@@ -21,7 +21,8 @@ def run_main(full_dataset):
     if args.dataset in ['duorc']:
         pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['plot'], handle_impossible_answer=True)])
     elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
-        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
+        prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)
+        pred_answers.append([x['answer'] for x in prediction_dictionaries])
     else:
         print('here')
         prediction_dictionaries = nlp(question=full_dataset['question'], context=full_dataset['context'])
