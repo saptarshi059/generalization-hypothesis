@@ -14,11 +14,11 @@ def run_main(full_dataset):
     gold_answers.append([x['text'][0] for x in full_dataset['answers']])
     
     if args.dataset in ['duorc']:
-        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
+        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['plot'], handle_impossible_answer=True)])
     elif args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
-        pred_answers.append([x['answer']['text'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
+        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'], handle_impossible_answer=True)])
     else:
-        pred_answers.append([x['answer']['text'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'])])
+        pred_answers.append([x['answer'] for x in nlp(question=full_dataset['question'], context=full_dataset['context'])])
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
