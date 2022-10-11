@@ -9,7 +9,7 @@ import torch
 import argparse
 from tqdm import tqdm
 
-logging.set_verbosity_info(50)
+logging.set_verbosity(50)
 
 def run_main():
     questions.append(record['question'])
