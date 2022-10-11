@@ -71,4 +71,4 @@ true_chars = [item for sublist in true_chars for item in sublist]
     
 print(metric.compute(predictions=pred, references=true))
 print(f'Avg. Gold Len: {np.round(np.asarray(true_chars).mean(),2)}')
-print(f'Avg. Predicted Len: {np.round(np.asarray(pred_chars).mean(),2)}')
+print(f'Avgs. Predicted Len: {np.round(np.asarray(pred_chars).mean(),2)}')
