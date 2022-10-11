@@ -45,7 +45,6 @@ gold_answers = []
 pred_answers = []
 questions = []
 
-'''
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
     for record in tqdm(raw_datasets['train']):
         run_main()
@@ -55,7 +54,6 @@ elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
 elif args.dataset in ['cuad', 'duorc']:
     for record in tqdm(raw_datasets['test']):
         run_main()
-'''
 
 print('Saving predictions...')
 if '../' not in model_checkpoint:
