@@ -48,6 +48,7 @@ questions = []
 if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
     for record in tqdm(raw_datasets['train']):
         run_main(record)
+        break
 elif args.dataset in ['squad', 'squad_v2', "Saptarshi7/techqa-squad-style"]:
     for record in tqdm(raw_datasets['validation']):
         run_main(record)
