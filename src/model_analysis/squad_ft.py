@@ -206,7 +206,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--squad_version2', default=False, type=str2bool)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
-parser.add_argument('--trained_model_name', default="distilbert-base-uncased-squad", type=str, required=True) # So that we can KNOW for sure which folder is what.
+parser.add_argument('--trained_model_name', default="distilbert-base-uncased-squad", type=str)
 parser.add_argument('--batch_size', default=16, type=int)
 parser.add_argument('--max_length', default=384, type=int)
 parser.add_argument('--stride', default=128, type=int)
