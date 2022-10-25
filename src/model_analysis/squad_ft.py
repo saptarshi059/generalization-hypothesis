@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from accelerate import Accelerator
 from torch.optim import AdamW
 from tqdm.auto import tqdm
+from evaluate import load
 import transformers
 import numpy as np
 import collections
@@ -205,6 +206,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--squad_version2', default=False, type=str2bool)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
+parser.add_argument('--trained_model_name', default="distilbert-base-uncased-squad", type=str, required=True) # So that we can KNOW for sure which folder is what.
 parser.add_argument('--batch_size', default=16, type=int)
 parser.add_argument('--max_length', default=384, type=int)
 parser.add_argument('--stride', default=128, type=int)
@@ -255,7 +257,7 @@ else:
     train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True, remove_columns=raw_datasets['train'].column_names)
     validation_dataset = raw_datasets['validation'].map(prepare_validation_features, batched=True, remove_columns=raw_datasets['validation'].column_names)
 
-metric = load_metric("squad")
+metric = load("squad")
 
 train_dataset.set_format("torch")
 train_dataloader = DataLoader(train_dataset, shuffle=True, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
@@ -265,7 +267,7 @@ validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
-output_dir = args.model_checkpoint.replace('uncased_', 'BERT_') + '_FT_SQuAD_V1'
+output_dir = args.trained_model_name
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
