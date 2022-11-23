@@ -35,5 +35,5 @@ for ques in tqdm(all_questions):
     for ent_dict in doc.entities:
         new_ents.append(ent_dict.text)
 
-with open(f'stanza_ents-from_question-{raw_dataset.replace('/','-')}.pkl', 'wb') as f:
+with open(f'stanza_ents-from_question-{raw_dataset.replace("/","-")}.pkl', 'wb') as f:
     pickle.dump(new_ents, f)
