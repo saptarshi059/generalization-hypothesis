@@ -13,6 +13,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--model_checkpoint', default="bert-base-uncased", type=str)
+parser.add_argument('--dataset', default="covidqa", type=str)
 parser.add_argument('--stanza_ent_file', type=str)
 parser.add_argument('--num_of_ents', default=10, type=int)
 parser.add_argument('--num_of_ctx_per_ent', default=1, type=int)
@@ -63,4 +64,4 @@ print('Saving mini_corpus...')
 final_ents = [val for val in selected_ents_text_dict.keys() for _ in range(no_of_results_per_entity)]
 texts = [item for sublist in selected_ents_text_dict.values() for item in sublist]
 
-pd.DataFrame(zip(final_ents, texts), columns = ['ent', 'text']).to_csv(f'mini_corpus-{no_of_ents_to_select}T{no_of_results_per_entity}CpT.csv', index=False)
+pd.DataFrame(zip(final_ents, texts), columns = ['ent', 'text']).to_csv(f'{args.dataset}-mini_corpus.csv', index=False)

@@ -24,7 +24,10 @@ if raw_dataset == "Saptarshi7/covid_qa_cleaned_CS":
 else:
     nlp = stanza.Pipeline(lang='en', processors='tokenize,ner')
 
-dataset = load_dataset(raw_dataset, use_auth_token=True)
+if args.dataset == 'duorc':
+  raw_datasets = load_dataset('duorc', 'SelfRC')
+else:
+  raw_datasets = load_dataset(args.dataset, use_auth_token=True)
 
 new_ents = []
 
