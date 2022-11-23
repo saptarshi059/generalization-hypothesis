@@ -1,4 +1,4 @@
-from evaluate import load
+from datasets import load_metric
 import pickle5 as pickle
 import pandas as pd
 import numpy as np
@@ -10,7 +10,7 @@ parser.add_argument('--pred_file', type=str)
 parser.add_argument('--metric', default='squad' ,type=str)
 args = parser.parse_args()
 
-metric = load(args.metric)
+metric = load_metric(args.metric)
 
 s = pickle.load(open(args.pred_file, 'rb'))
 
