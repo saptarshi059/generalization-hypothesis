@@ -51,7 +51,7 @@ for tup in tqdm(most_common_entities):
         set_seed(i)
         final_string = final_string + ' ' + generator(f'{entity}', renormalize_logits=True, do_sample=True, max_length=2048, top_p=0.9, temperature=0.9, use_cache=True)[0]['generated_text']
     
-    selected_ents_text_dict[entity].append(final_string.strip())
+    selected_ents_text_dict[entity] = final_string.strip()
 
 print('Saving mini_corpus...')
 
