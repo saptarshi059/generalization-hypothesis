@@ -35,7 +35,7 @@ for ent in ent_in_model_vocab:
     stanza_ents.remove(ent)
 
 most_common_entities = Counter(stanza_ents).most_common()[:args.num_of_ents]
-selected_ents_text_dict = defaultdict(list)
+selected_ents_text_dict = {}
 print('Entities to generate contexts for selected...')
 
 generator_model_tokenizer = AutoTokenizer.from_pretrained(args.teacher_model)
