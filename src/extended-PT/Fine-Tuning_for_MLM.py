@@ -54,7 +54,7 @@ def seed_worker(worker_id):
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
 parser.add_argument('--corpus_file', default="../../data/our-wikipedia-corpus/Tokens_From_Question_side/mini_corpus-10T1CpT.csv", type=str)
-parser.add_argument('--trained_model_name', default="distilbert-base-uncased-new_tokens", type=str, required=True) # So that we can KNOW for sure which folder is what.
+parser.add_argument('--trained_model_name', default="distilbert-base-uncased-extended-PT", type=str, required=True) # So that we can KNOW for sure which folder is what.
 parser.add_argument('--use_new_tokens', default=True, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
 parser.add_argument('--batch_size', default=40, type=int)
