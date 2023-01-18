@@ -3,12 +3,7 @@ from collections import Counter
 from tqdm.auto import tqdm
 import pickle5 as pickle
 import scispacy
-import argparse
 import spacy
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--top_N_ents', default=500, type=int)
-args = parser.parse_args()
 
 nlp = spacy.load("en_core_sci_sm")
 dataset = load_dataset("Saptarshi7/covid_qa_cleaned_CS", use_auth_token=True)
