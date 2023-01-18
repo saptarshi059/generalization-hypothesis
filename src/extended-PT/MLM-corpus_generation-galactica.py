@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
 parser.add_argument('--teacher_model', default="facebook/galactica-1.3b", type=str)
-parser.add_argument('--stanza_ent_file', type=str)
+parser.add_argument('--ent_list_file', type=str)
 parser.add_argument('--num_of_ents', default=10, type=int)
 parser.add_argument('--num_of_ctx_per_ent', default=5, type=int)
 
