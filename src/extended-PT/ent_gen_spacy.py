@@ -16,8 +16,8 @@ ents = []
 
 all_questions = dataset['train']['question']
 
-for row in tqdm(all_questions):
-  ents.append([str(x) for x in nlp(row['question']).ents])
+for ques in tqdm(all_questions):
+  ents.append([str(x) for x in nlp(ques).ents])
 
 ents_flat = [item for sublist in ents for item in sublist]
 
