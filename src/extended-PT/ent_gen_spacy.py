@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--top_N_ents', default=500, type=int)
 args = parser.parse_args()
 
-raw_datasets = load_dataset("Saptarshi7/covid_qa_cleaned_CS", use_auth_token=True)
+dataset = load_dataset("Saptarshi7/covid_qa_cleaned_CS", use_auth_token=True)
 ents = []
 
 all_questions = dataset['train']['question']
