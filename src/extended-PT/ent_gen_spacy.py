@@ -21,7 +21,5 @@ for ques in tqdm(all_questions):
 
 ents_flat = [item for sublist in ents for item in sublist]
 
-selected_ents = [x[0] for x in Counter(ents_flat).most_common()[:args.top_N_ents]]
-
 with open('spacy_ents-from_question-covidqa.pkl', 'wb') as f:
     pickle.dump(selected_ents, f)

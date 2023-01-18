@@ -19,21 +19,21 @@ parser.add_argument('--num_of_ctx_per_ent', default=5, type=int)
 
 args = parser.parse_args()
 
-stanza_ents = pickle.load(open(args.stanza_ent_file, 'rb'))
+ents = pickle.load(open(args.ent_list_file, 'rb'))
 
 tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
 model_vocab = list(tokenizer.vocab.keys())
 
 # We only want to deal with those entities that are not in the model vocabulary otherwise we would get multiple embeddings for the same term.
 ent_in_model_vocab = []
-for ent in tqdm(stanza_ents):
+for ent in tqdm(ents):
     if ent in model_vocab:
         ent_in_model_vocab.append(ent)
 
 for ent in ent_in_model_vocab:
-    stanza_ents.remove(ent)
+    ents.remove(ent)
 
-most_common_entities = Counter(stanza_ents).most_common()[:args.num_of_ents]
+most_common_entities = Counter(ents).most_common()[:args.num_of_ents]
 selected_ents_text_dict = {}
 print('Entities to generate contexts for selected...')
 
