@@ -17,4 +17,4 @@ for ques in tqdm(all_questions):
 ents_flat = [item for sublist in ents for item in sublist]
 
 with open('spacy_ents-from_question-covidqa.pkl', 'wb') as f:
-    pickle.dump(selected_ents, f)
+    pickle.dump(ents_flat, f)
