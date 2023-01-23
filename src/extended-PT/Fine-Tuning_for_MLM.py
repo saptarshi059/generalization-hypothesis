@@ -46,6 +46,12 @@ def group_texts(examples):
     result["labels"] = result["input_ids"].copy()
     return result
 
+def insert_random_mask(batch):
+    features = [dict(zip(batch, t)) for t in zip(*batch.values())]
+    masked_inputs = data_collator(features)
+    # Create a new "masked" column for each column in the dataset
+    return {"masked_" + k: v.numpy() for k, v in masked_inputs.items()}
+
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
@@ -53,9 +59,10 @@ def seed_worker(worker_id):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
-parser.add_argument('--corpus_file', default="../../data/our-wikipedia-corpus/Tokens_From_Question_side/mini_corpus-10T1CpT.csv", type=str)
+parser.add_argument('--training_corpus', default="stanza_ents-from_questions-spacy.pkl", type=str)
+parser.add_argument('--eval_corpus', default="Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv", type=str)
 parser.add_argument('--trained_model_name', default="distilbert-base-uncased-extended-PT", type=str)
-parser.add_argument('--use_new_tokens', default=True, type=str2bool)
+parser.add_argument('--use_new_tokens', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
 parser.add_argument('--batch_size', default=40, type=int)
 parser.add_argument('--learning_rate', default=5e-5, type=float)
@@ -68,12 +75,15 @@ g.manual_seed(args.random_state)
 torch.manual_seed(args.random_state)
 random.seed(args.random_state)
 
-corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
-print('Corpus Loaded...')
-
 model_checkpoint = args.model_checkpoint
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 model = AutoModelForMaskedLM.from_pretrained(model_checkpoint)
+chunk_size = tokenizer.model_max_length
+batch_size = args.batch_size
+
+#Training Data
+train_dataset = load_dataset("csv", data_files=args.training_corpus)
+print('Training Corpus Loaded...')
 
 if args.use_new_tokens == True:
     #Adding the new tokens to the vocabulary
@@ -85,20 +95,47 @@ if args.use_new_tokens == True:
     # The new vector is added at the end of the embedding matrix
     model.resize_token_embeddings(len(tokenizer)) 
 
-tokenized_datasets = corpus_dataset['train'].map(tokenize_function, batched=True, remove_columns=['ent', 'text'])
-chunk_size = tokenizer.model_max_length
-lm_datasets = tokenized_datasets.map(group_texts, batched=True)
-
+train_dataset = train_dataset['train'].map(tokenize_function, batched=True, remove_columns=['ent', 'text'])
+train_dataset = train_dataset.map(group_texts, batched=True)
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=0.15)
 
-batch_size = args.batch_size
-lm_datasets = lm_datasets.remove_columns(["word_ids"])
-train_dataloader = DataLoader(lm_datasets, shuffle=True, batch_size=batch_size, collate_fn=data_collator, worker_init_fn=seed_worker, generator=g)
+train_dataset = train_dataset.remove_columns(["word_ids"])
+train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=batch_size, collate_fn=data_collator, worker_init_fn=seed_worker, generator=g)
+print('Training Dataset processed...')
+
+#Eval Data
+eval_dataset = load_dataset("csv", data_files=args.eval_corpus)
+print('Evaluation Corpus Loaded...')
+
+eval_dataset = eval_dataset['train'].map(tokenize_function, batched=True, remove_columns=['ent', 'text'])
+eval_dataset = eval_dataset.map(group_texts, batched=True)
+eval_dataset = eval_dataset.remove_columns(["word_ids"])
+
+eval_dataset = eval_dataset.map(insert_random_mask, batched=True, remove_columns=eval_dataset.column_names)
+if 'masked_token_type_ids' in eval_dataset.column_names:
+    eval_dataset = eval_dataset.rename_columns(
+        {
+        "masked_input_ids": "input_ids",
+        "masked_attention_mask": "attention_mask",
+        "masked_labels": "labels",
+        'masked_token_type_ids': "token_type_ids"
+        }
+)
+else:
+    eval_dataset = eval_dataset.rename_columns(
+        {
+        "masked_input_ids": "input_ids",
+        "masked_attention_mask": "attention_mask",
+        "masked_labels": "labels",
+        }
+)
+eval_dataloader = DataLoader(eval_dataset, batch_size=batch_size, collate_fn=default_data_collator, worker_init_fn=seed_worker, generator=g)
+print('Evaluation Dataset processed...')
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 accelerator = Accelerator()
-model, optimizer, train_dataloader = accelerator.prepare(model, optimizer, train_dataloader)
+model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
@@ -123,7 +160,24 @@ for epoch in range(num_train_epochs):
         optimizer.zero_grad()
         progress_bar.update(1)
 
-    print(f">>> Epoch {epoch} Complete")
+    # Evaluation
+    model.eval()
+    losses = []
+    for step, batch in enumerate(eval_dataloader):
+        with torch.no_grad():
+            outputs = model(**batch)
+
+        loss = outputs.loss
+        losses.append(accelerator.gather(loss.repeat(batch_size)))
+
+    losses = torch.cat(losses)
+    losses = losses[: len(eval_dataset)]
+    try:
+        perplexity = math.exp(torch.mean(losses))
+    except OverflowError:
+        perplexity = float("inf")
+
+    print(f">>> Epoch {epoch}: Perplexity: {perplexity}")
 
     # Save and upload
     accelerator.wait_for_everyone()
