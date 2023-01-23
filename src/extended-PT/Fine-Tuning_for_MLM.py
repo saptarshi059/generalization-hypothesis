@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from transformers import AutoModelForMaskedLM, AutoTokenizer, DataCollatorForLanguageModeling, get_scheduler
+from transformers import AutoModelForMaskedLM, AutoTokenizer, DataCollatorForLanguageModeling, get_scheduler, default_data_collator
 from torch.utils.data import DataLoader
 from accelerate import Accelerator
 from datasets import load_dataset
