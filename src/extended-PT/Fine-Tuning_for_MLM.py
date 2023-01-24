@@ -82,7 +82,9 @@ chunk_size = tokenizer.model_max_length
 batch_size = args.batch_size
 
 #Training Data
-train_dataset = load_dataset("csv", data_files=args.training_corpus)
+train_dataset = load_dataset("parquet", data_files=args.training_corpus)
+train_dataset = train_dataset.remove_columns(['prompt', '__index_level_0__'])
+train_dataset = train_dataset.rename_columns({'entity':'ent', 'context':'text'})
 print('Training Corpus Loaded...')
 
 if args.use_new_tokens == True:
