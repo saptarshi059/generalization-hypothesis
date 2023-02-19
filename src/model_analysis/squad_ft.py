@@ -340,7 +340,6 @@ for epoch in range(num_train_epochs):
 
     if args.trial_mode == True:
         metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets[1])
-        break
     else:
         metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
         
