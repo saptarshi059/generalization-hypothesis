@@ -251,6 +251,7 @@ model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 
 accelerator = Accelerator()
+device = accelerator.device
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
@@ -282,6 +283,7 @@ validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
+model.to(device)
 output_dir = args.trained_model_name
 
 if args.freeze_PT_layers == True:
