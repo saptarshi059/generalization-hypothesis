@@ -199,18 +199,17 @@ def compute_metrics(start_logits, end_logits, features, examples):
             predicted_answers.append({"id": example_id, "prediction_text": ""})
 
         #top-5 
-        '''
         if len(answers) > 0:
             top5_answers = sorted(answers, key= lambda x: x['logit_score'], reverse=True)[:5]
             predicted_answers_top5.extend({"id": example_id, "prediction_text": pred["text"]} for pred in top5_answers)
         else:
             predicted_answers_top5.extend(list(repeat({"id": example_id, "prediction_text": ""}, 5)))
-        '''
-        theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
-        #theoretical_answers_top5 = [list(repeat({"id": ex["id"], "answers": ex["answers"]}, 5)) for ex in examples]
-        #theoretical_answers_top5_flat = list(itertools.chain.from_iterable(theoretical_answers_top5))
 
-    return metric.compute(predictions=predicted_answers, references=theoretical_answers)#, metric.compute(predictions=predicted_answers_top5, references=theoretical_answers_top5_flat)
+        theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
+        theoretical_answers_top5 = [list(repeat({"id": ex["id"], "answers": ex["answers"]}, 5)) for ex in examples]
+        theoretical_answers_top5_flat = list(itertools.chain.from_iterable(theoretical_answers_top5))
+
+    return metric.compute(predictions=predicted_answers, references=theoretical_answers), metric.compute(predictions=predicted_answers_top5, references=theoretical_answers_top5_flat)
 
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
