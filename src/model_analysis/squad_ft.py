@@ -232,7 +232,7 @@ parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
 parser.add_argument('--optimizer_type', default='AdamW', type=str)
-parser.add_argument('--freeze_PT_layers', default=False, type=str)
+parser.add_argument('--freeze_PT_layers', default=False, type=str2bool)
 
 args = parser.parse_args()
 
