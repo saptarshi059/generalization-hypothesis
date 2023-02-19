@@ -199,7 +199,7 @@ def compute_metrics(start_logits, end_logits, features, examples):
             predicted_answers.append({"id": example_id, "prediction_text": ""})
 
         #top-5 
-        if len(answers) > 0:
+        if len(answers) >= 5:
             top5_answers = sorted(answers, key= lambda x: x['logit_score'], reverse=True)[:5]
             predicted_answers_top5.extend({"id": example_id, "prediction_text": pred["text"]} for pred in top5_answers)
         else:
