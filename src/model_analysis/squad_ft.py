@@ -283,7 +283,6 @@ validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
-model.to(device)
 output_dir = args.trained_model_name
 
 if args.freeze_PT_layers == True:
@@ -300,6 +299,7 @@ else:
     optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
+model.to(device)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
