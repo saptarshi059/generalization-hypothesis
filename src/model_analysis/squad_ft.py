@@ -251,7 +251,6 @@ model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 
 accelerator = Accelerator()
-device = accelerator.device
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
@@ -299,7 +298,6 @@ else:
     optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
-model.to(device)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
