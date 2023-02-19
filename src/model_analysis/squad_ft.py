@@ -5,11 +5,14 @@ from datasets import load_dataset, load_metric
 from torch.utils.data import DataLoader
 from accelerate import Accelerator
 from torch.optim import AdamW
+from itertools import repeat
+from timm.optim import Lamb
 from tqdm.auto import tqdm
 from evaluate import load
 import transformers
 import numpy as np
 import collections
+import itertools
 import argparse
 import random
 import torch
@@ -154,6 +157,7 @@ def compute_metrics(start_logits, end_logits, features, examples):
         example_to_features[feature["example_id"]].append(idx)
 
     predicted_answers = []
+    predicted_answers_top5 = []
     for example in tqdm(examples):
         example_id = example["id"]
         context = example["context"]
@@ -194,8 +198,18 @@ def compute_metrics(start_logits, end_logits, features, examples):
         else:
             predicted_answers.append({"id": example_id, "prediction_text": ""})
 
-    theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
-    return metric.compute(predictions=predicted_answers, references=theoretical_answers)
+        #top-5 
+        if len(answers) > 0:
+            top5_answers = sorted(answers, key= lambda x: x['logit_score'], reverse=True)[:5]
+            predicted_answers_top5.extend({"id": example_id, "prediction_text": pred["text"]} for pred in top5_answers)
+        else:
+            predicted_answers_top5.extend(list(repeat({"id": example_id, "prediction_text": ""}, 5)))
+
+        theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
+        theoretical_answers_top5 = [list(repeat({"id": ex["id"], "answers": ex["answers"]}, 5)) for ex in examples]
+        theoretical_answers_top5_flat = list(itertools.chain.from_iterable(theoretical_answers_top5))
+
+    return metric.compute(predictions=predicted_answers, references=theoretical_answers), metric.compute(predictions=predicted_answers_top5, references=theoretical_answers_top5_flat)
 
 def seed_worker(worker_id):
     worker_seed = torch.initial_seed() % 2**32
@@ -217,6 +231,8 @@ parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
+parser.add_argument('--optimizer_type', default='AdamW', type=str)
+parser.add_argument('--freeze_PT_layers', default=False, type=str)
 
 args = parser.parse_args()
 
@@ -269,10 +285,19 @@ eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_siz
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 output_dir = args.trained_model_name
 
-optimizer = AdamW(model.parameters(), lr=args.learning_rate)
+if args.freeze_PT_layers == True:
+    print('Freezing base layers and only training span head...')
+    base_module_name = list(model.named_children())[0][0]
+    for param in getattr(model, base_module_name).parameters():
+        param.requires_grad = False
+
+if args.optimizer_type == 'LAMB':
+    print('Using Lamb optimizer...')
+    optimizer = Lamb(model.parameters(), lr=args.learning_rate)
+else:
+    optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
-model.to(device)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
@@ -314,11 +339,12 @@ for epoch in range(num_train_epochs):
 
     if args.trial_mode == True:
         metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets[1])
+        break
     else:
         metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
+        
+    print(f"epoch {epoch}: EM@1: {metrics[0]['exact_match']:.3} F1@1: {metrics[0]['f1']:.3} || EM@5: {metrics[1]['exact_match']:.3} F1@5: {metrics[1]['f1']:.3}")
     
-    print(f"epoch {epoch}:", metrics)
-
     # Save and upload
     accelerator.wait_for_everyone()
     unwrapped_model = accelerator.unwrap_model(model)
