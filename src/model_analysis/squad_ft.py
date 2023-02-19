@@ -296,7 +296,8 @@ if args.optimizer_type == 'LAMB':
     optimizer = Lamb(model.parameters(), lr=args.learning_rate)
 else:
     print('Using AdamW optimizer...')
-    optimizer = AdamW(model.parameters(), lr=args.learning_rate)
+    #optimizer = AdamW(model.parameters(), lr=args.learning_rate)
+    optimizer = AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
 
