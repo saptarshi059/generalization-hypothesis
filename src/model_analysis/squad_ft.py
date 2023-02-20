@@ -297,13 +297,13 @@ else:
     print('Using AdamW optimizer...')
     optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
-model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
+lr_scheduler = get_scheduler("linear", optimizer=optimizer, num_warmup_steps=0, num_training_steps=num_training_steps)
+
+model, optimizer, train_dataloader, eval_dataloader, lr_scheduler = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader, lr_scheduler)
 
 num_train_epochs = args.epochs
 num_update_steps_per_epoch = len(train_dataloader)
 num_training_steps = num_train_epochs * num_update_steps_per_epoch
-
-lr_scheduler = get_scheduler("linear", optimizer=optimizer, num_warmup_steps=0, num_training_steps=num_training_steps)
 
 progress_bar = tqdm(range(num_training_steps))
 
