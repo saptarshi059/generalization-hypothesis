@@ -326,7 +326,6 @@ for epoch in range(num_train_epochs):
     accelerator.print("Evaluation!")
     for batch in tqdm(eval_dataloader):
         with torch.no_grad():
-            print(batch.shape)
             outputs = model(**batch)
 
         start_logits.append(accelerator.gather(outputs.start_logits).cpu().numpy())
