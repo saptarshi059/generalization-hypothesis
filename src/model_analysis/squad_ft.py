@@ -217,7 +217,7 @@ parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
 parser.add_argument('--trial_mode', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
-parser.add_argument('--freeze_PT_layers', default=False, type=str)
+parser.add_argument('--freeze_PT_layers', default=False, type=str2bool)
 
 
 args = parser.parse_args()
@@ -271,10 +271,11 @@ eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_siz
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 output_dir = args.trained_model_name
 
-print('Freezing base layers and only training span head...')
-base_module_name = list(model.named_children())[0][0]
-for param in getattr(model, base_module_name).parameters():
-    param.requires_grad = False
+if args.freeze_PT_layers == True:
+    print('Freezing base layers and only training span head...')
+    base_module_name = list(model.named_children())[0][0]
+    for param in getattr(model, base_module_name).parameters():
+        param.requires_grad = False
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
