@@ -234,7 +234,7 @@ squad_v2 = args.squad_version2
 model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 
-accelerator = Accelerator(fp16=True)
+accelerator = Accelerator()
 device = accelerator.device
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
