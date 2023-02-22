@@ -13,7 +13,7 @@ parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=
 args = parser.parse_args()
 
 spacy.prefer_gpu(gpu_id=0)
-nlp = spacy.load("en_core_sci_sm")
+nlp = spacy.load("en_core_sci_scibert")
 dataset = load_dataset(args.dataset, use_auth_token=True)
 ents = []
 
