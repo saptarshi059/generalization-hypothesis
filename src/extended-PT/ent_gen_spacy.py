@@ -23,10 +23,10 @@ all_questions = dataset['train']['question']
 ques_ents = []
 ctx_ents = []
 
-for ques in tqdm(nlp.pipe(all_questions, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])):
+for ques in tqdm(nlp.pipe(all_questions, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"], batch_size=32)):
   ques_ents.extend([str(x) for x in nlp(ques).ents])
 
-for ctx in tqdm(nlp.pipe(all_contexts, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])):
+for ctx in tqdm(nlp.pipe(all_contexts, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"], batch_size=32)):
   ctx_ents.extend([str(x) for x in nlp(ctx).ents])
 
 print(f'Total Entities from Questions: {len(ques_ents)} (Unique: {len(set(ques_ents))})')
