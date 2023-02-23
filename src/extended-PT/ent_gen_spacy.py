@@ -23,9 +23,11 @@ all_questions = dataset['train']['question']
 ques_ents = []
 ctx_ents = []
 
+spacy.prefer_gpu(gpu_id=0)
 for ques in tqdm(all_questions):
   ques_ents.extend([str(x) for x in nlp(ques).ents])
 
+spacy.prefer_gpu(gpu_id=0)
 for ctx in tqdm(all_contexts):
   ctx_ents.extend([str(x) for x in nlp(ctx).ents])
 
