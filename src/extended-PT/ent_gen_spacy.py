@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
 args = parser.parse_args()
 
-spacy.prefer_gpu()
+spacy.require_gpu()
 nlp = spacy.load("en_core_sci_scibert", disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"])
 dataset = load_dataset(args.dataset, use_auth_token=True)
 ents = []
