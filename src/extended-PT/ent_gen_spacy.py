@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
 args = parser.parse_args()
 
-spacy.prefer_gpu(gpu_id=0)
+spacy.prefer_gpu(gpu_id=2)
 nlp = spacy.load("en_core_sci_scibert")
 dataset = load_dataset(args.dataset, use_auth_token=True)
 ents = []
@@ -23,12 +23,12 @@ all_questions = dataset['train']['question']
 ques_ents = []
 ctx_ents = []
 
-spacy.prefer_gpu(gpu_id=0)
-for ques in tqdm(all_questions):
+spacy.prefer_gpu(gpu_id=2)
+for ques in tqdm(nlp.pipe(all_questions, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"], batch_size=32)):
   ques_ents.extend([str(x) for x in nlp(ques).ents])
 
-spacy.prefer_gpu(gpu_id=0)
-for ctx in tqdm(all_contexts):
+spacy.prefer_gpu(gpu_id=2)
+for ctx in tqdm(nlp.pipe(all_contexts, disable=["tok2vec", "tagger", "parser", "attribute_ruler", "lemmatizer"], batch_size=8)):
   ctx_ents.extend([str(x) for x in nlp(ctx).ents])
 
 print(f'Total Entities from Questions: {len(ques_ents)} (Unique: {len(set(ques_ents))})')
