@@ -168,7 +168,7 @@ metric = load("squad")
 train_dataset.set_format("torch")
 train_dataloader = DataLoader(train_dataset, shuffle=True, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
-validation_set = validation_dataset.remove_columns(["example_id", "offset_mapping"])
+#validation_set = validation_dataset.remove_columns(["example_id", "offset_mapping"])
 validation_set.set_format("torch")
 eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
 
