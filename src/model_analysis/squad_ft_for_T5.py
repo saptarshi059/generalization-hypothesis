@@ -156,8 +156,8 @@ n_best = args.n_best
 if args.trial_mode == True:
     print('Running Code in Trial Mode to see if everything works properly...')
     raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad", split=['train[:160]','validation[:10]']) #Testing purposes
-    train_dataset = raw_datasets[0].map(encode, batched=True)
-    validation_dataset = raw_datasets[1].map(encode, batched=True)
+    train_dataset = raw_datasets[0].map(encode
+    validation_dataset = raw_datasets[1].map(encode)
 else:
     raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad")
     train_dataset = raw_datasets['train'].map(encode, batched=True)
