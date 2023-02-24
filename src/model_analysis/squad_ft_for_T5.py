@@ -27,7 +27,7 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
-def encode(example, encoder_max_len=encoder_max_len, decoder_max_len=decoder_max_len):
+def encode(example, encoder_max_len=250, decoder_max_len=54):
     context = example['context']
     question = example['question']
     answer = example['answers']['text']
@@ -54,7 +54,6 @@ def encode(example, encoder_max_len=encoder_max_len, decoder_max_len=decoder_max
     outputs = {'input_ids':input_ids, 'attention_mask': input_attention, 
                'labels':target_ids, 'decoder_attention_mask':target_attention}
     return outputs
-
 
 def compute_metrics(start_logits, end_logits, features, examples):
     example_to_features = collections.defaultdict(list)
