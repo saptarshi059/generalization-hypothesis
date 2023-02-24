@@ -240,7 +240,11 @@ batch_size = args.batch_size
 accelerator = Accelerator()
 device = accelerator.device
 
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+if model_checkpoint == 'studio-ousia/luke-base':
+    tokenizer = AutoTokenizer.from_pretrained('roberta-base') #since luke doesn't have a fast implementation & it has the same vocab as roberta
+else:
+    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+
 data_collator = default_data_collator
 
 max_length = args.max_length # The maximum length of a feature (question and context)
