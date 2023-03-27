@@ -59,8 +59,8 @@ def seed_worker(worker_id):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
-parser.add_argument('--training_corpus', default="stanza_ents-from_questions-spacy.pkl", type=str)
-parser.add_argument('--eval_corpus', default="Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv", type=str)
+parser.add_argument('--training_corpus', default="../../../CDQA-v1-whole-entity-approach/data/COVID-QA/wiki_corpus_covidqa_wo_filter.parquet", type=str)
+parser.add_argument('--eval_corpus', default="../../../CDQA-v1-whole-entity-approach/src/Utils/Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv ", type=str)
 parser.add_argument('--trained_model_name', default="distilbert-base-uncased-extended-PT", type=str)
 parser.add_argument('--use_new_tokens', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
@@ -87,7 +87,9 @@ train_dataset = load_dataset("parquet", data_files=args.training_corpus)
 if ('prompt' in train_dataset.column_names) and ('__index_level_0__' in train_dataset.column_names):
     train_dataset = train_dataset.remove_columns(['prompt', '__index_level_0__'])
 
-train_dataset = train_dataset.rename_columns({'entity':'ent', 'context':'text'})
+if ('entity' in train_dataset.column_names) and ('context' in train_dataset.column_names):
+    train_dataset = train_dataset.rename_columns({'entity':'ent', 'context':'text'})
+
 print('Training Corpus Loaded...')
 
 if args.use_new_tokens == True:
