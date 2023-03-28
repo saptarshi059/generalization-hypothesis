@@ -84,11 +84,11 @@ batch_size = args.batch_size
 #Training Data
 train_dataset = load_dataset("parquet", data_files=args.training_corpus)
 
-if ('prompt' in train_dataset.column_names) and ('__index_level_0__' in train_dataset.column_names):
-    train_dataset = train_dataset.remove_columns(['prompt', '__index_level_0__'])
+if ('prompt' in train_dataset['train'].column_names) and ('__index_level_0__' in train_dataset['train'].column_names):
+    train_dataset = train_dataset['train'].remove_columns(['prompt', '__index_level_0__'])
 
-if ('entity' in train_dataset.column_names) and ('context' in train_dataset.column_names):
-    train_dataset = train_dataset.rename_columns({'entity':'ent', 'context':'text'})
+if ('entity' in train_dataset['train'].column_names) and ('context' in train_dataset['train'].column_names):
+    train_dataset = train_dataset['train'].rename_columns({'entity':'ent', 'context':'text'})
 
 print('Training Corpus Loaded...')
 
