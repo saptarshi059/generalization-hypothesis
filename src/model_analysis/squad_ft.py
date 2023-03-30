@@ -282,7 +282,7 @@ if args.freeze_PT_layers == True:
     for param in getattr(model, base_module_name).parameters():
         param.requires_grad = False
 
-optimizer = Lamb(model.parameters(), lr=args.learning_rate)
+optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
 model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
 model.to(device)
