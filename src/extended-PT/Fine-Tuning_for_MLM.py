@@ -64,7 +64,7 @@ parser.add_argument('--eval_corpus', default="../../../CDQA-v1-whole-entity-appr
 parser.add_argument('--trained_model_name', default="distilbert-base-uncased-extended-PT", type=str)
 parser.add_argument('--use_new_tokens', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
-parser.add_argument('--batch_size', default=40, type=int)
+parser.add_argument('--batch_size', default=64, type=int)
 parser.add_argument('--learning_rate', default=5e-5, type=float)
 parser.add_argument('--epochs', default=3, type=int)
 
