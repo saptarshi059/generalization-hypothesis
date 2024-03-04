@@ -11,15 +11,23 @@ from transformers import AutoTokenizer, pipeline
 class QADataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
-        for row in tqdm(ds['train']):
-            context_chunks = tokenizer(row['context'], add_special_tokens=False, truncation=True, max_length=400,
+        for row in tqdm(ds['test']):
+            context = row['context'] if ds != 'ibm/duorc' else row['plot']
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
                                        stride=200, return_overflowing_tokens=True)
-            gold_answer = row['answers']['text'][0]
+            true_spans = row['answers']['text'] if ds != 'ibm/duorc' else row['answers']
             question = row['question']
 
+            flag = 0
             for chunk in context_chunks['input_ids']:
                 decoded_chunk = tokenizer.decode(chunk, clean_up_tokenization_spaces=False)
-                if gold_answer in decoded_chunk:
+                for ans in true_spans:
+                    if ans in decoded_chunk:
+                        flag = 1
+                    else:
+                        flag = 0
+                        break
+                if flag == 1:
                     self.samples.append(prompt.format(context=decoded_chunk, question=question))
                     break
 
@@ -54,14 +62,19 @@ if __name__ == '__main__':
     checkpoint = args.model_checkpoint
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
 
-    if checkpoint == 'tiiuae/falcon-7b-instruct':
-        generator = pipeline("text-generation", model=checkpoint, tokenizer=tokenizer, torch_dtype=torch.bfloat16,
-                             trust_remote_code=True, device_map="auto", pad_token_id=tokenizer.eos_token_id)
-        print('The Falcon has landed... ;)')
+    if args.dataset == 'ibm/duorc':
+        dataset = load_dataset('ibm/duorc', 'SelfRC')
     else:
-        generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='auto')
+        dataset = load_dataset(args.dataset, token=True)
 
-    dataset = load_dataset(args.dataset, token=True)
+    # Changing dataset split names for consistency
+    if args.dataset in ['squad', 'Saptarshi7/techqa-squad-style']:
+        dataset['test'] = dataset.pop('validation')
+    elif args.dataset in ['cuad', 'ibm/duorc']:
+        pass  # Since they already contain a test split
+    elif args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
+        dataset['test'] = dataset.pop('train')
+
     formatted_dataset = QADataset(dataset, args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
@@ -71,11 +84,19 @@ if __name__ == '__main__':
             c += 1
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
-        exit()
+        exit('Exited program because of inconsistent number of samples...')
 
     gold_answers = []
     for el in dataset['train']['answers']:
         gold_answers.append(el['text'])
+
+    # Loading models start here
+    if checkpoint == 'tiiuae/falcon-7b-instruct':
+        generator = pipeline("text-generation", model=checkpoint, tokenizer=tokenizer, torch_dtype=torch.bfloat16,
+                             trust_remote_code=True, device_map="auto", pad_token_id=tokenizer.eos_token_id)
+        print('The Falcon has landed... ;)')
+    else:
+        generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='auto')
 
     predictions = []
     for batch in tqdm(dataloader):
