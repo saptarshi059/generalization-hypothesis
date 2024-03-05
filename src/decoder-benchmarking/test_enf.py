@@ -97,7 +97,7 @@ Child. Managed by her father, Mathew Knowles, the group became one of the world'
 time. Their hiatus saw the release of Beyoncé's debut album, Dangerously in Love (2003), which established her as a 
 solo artist worldwide, earned five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in 
 Love" and "Baby Boy".'''
-question = "When did Beyonce leave Destiny's Child and become a solo singer?"
+question = "When did Beyonce start becoming popular?"
 
 sent_dict = {}
 for idx, sent in enumerate(sent_tokenize(context)):
