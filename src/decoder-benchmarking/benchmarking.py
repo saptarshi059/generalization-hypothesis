@@ -42,7 +42,7 @@ class SQUAD(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['plot'], question=row['question']))
+            self.samples.append(prompt.format(context=row['context'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
@@ -56,7 +56,7 @@ class DuoRC(Dataset):
         self.samples = []
         for row in tqdm(ds):
             context = row['plot']
-            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=500,
                                        stride=100, return_overflowing_tokens=True)
             true_spans = row['answers']
             question = row['question']
