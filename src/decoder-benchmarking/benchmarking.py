@@ -81,14 +81,6 @@ class DuoRC(Dataset):
         return self.samples[idx]
 
 
-
-
-
-
-
-
-
-
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -144,6 +136,7 @@ if __name__ == '__main__':
     c = 0
     for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
         print(i, j)
+        break
         if j[0] not in i:
             c += 1
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
