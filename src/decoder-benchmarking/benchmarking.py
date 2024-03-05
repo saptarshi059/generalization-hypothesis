@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     c = 0
     for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
-        if j['text'][0] not in i:
+        if j[0] not in i:
             c += 1
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
