@@ -109,6 +109,7 @@ if __name__ == '__main__':
         for ans in true_answers:
             if not re.search(ans, expanded_prompt, re.IGNORECASE):
                 c += 1
+                print(ans)
                 break
         if c==1:
             print(expanded_prompt, true_answers)
