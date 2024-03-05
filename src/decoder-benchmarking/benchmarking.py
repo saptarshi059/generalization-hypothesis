@@ -93,6 +93,8 @@ if __name__ == '__main__':
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
         exit('Exited program because of inconsistent number of samples...')
+    else:
+        exit('Dataset can be processed correctly by this model...')
 
     gold_answers = []
     for el in dataset['test']['answers']:
