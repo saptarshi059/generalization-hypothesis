@@ -38,6 +38,19 @@ class QADataset(Dataset):
         return self.samples[idx]
 
 
+class SQUAD(Dataset):
+    def __init__(self, ds, prompt):
+        self.samples = []
+        for row in tqdm(ds):
+            self.samples.append(prompt.format(context=row['context'], question=row['question']))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        return self.samples[idx]
+
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
@@ -83,7 +96,10 @@ if __name__ == '__main__':
     elif args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
-    formatted_dataset = QADataset(dataset['test'], args.prompt)
+    if args.dataset == 'squad':
+        formatted_dataset = SQUAD(dataset['test'], args.prompt)
+    else:
+        formatted_dataset = QADataset(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
@@ -115,7 +131,7 @@ if __name__ == '__main__':
     with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
         for batch in tqdm(dataloader):
             generations = generator(batch, max_new_tokens=50)
-            predictions.extend([x[0]['generated_text'].split(args.answer_prompt)[1].strip() for x in generations])
+            predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
 
     print('Computing Scores...')
     metric = load_metric('squad')
