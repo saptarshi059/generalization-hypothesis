@@ -106,7 +106,7 @@ if __name__ == '__main__':
     c = 0
     import re
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
-        for ans in true_answers:
+        for ans in true_answers['text']:
             if not re.search(ans, expanded_prompt, re.IGNORECASE):
                 c += 1
                 print(ans)
