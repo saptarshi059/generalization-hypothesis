@@ -51,6 +51,44 @@ class SQUAD(Dataset):
         return self.samples[idx]
 
 
+class DuoRC(Dataset):
+    def __init__(self, ds, prompt):
+        self.samples = []
+        for row in tqdm(ds):
+            context = row['plot']
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
+                                       stride=100, return_overflowing_tokens=True)
+            true_spans = row['answers']
+            question = row['question']
+
+            flag = 0
+            for chunk in context_chunks['input_ids']:
+                decoded_chunk = tokenizer.decode(chunk, clean_up_tokenization_spaces=False)
+                for ans in true_spans:
+                    if ans in decoded_chunk:
+                        flag = 1
+                    else:
+                        flag = 0
+                        break
+                if flag == 1:
+                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
+                    break
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        return self.samples[idx]
+
+
+
+
+
+
+
+
+
+
 def str2bool(v):
     if isinstance(v, bool):
         return v
