@@ -97,13 +97,14 @@ Child. Managed by her father, Mathew Knowles, the group became one of the world'
 time. Their hiatus saw the release of Beyoncé's debut album, Dangerously in Love (2003), which established her as a 
 solo artist worldwide, earned five Grammy Awards and featured the Billboard Hot 100 number-one singles "Crazy in 
 Love" and "Baby Boy".'''
-question = "When did Beyonce start becoming popular? Please answer in number: format "
-
 sent_dict = {}
 for idx, sent in enumerate(sent_tokenize(context)):
     sent_dict[idx] = sent
-
 numbered_ctx = ' '.join(str(x) + ': ' + y for x, y in sent_dict.items())
+
+question = (f"When did Beyonce start becoming popular? "
+            f"Please answer in number: format based on the context: {numbered_ctx}")
+
 
 DEFAULT_SYSTEM_PROMPT = """\
 You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\
