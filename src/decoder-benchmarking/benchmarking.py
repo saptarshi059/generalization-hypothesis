@@ -12,10 +12,10 @@ class QADataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            context = row['context'] if ds != 'ibm/duorc' else row['plot']
+            context = row['context'] if args.dataset != 'ibm/duorc' else row['plot']
             context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
                                        stride=200, return_overflowing_tokens=True)
-            true_spans = row['answers']['text'] if ds != 'ibm/duorc' else row['answers']
+            true_spans = row['answers']['text'] if args.dataset != 'ibm/duorc' else row['answers']
             question = row['question']
 
             flag = 0
