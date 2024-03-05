@@ -108,7 +108,7 @@ if __name__ == '__main__':
     d = []
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
         for ans in true_answers['text']:
-            if not re.search(ans, expanded_prompt, re.IGNORECASE):
+            if not re.search(fr'{ans}', expanded_prompt, re.IGNORECASE):
                 c += 1
                 d.append((expanded_prompt, ans))
                 break
