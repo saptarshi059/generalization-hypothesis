@@ -42,7 +42,7 @@ class SQUAD(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question']))
+            self.samples.append(prompt.format(context=row['plot'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
