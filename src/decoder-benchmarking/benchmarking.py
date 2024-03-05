@@ -137,8 +137,11 @@ if __name__ == '__main__':
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
         for ans in true_answers:
             if ans not in expanded_prompt:
+                print(expanded_prompt, true_answers)
                 c += 1
                 break
+        if c>1:
+            break
 
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
