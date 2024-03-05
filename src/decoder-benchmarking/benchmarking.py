@@ -11,7 +11,7 @@ from transformers import AutoTokenizer, pipeline
 class QADataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
-        for row in tqdm(ds['test']):
+        for row in tqdm(ds):
             context = row['context'] if ds != 'ibm/duorc' else row['plot']
             context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
                                        stride=200, return_overflowing_tokens=True)
@@ -61,11 +61,13 @@ if __name__ == '__main__':
 
     checkpoint = args.model_checkpoint
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
 
     if args.dataset == 'ibm/duorc':
         dataset = load_dataset('ibm/duorc', 'SelfRC')
     else:
-        dataset = load_dataset(args.dataset, token=True)
+        dataset = load_dataset(args.dataset, token=True, trust_remote_code=True)
 
     # Changing dataset split names for consistency
     if args.dataset in ['squad', 'Saptarshi7/techqa-squad-style']:
@@ -75,11 +77,17 @@ if __name__ == '__main__':
     elif args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
         dataset['test'] = dataset.pop('train')
 
-    formatted_dataset = QADataset(dataset, args.prompt)
+    # Keeping only answerable questions for TechQA & DuoRC
+    if args.dataset == 'Saptarshi7/techqa-squad-style':
+        dataset['test'] = dataset['test'].filter(lambda x: x['answers']['text'] != [])
+    elif args.dataset == 'ibm/duorc':
+        dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
+
+    formatted_dataset = QADataset(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
-    for i, j in zip(iter(formatted_dataset), dataset['train']['answers']):
+    for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
         if j['text'][0] not in i:
             c += 1
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
@@ -87,7 +95,7 @@ if __name__ == '__main__':
         exit('Exited program because of inconsistent number of samples...')
 
     gold_answers = []
-    for el in dataset['train']['answers']:
+    for el in dataset['test']['answers']:
         gold_answers.append(el['text'])
 
     # Loading models start here
@@ -97,11 +105,15 @@ if __name__ == '__main__':
         print('The Falcon has landed... ;)')
     else:
         generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='auto')
+        print(f'Model: {checkpoint} loaded...')
 
+    print('Generating Predictions...')
     predictions = []
-    for batch in tqdm(dataloader):
-        generations = generator(batch, max_new_tokens=50)
-        predictions.extend([x[0]['generated_text'].split(args.answer_prompt)[1].strip() for x in generations])
+    # Using Flash Attention...
+    with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+        for batch in tqdm(dataloader):
+            generations = generator(batch, max_new_tokens=50)
+            predictions.extend([x[0]['generated_text'].split(args.answer_prompt)[1].strip() for x in generations])
 
     print('Computing Scores...')
     metric = load_metric('squad')
