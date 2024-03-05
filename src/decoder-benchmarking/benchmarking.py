@@ -42,7 +42,7 @@ class SQUAD(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question']))
+            self.samples.append(prompt.format(context=row['plot'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
@@ -56,8 +56,8 @@ class DuoRC(Dataset):
         self.samples = []
         for row in tqdm(ds):
             context = row['plot']
-            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1024,
-                                       stride=300, return_overflowing_tokens=True)
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1500,
+                                       stride=512, return_overflowing_tokens=True)
             true_spans = row['answers']
             question = row['question']
 
@@ -137,13 +137,15 @@ if __name__ == '__main__':
     if args.dataset == 'squad':
         formatted_dataset = SQUAD(dataset['test'], args.prompt)
     else:
-        formatted_dataset = DuoRC(dataset['test'], args.prompt)
+        formatted_dataset = SQUAD(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
     for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
-        if j[0] not in i:
-            c += 1
+        for x in j:
+            if x not in i:
+                c += 1
+                break
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
         exit('Exited program because of inconsistent number of samples...')
