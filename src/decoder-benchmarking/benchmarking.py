@@ -42,7 +42,7 @@ class SQUAD(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['plot'], question=row['question']))
+            self.samples.append(prompt.format(context=row['context'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
@@ -137,15 +137,15 @@ if __name__ == '__main__':
     if args.dataset == 'squad':
         formatted_dataset = SQUAD(dataset['test'], args.prompt)
     else:
+        print(len(dataset['test']))
         formatted_dataset = SQUAD(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
     for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
-        for x in j:
-            if x not in i:
-                c += 1
-                break
+        print(i, j)
+        if j[0] not in i:
+            c += 1
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
         exit('Exited program because of inconsistent number of samples...')
