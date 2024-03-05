@@ -56,7 +56,7 @@ class DuoRC(Dataset):
         self.samples = []
         for row in tqdm(ds):
             context = row['plot']
-            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=500,
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1024,
                                        stride=100, return_overflowing_tokens=True)
             true_spans = row['answers']
             question = row['question']
