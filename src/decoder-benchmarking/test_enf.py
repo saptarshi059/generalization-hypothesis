@@ -110,7 +110,7 @@ You are a helpful, respectful and honest assistant. Always answer as helpfully a
 """
 DEFAULT_MAX_NEW_TOKENS = 10
 
-required_format_answer_regex = r'\b\d{1,2}:\b'
+required_format_answer_regex = r'(\d{1,2}:)'
 answer_prompt = ' In number: format, answer the question: {question} based on the context: {numbered_ctx} ' + required_format_answer_regex
 
 result, enforced_scores = run(answer_prompt, system_prompt=DEFAULT_SYSTEM_PROMPT, max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
