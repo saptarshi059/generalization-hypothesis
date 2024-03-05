@@ -111,7 +111,7 @@ You are a helpful, respectful and honest assistant. Always answer as helpfully a
 DEFAULT_MAX_NEW_TOKENS = 5
 
 required_format_answer_regex = r'\d{1,2}:'
-answer_prompt = ' {question} based on the context: {numbered_ctx} ' + required_format_answer_regex
+answer_prompt = ' In number: format, When did Beyonce start becoming popular? based on the context: {numbered_ctx} ' + required_format_answer_regex
 
 result, enforced_scores = run(question, system_prompt=DEFAULT_SYSTEM_PROMPT, max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
                               required_regex=answer_prompt)
