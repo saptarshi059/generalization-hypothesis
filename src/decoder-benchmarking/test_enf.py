@@ -19,6 +19,16 @@ if tokenizer.pad_token_id is None:
 tokenizer_data = build_token_enforcer_tokenizer_data(tokenizer)
 
 
+def get_prompt(message: str, system_prompt: str) -> str:
+    texts = [f'<bos><start_of_turn>user'
+             f'{message}<end_of_turn>'
+             f'<start_of_turn>model']
+    # The first user input is _not_ stripped
+    do_strip = False
+    message = message.strip() if do_strip else message
+    return message
+
+
 def run(message: StringOrManyStrings,
         system_prompt: str,
         max_new_tokens: int = 1024,
@@ -98,11 +108,11 @@ numbered_ctx = ' '.join(str(x) + ': ' + y for x, y in sent_dict.items())
 DEFAULT_SYSTEM_PROMPT = """\
 You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature.\n\nIf a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.\
 """
-MAX_MAX_NEW_TOKENS = 20
 DEFAULT_MAX_NEW_TOKENS = 10
 
 required_format_answer_regex = r'\b\d{1,2}:\b'
 answer_prompt = ' In number: format, answer the question: {question} based on the context: {numbered_ctx} ' + required_format_answer_regex
 
-result, enforced_scores = run(answer_prompt, system_prompt=DEFAULT_SYSTEM_PROMPT, max_new_tokens=DEFAULT_MAX_NEW_TOKENS, required_regex=required_format_answer_regex)
+result, enforced_scores = run(answer_prompt, system_prompt=DEFAULT_SYSTEM_PROMPT, max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
+                              required_regex=required_format_answer_regex)
 print(result)
