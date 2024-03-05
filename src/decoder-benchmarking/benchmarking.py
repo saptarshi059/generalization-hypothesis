@@ -142,6 +142,7 @@ if __name__ == '__main__':
                 break
         if c==1:
             print(expanded_prompt, true_answers)
+            break
 
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
