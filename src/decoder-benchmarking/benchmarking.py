@@ -134,11 +134,12 @@ if __name__ == '__main__':
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
-    for i, j in zip(iter(formatted_dataset), dataset['test']['answers']):
-        print(i, j)
-        break
-        if j[0] not in i:
-            c += 1
+    for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
+        for ans in true_answers:
+            if ans not in expanded_prompt:
+                c += 1
+                break
+
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
         exit('Exited program because of inconsistent number of samples...')
