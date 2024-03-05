@@ -102,8 +102,8 @@ for idx, sent in enumerate(sent_tokenize(context)):
     sent_dict[idx] = sent
 numbered_ctx = ' '.join(str(x) + ': ' + y for x, y in sent_dict.items())
 
-question = (f"When did Beyonce start becoming popular? "
-            f"Please answer in number: format based on the context: {numbered_ctx}")
+question = (f"Based on the context: {numbered_ctx}, When did Beyonce start becoming popular? "
+            f"Please answer in number: format.")
 
 
 DEFAULT_SYSTEM_PROMPT = """\
