@@ -137,7 +137,7 @@ if __name__ == '__main__':
     if args.dataset == 'squad':
         formatted_dataset = SQUAD(dataset['test'], args.prompt)
     else:
-        formatted_dataset = QADataset(dataset['test'], args.prompt)
+        formatted_dataset = DuoRC(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
