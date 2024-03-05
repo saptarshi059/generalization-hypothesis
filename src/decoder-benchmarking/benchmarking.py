@@ -134,14 +134,12 @@ if __name__ == '__main__':
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
+    import re
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
         for ans in true_answers:
-            if ans not in expanded_prompt:
-                print(expanded_prompt, true_answers)
+            if not re.search(ans, expanded_prompt, re.IGNORECASE):
                 c += 1
                 break
-        if c>1:
-            break
 
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
