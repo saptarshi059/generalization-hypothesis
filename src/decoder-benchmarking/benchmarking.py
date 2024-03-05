@@ -105,12 +105,10 @@ if __name__ == '__main__':
 
     c = 0
     import re
-    d = []
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
         for ans in true_answers['text']:
-            if not re.search(fr'{ans}', expanded_prompt, re.IGNORECASE):
+            if not re.search(fr'{re.escape(ans)}', expanded_prompt, re.IGNORECASE):
                 c += 1
-                d.append((expanded_prompt, ans))
                 break
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
     if c != 0:
