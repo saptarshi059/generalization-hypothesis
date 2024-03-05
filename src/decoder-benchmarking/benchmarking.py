@@ -96,7 +96,7 @@ if __name__ == '__main__':
     elif args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
-    if args.dataset == 'squad':
+    if args.dataset == 'ibm/duorc':
         formatted_dataset = SQUAD(dataset['test'], args.prompt)
     else:
         formatted_dataset = QADataset(dataset['test'], args.prompt)
