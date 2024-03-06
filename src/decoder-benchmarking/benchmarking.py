@@ -44,7 +44,7 @@ class TechQA(Dataset):
         for row in tqdm(ds):
             context = row['context']
             context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1500,
-                                       stride=200, return_overflowing_tokens=True)
+                                       stride=1000, return_overflowing_tokens=True)
             true_spans = row['answers']['text']
             question = row['question']
 
