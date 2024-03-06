@@ -38,6 +38,45 @@ class QADataset(Dataset):
         return self.samples[idx]
 
 
+class TechQA(Dataset):
+    def __init__(self, ds, prompt):
+        self.samples = []
+        for row in tqdm(ds):
+            context = row['context']
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1024,
+                                       stride=200, return_overflowing_tokens=True)
+            true_spans = row['answers']['text']
+            question = row['question']
+
+            flag = 0
+            for chunk in context_chunks['input_ids']:
+                decoded_chunk = tokenizer.decode(chunk, clean_up_tokenization_spaces=False)
+                for ans in true_spans:
+                    if ans in decoded_chunk:
+                        flag = 1
+                    else:
+                        flag = 0
+                        break
+                if flag == 1:
+                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
+                    break
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        return self.samples[idx]
+
+
+
+
+
+
+
+
+
+
+
 class NoChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
@@ -100,8 +139,8 @@ if __name__ == '__main__':
 
     if args.dataset in ['squad', 'ibm/duorc']:
         formatted_dataset = NoChunkDataset(dataset['test'], args.prompt)
-    else:
-        formatted_dataset = QADataset(dataset['test'], args.prompt)
+    elif args.dataset == 'Saptarshi7/techqa-squad-style':
+        formatted_dataset = TechQA(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
