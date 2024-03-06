@@ -128,13 +128,16 @@ if __name__ == '__main__':
     '''
 
     # Loading models start here
+    '''
     if checkpoint == 'tiiuae/falcon-7b-instruct':
         generator = pipeline("text-generation", model=checkpoint, tokenizer=tokenizer, torch_dtype=torch.bfloat16,
                              trust_remote_code=True, device_map="auto", pad_token_id=tokenizer.eos_token_id)
         print('The Falcon has landed... ;)')
     else:
-        generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='auto')
-        print(f'Model: {checkpoint} loaded...')
+    '''
+
+    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='auto')
+    print(f'Model: {checkpoint} loaded...')
 
     print('Generating Predictions...')
     predictions = []
