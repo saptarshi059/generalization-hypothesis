@@ -138,7 +138,7 @@ if __name__ == '__main__':
     else:
     '''
 
-    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='cuda:1',
+    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
