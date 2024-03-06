@@ -38,11 +38,13 @@ class QADataset(Dataset):
         return self.samples[idx]
 
 
-class SQUAD(Dataset):
+class NoChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question']))
+            self.samples.append(prompt.format(context=row['context'], question=row['question'])
+                                if args.dataset == 'squad' else
+                                prompt.format(context=row['plot'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
@@ -96,11 +98,10 @@ if __name__ == '__main__':
     elif args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
-    if args.dataset == 'squad':
-        formatted_dataset = SQUAD(dataset['test'], args.prompt)
+    if args.dataset in ['squad', 'ibm/duorc']:
+        formatted_dataset = NoChunkDataset(dataset['test'], args.prompt)
     else:
-        print(len(dataset['test']))
-        formatted_dataset = SQUAD(dataset['test'], args.prompt)
+        formatted_dataset = QADataset(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     c = 0
