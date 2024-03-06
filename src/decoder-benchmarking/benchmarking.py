@@ -8,43 +8,21 @@ from tqdm import tqdm
 from transformers import AutoTokenizer, pipeline
 
 
-class QADataset(Dataset):
-    def __init__(self, ds, prompt):
-        self.samples = []
-        for row in tqdm(ds):
-            context = row['context'] if args.dataset != 'ibm/duorc' else row['plot']
-            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
-                                       stride=200, return_overflowing_tokens=True)
-            true_spans = row['answers']['text'] if args.dataset != 'ibm/duorc' else row['answers']
-            question = row['question']
-
-            flag = 0
-            for chunk in context_chunks['input_ids']:
-                decoded_chunk = tokenizer.decode(chunk, clean_up_tokenization_spaces=False)
-                for ans in true_spans:
-                    if ans in decoded_chunk:
-                        flag = 1
-                    else:
-                        flag = 0
-                        break
-                if flag == 1:
-                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
-                    break
-
-    def __len__(self):
-        return len(self.samples)
-
-    def __getitem__(self, idx):
-        return self.samples[idx]
-
-
-class TechQA(Dataset):
+class ChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
             context = row['context']
-            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=95,
-                                       stride=10, return_overflowing_tokens=True)
+            if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
+                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
+                                           stride=200, return_overflowing_tokens=True)
+            elif args.dataset == 'Saptarshi7/techqa-squad-style':
+                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1024,
+                                           stride=50, return_overflowing_tokens=True)
+            else:  # CUAD
+                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1900,
+                                           stride=1800, return_overflowing_tokens=True)
+
             true_spans = row['answers']['text']
             question = row['question']
 
@@ -58,7 +36,7 @@ class TechQA(Dataset):
                         flag = 0
                         break
                 if flag == 1:
-                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
+                    self.samples.append((prompt.format(context=decoded_chunk, question=question), true_spans))
                     break
 
     def __len__(self):
@@ -68,22 +46,13 @@ class TechQA(Dataset):
         return self.samples[idx]
 
 
-
-
-
-
-
-
-
-
-
 class NoChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question'])
-                                if args.dataset == 'squad' else
-                                prompt.format(context=row['plot'], question=row['question']))
+            self.samples.append((prompt.format(context=row['context'], question=row['question']),
+                                 row['answers']['text']) if args.dataset == 'squad' else
+                                (prompt.format(context=row['plot'], question=row['question']), row['answers']))
 
     def __len__(self):
         return len(self.samples)
@@ -131,18 +100,19 @@ if __name__ == '__main__':
     elif args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
         dataset['test'] = dataset.pop('train')
 
-    # Keeping only answerable questions for TechQA & DuoRC
-    if args.dataset == 'Saptarshi7/techqa-squad-style':
+    # Keeping only answerable questions for TechQA/DuoRC/CUAD
+    if args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
         dataset['test'] = dataset['test'].filter(lambda x: x['answers']['text'] != [])
     elif args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
     if args.dataset in ['squad', 'ibm/duorc']:
         formatted_dataset = NoChunkDataset(dataset['test'], args.prompt)
-    elif args.dataset == 'Saptarshi7/techqa-squad-style':
-        formatted_dataset = TechQA(dataset['test'], args.prompt)
+    else:
+        formatted_dataset = ChunkDataset(dataset['test'], args.prompt)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
+    '''
     c = 0
     import re
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
@@ -155,10 +125,7 @@ if __name__ == '__main__':
         exit('Exited program because of inconsistent number of samples...')
     else:
         exit('Dataset can be processed correctly by this model...')
-
-    gold_answers = []
-    for el in dataset['test']['answers']:
-        gold_answers.append(el['text'])
+    '''
 
     # Loading models start here
     if checkpoint == 'tiiuae/falcon-7b-instruct':
@@ -171,11 +138,14 @@ if __name__ == '__main__':
 
     print('Generating Predictions...')
     predictions = []
+    gold_answers = []
     # Using Flash Attention...
     with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
         for batch in tqdm(dataloader):
-            generations = generator(batch, max_new_tokens=50)
+            generations = generator(batch[0], max_new_tokens=50)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
+            gold_answers.append(batch[1])
+            break
 
     print('Computing Scores...')
     metric = load_metric('squad')
