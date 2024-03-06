@@ -145,9 +145,9 @@ if __name__ == '__main__':
     # Using Flash Attention...
     with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
         for batch in tqdm(dataloader):
-            print(batch[0])
-            generations = generator(batch[0], max_new_tokens=50)
+            generations = generator(list(batch[0]), max_new_tokens=50)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
+            print(batch[1])
             gold_answers.append(batch[1])
             break
 
