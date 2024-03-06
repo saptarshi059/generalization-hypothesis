@@ -5,7 +5,7 @@ import torch
 from datasets import load_dataset, load_metric
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, pipeline, set_seed
 
 
 class ChunkDataset(Dataset):
@@ -82,6 +82,8 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', default=40)
     args = parser.parse_args()
 
+    set_seed(43)
+
     checkpoint = args.model_checkpoint
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     if tokenizer.pad_token is None:
@@ -143,13 +145,12 @@ if __name__ == '__main__':
     predictions = []
     gold_answers = []
     # Using Flash Attention...
-    with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
-        for batch in tqdm(dataloader):
-            generations = generator(list(batch[0]), max_new_tokens=50)
-            predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
-            print(batch[1])
-            gold_answers.append(list(batch[1]))
-            break
+    #with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+    for batch in tqdm(dataloader):
+        generations = generator(list(batch[0]), max_new_tokens=50)
+        predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
+        gold_answers.append(list(batch[1]))
+        break
 
     print('Computing Scores...')
     metric = load_metric('squad')
