@@ -149,6 +149,7 @@ if __name__ == '__main__':
         for ans in true_answers['text'] if args.dataset != 'ibm/duorc' else true_answers:
             if not re.search(fr'{re.escape(ans)}', expanded_prompt, re.IGNORECASE):
                 print(expanded_prompt, ans)
+                print('>>>>>>>>>>>>>>>>>>>>>>')
                 c += 1
                 break
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
