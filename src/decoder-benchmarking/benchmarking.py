@@ -83,7 +83,7 @@ class NoChunkDataset(Dataset):
         for row in tqdm(ds):
             self.samples.append(prompt.format(context=row['context'], question=row['question'])
                                 if args.dataset == 'squad' else
-                                prompt.format(context=row['plot'], question=row['question']))
+                                prompt.format(context=row['context'], question=row['question']))
 
     def __len__(self):
         return len(self.samples)
