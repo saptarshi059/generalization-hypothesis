@@ -79,7 +79,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', default='Saptarshi7/covid_qa_cleaned_CS')
     parser.add_argument('--model_checkpoint', default='medalpaca/medalpaca-7b')
     parser.add_argument('--prompt', default='Context: {context}\n\nQuestion: {question}\n\nAnswer: ')
-    parser.add_argument('--batch_size', default=40)
+    parser.add_argument('--batch_size', type=int, default=40)
     args = parser.parse_args()
 
     set_seed(43)
