@@ -80,7 +80,7 @@ if __name__ == '__main__':
         tokenizer.pad_token = tokenizer.eos_token
 
     if args.dataset == 'ibm/duorc':
-        dataset = load_dataset('ibm/duorc', 'ParaphraseRC')
+        dataset = load_dataset('ibm/duorc', 'SelfRC')
     else:
         dataset = load_dataset(args.dataset, token=True, trust_remote_code=True)
 
@@ -109,8 +109,6 @@ if __name__ == '__main__':
     for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
         for ans in true_answers['text'] if args.dataset != 'ibm/duorc' else true_answers:
             if not re.search(fr'{re.escape(ans)}', expanded_prompt, re.IGNORECASE):
-                print(expanded_prompt, ans)
-                print(".>>>>>>>>>>>>>>>>>>>>")
                 c += 1
                 break
     print(f'No. of context chunks NOT containing the respective answer span: {c}')
