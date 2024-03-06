@@ -148,7 +148,7 @@ if __name__ == '__main__':
             generations = generator(list(batch[0]), max_new_tokens=50)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
             print(batch[1])
-            gold_answers.append(batch[1])
+            gold_answers.append(list(batch[1]))
             break
 
     print('Computing Scores...')
