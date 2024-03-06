@@ -80,7 +80,7 @@ if __name__ == '__main__':
         tokenizer.pad_token = tokenizer.eos_token
 
     if args.dataset == 'ibm/duorc':
-        dataset = load_dataset('ibm/duorc', 'SelfRC')
+        dataset = load_dataset('ibm/duorc', 'ParaphraseRC')
     else:
         dataset = load_dataset(args.dataset, token=True, trust_remote_code=True)
 
