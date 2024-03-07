@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 import torch
 from datasets import load_dataset, load_metric
+from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 from transformers import AutoTokenizer, pipeline, set_seed
@@ -149,7 +150,8 @@ if __name__ == '__main__':
     # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
     for batch in tqdm(dataloader):
         try:
-            generations = generator(list(batch[0]), max_new_tokens=50, renormalize_logits=True)
+            padded_batch = pad_sequence(list(batch[0]), batch_first=True, padding_value=tokenizer.pad_token_id)
+            generations = generator(padded_batch, max_new_tokens=50, renormalize_logits=True)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
             gold_answers.append(list(batch[1]))
         except Exception as e:
