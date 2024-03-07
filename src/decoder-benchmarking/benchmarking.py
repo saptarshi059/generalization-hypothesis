@@ -51,7 +51,7 @@ class NoChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question']),
+            self.samples.append(prompt.format(context=row['context'], question=row['question'])
                                 if args.dataset == 'squad' else
                                 (prompt.format(context=row['plot'], question=row['question'])))
 
