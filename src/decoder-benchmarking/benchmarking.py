@@ -170,7 +170,7 @@ if __name__ == '__main__':
                  columns=['predictions', 'reference']).to_pickle(f'{checkpoint.replace("/", "_")}_preds.pkl')
 
     count = 0
-    for (pred, ctx) in zip(predictions, dataset['train']['context']):
+    for (pred, ctx) in zip(predictions, dataset['test']['context']):
         if pred in ctx:
             count += 1
     print(f'No. of predictions ACTUALLY (exactly) IN the entire context: {count}')
