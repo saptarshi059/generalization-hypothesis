@@ -37,7 +37,7 @@ class ChunkDataset(Dataset):
                         flag = 0
                         break
                 if flag == 1:
-                    self.samples.append((prompt.format(context=decoded_chunk, question=question), true_spans))
+                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
                     break
 
     def __len__(self):
@@ -51,9 +51,9 @@ class NoChunkDataset(Dataset):
     def __init__(self, ds, prompt):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append((prompt.format(context=row['context'], question=row['question']),
-                                 row['answers']['text']) if args.dataset == 'squad' else
-                                (prompt.format(context=row['plot'], question=row['question']), row['answers']))
+            self.samples.append(prompt.format(context=row['context'], question=row['question']),
+                                if args.dataset == 'squad' else
+                                (prompt.format(context=row['plot'], question=row['question'])))
 
     def __len__(self):
         return len(self.samples)
@@ -143,17 +143,19 @@ if __name__ == '__main__':
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
-    print('Generating Predictions...')
-    predictions = []
     gold_answers = []
+    for el in dataset['test']['answers']:
+        gold_answers.append(el['text'])
+
     # Using Flash Attention...
     # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+    print('Generating Predictions...')
+    predictions = []
     for batch in tqdm(dataloader):
         try:
-            padded_batch = pad_sequence(list(batch[0]), batch_first=True, padding_value=tokenizer.pad_token_id)
-            generations = generator(list(padded_batch), max_new_tokens=50, renormalize_logits=True)
+            #padded_batch = pad_sequence(batch[0], batch_first=True, padding_value=tokenizer.pad_token_id)
+            generations = generator(batch, max_new_tokens=50, renormalize_logits=True)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
-            gold_answers.append(list(batch[1]))
         except Exception as e:
             print(f"An exception occurred: {e}")
             print(f"Batch content: {batch}")
