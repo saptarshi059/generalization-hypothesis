@@ -152,7 +152,7 @@ if __name__ == '__main__':
             generations = generator(list(batch[0]), max_new_tokens=50, renormalize_logits=True)
             predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
             gold_answers.append(list(batch[1]))
-        except:
+        except RuntimeError:
             print(batch)
 
     print('Computing Scores...')
