@@ -148,9 +148,12 @@ if __name__ == '__main__':
     # Using Flash Attention...
     # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
     for batch in tqdm(dataloader):
-        generations = generator(list(batch[0]), max_new_tokens=50, renormalize_logits=True)
-        predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
-        gold_answers.append(list(batch[1]))
+        try:
+            generations = generator(list(batch[0]), max_new_tokens=50, renormalize_logits=True)
+            predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
+            gold_answers.append(list(batch[1]))
+        except:
+            print(batch)
 
     print('Computing Scores...')
     metric = load_metric('squad', trust_remote_code=True)
