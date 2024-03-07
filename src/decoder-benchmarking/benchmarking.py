@@ -3,7 +3,6 @@ import argparse
 import pandas as pd
 import torch
 from datasets import load_dataset, load_metric
-from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 from transformers import AutoTokenizer, pipeline, set_seed
@@ -130,15 +129,6 @@ if __name__ == '__main__':
         exit('Dataset can be processed correctly by this model...')
     '''
 
-    # Loading models start here
-    '''
-    if checkpoint == 'tiiuae/falcon-7b-instruct':
-        generator = pipeline("text-generation", model=checkpoint, tokenizer=tokenizer, torch_dtype=torch.bfloat16,
-                             trust_remote_code=True, device_map="auto", pad_token_id=tokenizer.eos_token_id)
-        print('The Falcon has landed... ;)')
-    else:
-    '''
-
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
@@ -152,13 +142,8 @@ if __name__ == '__main__':
     print('Generating Predictions...')
     predictions = []
     for batch in tqdm(dataloader):
-        try:
-            #padded_batch = pad_sequence(batch[0], batch_first=True, padding_value=tokenizer.pad_token_id)
-            generations = generator(batch, max_new_tokens=50, renormalize_logits=True)
-            predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
-        except Exception as e:
-            print(f"An exception occurred: {e}")
-            print(f"Batch content: {batch}")
+        generations = generator(batch, max_new_tokens=50, renormalize_logits=True)
+        predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
 
     print('Computing Scores...')
     metric = load_metric('squad', trust_remote_code=True)

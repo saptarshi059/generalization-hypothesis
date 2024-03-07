@@ -1,7 +1,7 @@
 export CUDA_VISIBLE_DEVICES=1
 
-#python benchmarking.py --model_checkpoint google/gemma-7b-it --dataset Saptarshi7/covid_qa_cleaned_CS
-#python benchmarking.py --model_checkpoint BioMistral/BioMistral-7B --dataset Saptarshi7/covid_qa_cleaned_CS
+python benchmarking.py --model_checkpoint google/gemma-7b-it --dataset Saptarshi7/covid_qa_cleaned_CS
+python benchmarking.py --model_checkpoint BioMistral/BioMistral-7B --dataset Saptarshi7/covid_qa_cleaned_CS
 
 python benchmarking.py --model_checkpoint tiiuae/falcon-7b-instruct --dataset squad
 python benchmarking.py --model_checkpoint garage-bAInd/Platypus2-7B --dataset squad
