@@ -80,6 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_checkpoint', default='medalpaca/medalpaca-7b')
     parser.add_argument('--prompt', default='Context: {context}\n\nQuestion: {question}\n\nAnswer: ')
     parser.add_argument('--batch_size', type=int, default=40)
+    parser.add_argument('--max_new_tokens', type=int, default=50)
     args = parser.parse_args()
 
     set_seed(43)
@@ -142,7 +143,7 @@ if __name__ == '__main__':
     print('Generating Predictions...')
     predictions = []
     for batch in tqdm(dataloader):
-        generations = generator(batch, max_new_tokens=50, renormalize_logits=True)
+        generations = generator(batch, max_new_tokens=args.max_new_tokens, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
 
     print('Computing Scores...')
