@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     gold_answers = []
     for el in dataset['test']['answers']:
-        gold_answers.append(el['text'])
+        gold_answers.append(el['text'] if args.dataset != 'ibm/duorc' else el)
 
     # Using Flash Attention...
     # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
