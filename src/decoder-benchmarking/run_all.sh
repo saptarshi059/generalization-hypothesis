@@ -19,8 +19,8 @@ python benchmarking.py --model_checkpoint mistralai/Mistral-7B-Instruct-v0.2 --d
 #python benchmarking.py --model_checkpoint mistralai/Mistral-7B-Instruct-v0.2 --dataset Saptarshi7/techqa-squad-style
 #python benchmarking.py --model_checkpoint microsoft/phi-2 --dataset Saptarshi7/techqa-squad-style
 
-python benchmarking.py --model_checkpoint tiiuae/falcon-7b-instruct --dataset cuad
-python benchmarking.py --model_checkpoint garage-bAInd/Platypus2-7B --dataset cuad
-python benchmarking.py --model_checkpoint google/gemma-7b-it --dataset cuad
-python benchmarking.py --model_checkpoint mistralai/Mistral-7B-Instruct-v0.2 --dataset cuad
+#python benchmarking.py --model_checkpoint tiiuae/falcon-7b-instruct --dataset cuad
+#python benchmarking.py --model_checkpoint garage-bAInd/Platypus2-7B --dataset cuad
+#python benchmarking.py --model_checkpoint google/gemma-7b-it --dataset cuad
+#python benchmarking.py --model_checkpoint mistralai/Mistral-7B-Instruct-v0.2 --dataset cuad
 python benchmarking.py --model_checkpoint AdaptLLM/law-LLM --dataset cuad
