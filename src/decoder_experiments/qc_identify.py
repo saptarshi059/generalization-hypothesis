@@ -112,35 +112,31 @@ if __name__ == '__main__':
         formatted_dataset = ChunkDataset(dataset['test'])
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
-    for batch_question, batch_ctx, batch_prompts in tqdm(dataloader):
-        print(batch_question)
-        print('............................................')
-        print(batch_ctx)
-        print('............................................')
-        print(batch_prompts)
-        print('............................................')
-        break
-
-    '''
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
+    '''
     gold_answers = []
     for el in dataset['test']['answers']:
         gold_answers.append(el['text'] if args.dataset != 'ibm/duorc' else el)
-
+    '''
     gold_answers = [x['text'] for x in dataset['test']['answers'][:2]]
 
     print('Generating Predictions...')
+    questions = []
+    contexts = []
+    prompts = []
     predictions = []
-    for batch in tqdm(dataloader):
-        generations = generator(batch, max_new_tokens=1500, renormalize_logits=True)
+    for batch_questions, batch_ctx, batch_prompts in tqdm(dataloader):
+        questions.extend(batch_questions)
+        contexts.extend(batch_ctx)
+        prompts.extend(batch_prompts)
+        generations = generator(list(batch_prompts), max_new_tokens=1500, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'] for x in generations])
         break
 
     print('Saving predictions...')
-    pd.DataFrame(zip(predictions, gold_answers),
-                 columns=['predictions', 'reference']).to_pickle(f'{checkpoint.replace("/", "_")}'
-                                                                 f'_{args.dataset}_preds.pkl')
-    '''
+    pd.DataFrame(zip(questions, contexts, prompts, predictions),
+                 columns=['questions', 'contexts', 'prompts',
+                          'predictions']).to_pickle(f'{checkpoint.replace("/", "_")}_{args.dataset}_qc_identify.pkl')
