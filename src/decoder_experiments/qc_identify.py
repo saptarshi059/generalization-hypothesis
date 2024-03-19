@@ -84,8 +84,6 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=40)
     args = parser.parse_args()
 
-    set_seed(43)
-
     checkpoint = args.model_checkpoint
     tokenizer = AutoTokenizer.from_pretrained(checkpoint)
     if tokenizer.pad_token is None:
@@ -129,10 +127,11 @@ if __name__ == '__main__':
         questions.extend(batch_questions)
         contexts.extend(batch_ctx)
         prompts.extend(batch_prompts)
+        set_seed(42)
         generations = generator(list(batch_prompts), max_new_tokens=1500, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'] for x in generations])
 
     print('Saving predictions...')
     pd.DataFrame(zip(questions, contexts, prompts, predictions),
-                 columns=['questions', 'contexts', 'prompts',
-                          'predictions']).to_pickle(f'{checkpoint.replace("/", "_")}_{args.dataset}_qc_identify.pkl')
+                 columns=['question', 'context', 'prompt',
+                          'prediction']).to_pickle(f'{checkpoint.replace("/", "_")}_{args.dataset}_qc_identify.pkl')
