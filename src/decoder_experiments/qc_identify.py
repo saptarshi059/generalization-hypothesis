@@ -130,7 +130,7 @@ if __name__ == '__main__':
     predictions = []
     for batch in tqdm(dataloader):
         generations = generator(batch, max_new_tokens=1500, renormalize_logits=True)
-        predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
+        predictions.extend([x[0]['generated_text'] for x in generations])
 
     print('Saving predictions...')
     pd.DataFrame(zip(predictions, gold_answers),
