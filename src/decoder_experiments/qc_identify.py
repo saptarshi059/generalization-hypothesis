@@ -52,7 +52,7 @@ class NoChunkDataset(Dataset):
             context = row['context'] if args.dataset == 'squad' else row['plot']
             chat = [{"role": "user",
                      "content": f"Write the context and question exactly.\nContext: {context}"
-                                f"\nQuestion: {question}"}]
+                                f"\nQuestion: {question}\n"}]
             prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
             final_tuple = (question, context, prompt)
             self.samples.append(final_tuple)
