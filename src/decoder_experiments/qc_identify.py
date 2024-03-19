@@ -112,19 +112,24 @@ if __name__ == '__main__':
         formatted_dataset = ChunkDataset(dataset['test'])
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
-    gold_answers = [x['text'] for x in dataset['test']['answers'][:2]]
-    print(gold_answers)
+    for batch_question, batch_ctx, batch_prompts in tqdm(dataloader):
+        print(batch_question)
+        print('............................................')
+        print(batch_ctx)
+        print('............................................')
+        print(batch_prompts)
+        print('............................................')
 
+    '''
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
-    '''
     gold_answers = []
     for el in dataset['test']['answers']:
         gold_answers.append(el['text'] if args.dataset != 'ibm/duorc' else el)
-    '''
-    #gold_answers = [x['text'] for x in dataset['test']['answers'][:2]]
+
+    gold_answers = [x['text'] for x in dataset['test']['answers'][:2]]
 
     print('Generating Predictions...')
     predictions = []
@@ -137,3 +142,4 @@ if __name__ == '__main__':
     pd.DataFrame(zip(predictions, gold_answers),
                  columns=['predictions', 'reference']).to_pickle(f'{checkpoint.replace("/", "_")}'
                                                                  f'_{args.dataset}_preds.pkl')
+    '''
