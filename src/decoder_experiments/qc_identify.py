@@ -119,6 +119,7 @@ if __name__ == '__main__':
         print('............................................')
         print(batch_prompts)
         print('............................................')
+        break
 
     '''
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
