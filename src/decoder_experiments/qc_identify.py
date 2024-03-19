@@ -52,7 +52,7 @@ class NoChunkDataset(Dataset):
             context = row['context'] if args.dataset == 'squad' else row['plot']
             chat = [{"role": "user",
                      "content": f"Write the context and question exactly.\nContext: {context}"
-                                f"\nQuestion: {question}\n"}]
+                                f"\nQuestion: {question}"}]
             prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
             final_tuple = (question, context, prompt)
             self.samples.append(final_tuple)
@@ -116,12 +116,9 @@ if __name__ == '__main__':
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
-    '''
     gold_answers = []
     for el in dataset['test']['answers']:
         gold_answers.append(el['text'] if args.dataset != 'ibm/duorc' else el)
-    '''
-    gold_answers = [x['text'] for x in dataset['test']['answers'][:2]]
 
     print('Generating Predictions...')
     questions = []
@@ -134,7 +131,6 @@ if __name__ == '__main__':
         prompts.extend(batch_prompts)
         generations = generator(list(batch_prompts), max_new_tokens=1500, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'] for x in generations])
-        break
 
     print('Saving predictions...')
     pd.DataFrame(zip(questions, contexts, prompts, predictions),
