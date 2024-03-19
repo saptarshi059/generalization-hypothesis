@@ -2,7 +2,7 @@ import argparse
 
 import pandas as pd
 import torch
-from datasets import load_dataset, load_metric
+from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
 from transformers import AutoTokenizer, pipeline, set_seed
@@ -13,15 +13,8 @@ class ChunkDataset(Dataset):
         self.samples = []
         for row in tqdm(ds):
             context = row['context']
-            if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400,
-                                           stride=200, return_overflowing_tokens=True)
-            elif args.dataset == 'Saptarshi7/techqa-squad-style':
-                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1024,
-                                           stride=50, return_overflowing_tokens=True)
-            else:  # CUAD
-                context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=1900,
-                                           stride=1800, return_overflowing_tokens=True)
+            context_chunks = tokenizer(context, add_special_tokens=False, truncation=True, max_length=400, stride=200,
+                                       return_overflowing_tokens=True)
 
             true_spans = row['answers']['text']
             question = row['question']
@@ -36,7 +29,12 @@ class ChunkDataset(Dataset):
                         flag = 0
                         break
                 if flag == 1:
-                    self.samples.append(prompt.format(context=decoded_chunk, question=question))
+                    chat = [{"role": "user",
+                             "content": f"Write the context and question exactly.\nContext: {decoded_chunk}"
+                                        f"\nQuestion: {question}"}]
+                    prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+                    final_tuple = (question, decoded_chunk, prompt)
+                    self.samples.append(final_tuple)
                     break
 
     def __len__(self):
@@ -78,9 +76,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default='Saptarshi7/covid_qa_cleaned_CS')
     parser.add_argument('--model_checkpoint', default='medalpaca/medalpaca-7b')
-    parser.add_argument('--prompt', default='Context: {context}\n\nQuestion: {question}\n\nAnswer: ')
     parser.add_argument('--batch_size', type=int, default=40)
-    parser.add_argument('--max_new_tokens', type=int, default=50)
     args = parser.parse_args()
 
     set_seed(43)
@@ -96,41 +92,27 @@ if __name__ == '__main__':
         dataset = load_dataset(args.dataset, token=True, trust_remote_code=True)
 
     # Changing dataset split names for consistency
-    if args.dataset in ['squad', 'Saptarshi7/techqa-squad-style']:
+    if args.dataset == 'squad':
         dataset['test'] = dataset.pop('validation')
-    elif args.dataset in ['cuad', 'ibm/duorc']:
-        pass  # Since they already contain a test split
     elif args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
         dataset['test'] = dataset.pop('train')
 
     # Keeping only answerable questions for TechQA/DuoRC/CUAD
-    if args.dataset in ['Saptarshi7/techqa-squad-style', 'cuad']:
-        dataset['test'] = dataset['test'].filter(lambda x: x['answers']['text'] != [])
-    elif args.dataset == 'ibm/duorc':
+    if args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
     if args.dataset in ['squad', 'ibm/duorc']:
-        formatted_dataset = NoChunkDataset(dataset['test'], args.prompt)
+        formatted_dataset = NoChunkDataset(dataset['test'])
     else:
-        formatted_dataset = ChunkDataset(dataset['test'], args.prompt)
+        formatted_dataset = ChunkDataset(dataset['test'])
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
-    '''
-    c = 0
-    import re
-    for expanded_prompt, true_answers in zip(iter(formatted_dataset), dataset['test']['answers']):
-        for ans in true_answers['text'] if args.dataset != 'ibm/duorc' else true_answers:
-            if not re.search(fr'{re.escape(ans)}', expanded_prompt, re.IGNORECASE):
-                c += 1
-                break
-    print(f'No. of context chunks NOT containing the respective answer span: {c}')
-    if c != 0:
-        exit('Exited program because of inconsistent number of samples...')
-    else:
-        exit('Dataset can be processed correctly by this model...')
-    '''
+    for batch in dataloader:
+        print(batch)
+        break
 
-    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='cuda:0',
+    '''
+    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
@@ -138,34 +120,14 @@ if __name__ == '__main__':
     for el in dataset['test']['answers']:
         gold_answers.append(el['text'] if args.dataset != 'ibm/duorc' else el)
 
-    # Using Flash Attention...
-    # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
     print('Generating Predictions...')
     predictions = []
     for batch in tqdm(dataloader):
-        generations = generator(batch, max_new_tokens=args.max_new_tokens, renormalize_logits=True)
+        generations = generator(batch, max_new_tokens=1500, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'].split('Answer: ')[1].strip() for x in generations])
-
-    print('Computing Scores...')
-    metric = load_metric('squad', trust_remote_code=True)
-
-    formatted_predictions = []
-    formatted_gold = []
-
-    for ID, (pred, gold) in enumerate(zip(predictions, gold_answers)):
-        formatted_predictions.append({"id": str(ID), "prediction_text": pred})
-        formatted_gold.append({"id": str(ID), "answers": {'answer_start': [1 for i in range(len(gold))], 'text': gold}})
-
-    metrics = metric.compute(predictions=formatted_predictions, references=formatted_gold)
-    print(metrics)
 
     print('Saving predictions...')
     pd.DataFrame(zip(predictions, gold_answers),
                  columns=['predictions', 'reference']).to_pickle(f'{checkpoint.replace("/", "_")}'
                                                                  f'_{args.dataset}_preds.pkl')
-
-    count = 0
-    for (pred, ctx) in zip(predictions, dataset['test']['context'] if args.dataset != 'ibm/duorc' else dataset['test']['plot']):
-        if pred in ctx:
-            count += 1
-    print(f'No. of predictions ACTUALLY (exactly) IN the entire context: {count}')
+    '''
