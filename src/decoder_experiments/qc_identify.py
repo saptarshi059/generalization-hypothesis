@@ -9,7 +9,7 @@ from transformers import AutoTokenizer, pipeline, set_seed
 
 
 class ChunkDataset(Dataset):
-    def __init__(self, ds, prompt):
+    def __init__(self, ds):
         self.samples = []
         for row in tqdm(ds):
             context = row['context']
@@ -45,12 +45,17 @@ class ChunkDataset(Dataset):
 
 
 class NoChunkDataset(Dataset):
-    def __init__(self, ds, prompt):
+    def __init__(self, ds):
         self.samples = []
         for row in tqdm(ds):
-            self.samples.append(prompt.format(context=row['context'], question=row['question'])
-                                if args.dataset == 'squad' else
-                                (prompt.format(context=row['plot'], question=row['question'])))
+            question = row['question']
+            context = row['context'] if args.dataset == 'squad' else row['plot']
+            chat = [{"role": "user",
+                     "content": f"Write the context and question exactly.\nContext: {context}"
+                                f"\nQuestion: {question}"}]
+            prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
+            final_tuple = (question, context, prompt)
+            self.samples.append(final_tuple)
 
     def __len__(self):
         return len(self.samples)
