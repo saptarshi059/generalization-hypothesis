@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #SBATCH --nodes=1                   # Number of nodes to request
-#SBATCH --gres=1
+#SBATCH --gpus=1                    # Number of GPUs to request
 #SBATCH --cpus-per-task=4           # Number of CPUs per node to request
 #SBATCH --job-name="Decoder-Correctly_Ident" # A nice readable name of your job, to see it in the queue, instead of numbers
 #SBATCH --output=jobName.%J.out     # Store the output console text to a file called jobName.<assigned job number>.out
