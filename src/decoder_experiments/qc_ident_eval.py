@@ -13,6 +13,7 @@ if __name__ == '__main__':
         prediction_df = pd.read_pickle(file)
 
     total_samples = prediction_df.shape[0]
+    print(f'Total number of samples: {total_samples}')
 
     correctly_identified_contexts = 0
     correctly_identified_questions = 0
