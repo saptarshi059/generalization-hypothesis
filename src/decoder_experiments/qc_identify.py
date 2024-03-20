@@ -134,4 +134,5 @@ if __name__ == '__main__':
     print('Saving predictions...')
     pd.DataFrame(zip(questions, contexts, prompts, predictions),
                  columns=['question', 'context', 'prompt',
-                          'prediction']).to_pickle(f'{checkpoint.replace("/", "_")}_{args.dataset}_qc_identify.pkl')
+                          'prediction']).to_pickle(f'{checkpoint.replace("/", "_")}_{args.dataset.replace("/", "_")}'
+                                                   f'_qc_identify.pkl')

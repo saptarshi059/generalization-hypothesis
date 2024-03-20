@@ -162,10 +162,11 @@ if __name__ == '__main__':
     print('Saving predictions...')
     pd.DataFrame(zip(predictions, gold_answers),
                  columns=['predictions', 'reference']).to_pickle(f'{checkpoint.replace("/", "_")}'
-                                                                 f'_{args.dataset}_preds.pkl')
+                                                                 f'_{args.dataset.replace("/", "_")}_preds.pkl')
 
     count = 0
-    for (pred, ctx) in zip(predictions, dataset['test']['context'] if args.dataset != 'ibm/duorc' else dataset['test']['plot']):
+    for (pred, ctx) in zip(predictions,
+                           dataset['test']['context'] if args.dataset != 'ibm/duorc' else dataset['test']['plot']):
         if pred in ctx:
             count += 1
     print(f'No. of predictions ACTUALLY (exactly) IN the entire context: {count}')
