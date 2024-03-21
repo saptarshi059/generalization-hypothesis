@@ -1,3 +1,5 @@
+#!/bin/bash
+
 BERT_VARIANT_STR=`awk -F'uncased_|.zip' '{print $2}' <<< $1`
 echo "Downloading BERT variant $BERT_VARIANT_STR"
 
