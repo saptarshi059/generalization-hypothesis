@@ -128,7 +128,7 @@ if __name__ == '__main__':
         contexts.extend(batch_ctx)
         prompts.extend(batch_prompts)
         set_seed(42)
-        generations = generator(list(batch_prompts), max_new_tokens=1500, renormalize_logits=True)
+        generations = generator(list(batch_prompts), max_new_tokens=1000, renormalize_logits=True)
         predictions.extend([x[0]['generated_text'] for x in generations])
 
     print('Saving predictions...')
