@@ -21,10 +21,10 @@ parser.add_argument('--batch_size', default=40, type=int)
 args = parser.parse_args()
 
 g = torch.Generator()
-g.manual_seed(args.random_state)
-torch.manual_seed(args.random_state)
-random.seed(args.random_state)
-set_seed(args.random_state)
+g.manual_seed(42)
+torch.manual_seed(42)
+random.seed(42)
+set_seed(42)
 
 model_checkpoint = args.model_checkpoint
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
