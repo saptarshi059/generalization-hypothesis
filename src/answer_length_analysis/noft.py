@@ -61,18 +61,16 @@ class CustomDataset(Dataset):
 
 # Create custom dataset
 dataset = CustomDataset(raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else raw_datasets['validation'])
-# dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g)
+dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g)
 
 gold_answers = []
 pred_answers = []
 questions = []
 
 # Run inference in batches
-for pred_batch_answers in tqdm(
-        nlp(dataset, batch_size=args.batch_size, max_seq_len=384, doc_stride=128, max_answer_length=1000,
-            handle_impossible_answer=True),
-        total=len(dataset)):
-    # pred_batch_answers = nlp(batch_questions, batch_contexts, max_seq_len=384, doc_stride=128, max_answer_length=1000, handle_impossible_answer=True)
+for batch_questions, batch_contexts, batch_gold_answers in tqdm(dataloader):
+    pred_batch_answers = nlp(batch_questions, batch_contexts, max_seq_len=384, doc_stride=128, tokenize=True,
+                             max_answer_length=1000, handle_impossible_answer=True)
 
     for pred_answer, gold_answer in zip(pred_batch_answers, batch_gold_answers):
         try:
