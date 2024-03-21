@@ -13,7 +13,7 @@ unzip "uncased_$BERT_VARIANT_STR.zip" -d "uncased_$BERT_VARIANT_STR"
 
 echo "Converting Tensorflow Checkpoint to PyTorch..."
 export BERT_BASE_DIR="`pwd`/uncased_$BERT_VARIANT_STR"
-yes |  convert --model_type bert \
+yes | transformers-cli convert --model_type bert \
   --tf_checkpoint $BERT_BASE_DIR/bert_model.ckpt \
   --config $BERT_BASE_DIR/bert_config.json \
   --pytorch_dump_output $BERT_BASE_DIR/pytorch_model.bin
@@ -21,11 +21,16 @@ yes |  convert --model_type bert \
 #Renaming the config file.
 `mv "uncased_$BERT_VARIANT_STR/bert_config.json" "uncased_$BERT_VARIANT_STR/config.json"`
 
+
+# Define the key and value
 KEY="model_type"
 VALUE="bert"
 
-# Add the key-value pair to the JSON file using jq
-jq --arg key "$KEY" --arg value "$VALUE" '.[$key] = $value' "uncased_$BERT_VARIANT_STR/config.json" > output.json.tmp && mv output.json.tmp "uncased_$BERT_VARIANT_STR/config.json"
+# Define the JSON file
+JSON_FILE="uncased_$BERT_VARIANT_STR/config.json"
+
+# Use sed to add the key-value pair to the JSON file
+sed -i "s/^\s*{\s*$/  \"$KEY\": \"$VALUE\",/" "$JSON_FILE"
 
 #Removing the zip file
 `rm "uncased_$BERT_VARIANT_STR.zip"`
