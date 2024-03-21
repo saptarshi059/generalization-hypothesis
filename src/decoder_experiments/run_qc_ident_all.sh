@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=0,4,5
+export CUDA_VISIBLE_DEVICES=0
 
 python qc_identify.py --dataset 'Saptarshi7/covid_qa_cleaned_CS' --model_checkpoint 'medalpaca/medalpaca-7b'
 python qc_identify.py --dataset 'Saptarshi7/covid_qa_cleaned_CS' --model_checkpoint 'tiiuae/falcon-7b-instruct'
