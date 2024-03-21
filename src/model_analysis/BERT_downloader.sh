@@ -20,3 +20,6 @@ transformers-cli convert --model_type bert \
 
 #Renaming the config file.
 `mv "uncased_$BERT_VARIANT_STR/bert_config.json" "uncased_$BERT_VARIANT_STR/config.json"`
+
+#Removing the zip file
+`rm "uncased_$BERT_VARIANT_STR.zip"`
