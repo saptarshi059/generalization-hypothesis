@@ -110,7 +110,7 @@ if __name__ == '__main__':
         formatted_dataset = ChunkDataset(dataset['test'])
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
-    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
+    generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device_map='cuda:0',
                          pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
