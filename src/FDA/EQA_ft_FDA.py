@@ -39,16 +39,28 @@ def prepare_train_features(examples):
     # Tokenize our examples with truncation and padding, but keep the overflows using a stride. This results
     # in one example possible giving several features when a context is long, each of those features having a
     # context that overlaps a bit the context of the previous feature.
-    tokenized_examples = tokenizer(
-        examples["question" if pad_on_right else "context"],
-        examples["context" if pad_on_right else "question"],
-        truncation="only_second" if pad_on_right else "only_first",
-        max_length=max_length,
-        stride=doc_stride,
-        return_overflowing_tokens=True,
-        return_offsets_mapping=True,
-        padding="max_length",
-    )
+    if args.dataset != 'ibm/duorc':
+        tokenized_examples = tokenizer(
+            examples["question" if pad_on_right else "context"],
+            examples["context" if pad_on_right else "question"],
+            truncation="only_second" if pad_on_right else "only_first",
+            max_length=max_length,
+            stride=doc_stride,
+            return_overflowing_tokens=True,
+            return_offsets_mapping=True,
+            padding="max_length",
+        )
+    else:
+        tokenized_examples = tokenizer(
+            examples["question" if pad_on_right else "context"],
+            examples["plot" if pad_on_right else "question"],
+            truncation="only_second" if pad_on_right else "only_first",
+            max_length=max_length,
+            stride=doc_stride,
+            return_overflowing_tokens=True,
+            return_offsets_mapping=True,
+            padding="max_length",
+        )
     # Since one example might give us several features if it has a long context, we need a map from a feature to
     # its corresponding example. This key gives us just that.
     sample_mapping = tokenized_examples.pop("overflow_to_sample_mapping")
@@ -78,7 +90,10 @@ def prepare_train_features(examples):
         else:
             # Start/end character index of the answer in the text.
             start_char = answers["answer_start"][0]
-            end_char = start_char + len(answers["text"][0])
+            if args.dataset != 'ibm/duorc':
+                end_char = start_char + len(answers["text"][0])
+            else:
+                end_char = start_char + len(answers[0])
 
             # Start token index of the current span in the text.
             token_start_index = 0
@@ -116,16 +131,28 @@ def prepare_validation_features(examples):
     # Tokenize our examples with truncation and maybe padding, but keep the overflows using a stride. This results
     # in one example possible giving several features when a context is long, each of those features having a
     # context that overlaps a bit the context of the previous feature.
-    tokenized_examples = tokenizer(
-        examples["question" if pad_on_right else "context"],
-        examples["context" if pad_on_right else "question"],
-        truncation="only_second" if pad_on_right else "only_first",
-        max_length=max_length,
-        stride=doc_stride,
-        return_overflowing_tokens=True,
-        return_offsets_mapping=True,
-        padding="max_length",
-    )
+    if args.dataset != 'ibm/duorc':
+        tokenized_examples = tokenizer(
+            examples["question" if pad_on_right else "context"],
+            examples["context" if pad_on_right else "question"],
+            truncation="only_second" if pad_on_right else "only_first",
+            max_length=max_length,
+            stride=doc_stride,
+            return_overflowing_tokens=True,
+            return_offsets_mapping=True,
+            padding="max_length",
+        )
+    else:
+        tokenized_examples = tokenizer(
+            examples["question" if pad_on_right else "context"],
+            examples["plot" if pad_on_right else "question"],
+            truncation="only_second" if pad_on_right else "only_first",
+            max_length=max_length,
+            stride=doc_stride,
+            return_overflowing_tokens=True,
+            return_offsets_mapping=True,
+            padding="max_length",
+        )
 
     # Since one example might give us several features if it has a long context, we need a map from a feature to
     # its corresponding example. This key gives us just that.
@@ -161,7 +188,7 @@ def compute_metrics(start_logits, end_logits, features, examples):
     predicted_answers = []
     for example in tqdm(examples):
         example_id = example["id"]
-        context = example["context"]
+        context = example["context"] if args.dataset != 'ibm/duorc' else example["plot"]
         answers = []
 
         # Loop through all features associated with that example
@@ -193,13 +220,17 @@ def compute_metrics(start_logits, end_logits, features, examples):
         # Select the answer with the best score
         if len(answers) > 0:
             best_answer = max(answers, key=lambda x: x["logit_score"])
-            if squad_v2:
-                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"],
+            if impossible_questions:
+                predicted_answers.append({"id": example_id,
+                                          "prediction_text":
+                                              best_answer["text"] if args.dataset != 'ibm/duorc' else best_answer,
                                           "no_answer_probability": 0.0})
             else:
-                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"]})
+                predicted_answers.append({"id": example_id,
+                                          "prediction_text":
+                                              best_answer["text"] if args.dataset != 'ibm/duorc' else best_answer})
         else:
-            if squad_v2:
+            if impossible_questions:
                 predicted_answers.append({"id": example_id, "prediction_text": "", "no_answer_probability": 1.0})
             else:
                 predicted_answers.append({"id": example_id, "prediction_text": ""})
@@ -216,7 +247,8 @@ def seed_worker(worker_id):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--squad_version2', default=False, type=str2bool)
+parser.add_argument('--impossible_questions', default=False, type=str2bool)
+parser.add_argument('--dataset', default='Saptarshi7/techqa-squad-style', type=str)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
 parser.add_argument('--trained_model_name', default="distilbert-base-uncased-squad", type=str)
 parser.add_argument('--batch_size', default=16, type=int)
@@ -227,9 +259,7 @@ parser.add_argument('--weight_decay', default=0.01, type=float)
 parser.add_argument('--epochs', default=3, type=int)
 parser.add_argument('--n_best', default=20, type=int)
 parser.add_argument('--max_answer_length', default=30, type=int)
-parser.add_argument('--trial_mode', default=False, type=str2bool)
 parser.add_argument('--random_state', default=42, type=int)
-parser.add_argument('--freeze_PT_layers', default=False, type=str2bool)
 
 args = parser.parse_args()
 
@@ -242,46 +272,36 @@ torch.manual_seed(args.random_state)
 random.seed(args.random_state)
 set_seed(args.random_state)
 
-# This flag is the difference between SQUAD v1 or 2 (if you're using another dataset, it indicates if impossible
-# answers are allowed or not).
-squad_v2 = args.squad_version2
+impossible_questions = args.impossible_questions
 model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
-
 accelerator = Accelerator()
 device = accelerator.device
-
-if model_checkpoint == 'studio-ousia/luke-base':
-    tokenizer = AutoTokenizer.from_pretrained(
-        'roberta-base')  # since luke doesn't have a fast implementation & it has the same vocab as roberta
-else:
-    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
-
 max_length = args.max_length  # The maximum length of a feature (question and context)
 doc_stride = args.stride  # The authorized overlap between two part of the context when splitting it is needed.
 max_answer_length = args.max_answer_length
 n_best = args.n_best
-
 pad_on_right = tokenizer.padding_side == "right"
 
-if args.trial_mode == True:
-    print('Running Code in Trial Mode to see if everything works properly...')
-    raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad",
-                                split=['train[:160]', 'validation[:10]'])  # Testing purposes
-    train_dataset = raw_datasets[0].map(prepare_train_features, batched=True,
-                                        remove_columns=raw_datasets[0].column_names)
-    validation_dataset = raw_datasets[1].map(prepare_validation_features, batched=True,
-                                             remove_columns=raw_datasets[1].column_names)
+if args.dataset == 'ibm/duorc':
+    raw_datasets = load_dataset('ibm/duorc', 'SelfRC')
 else:
-    raw_datasets = load_dataset("squad_v2" if squad_v2 else "squad")
-    train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True,
-                                              remove_columns=raw_datasets['train'].column_names)
+    raw_datasets = load_dataset(args.dataset, token=True, trust_remote_code=True)
+
+train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True,
+                                          remove_columns=raw_datasets['train'].column_names)
+
+if args.dataset == 'Saptarshi7/techqa-squad-style':  # Only has validation split.
     validation_dataset = raw_datasets['validation'].map(prepare_validation_features, batched=True,
                                                         remove_columns=raw_datasets['validation'].column_names)
+# CUAD/DuoRC - both have test splits.
+else:
+    validation_dataset = raw_datasets['test'].map(prepare_validation_features, batched=True,
+                                                  remove_columns=raw_datasets['test'].column_names)
 
-if squad_v2:
+if impossible_questions:
     metric = load("squad_v2")
 else:
     metric = load("squad")
@@ -297,12 +317,6 @@ eval_dataloader = DataLoader(validation_set, collate_fn=data_collator, batch_siz
 
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 output_dir = args.trained_model_name
-
-if args.freeze_PT_layers == True:
-    print('Freezing base layers and only training span head...')
-    base_module_name = list(model.named_children())[0][0]
-    for param in getattr(model, base_module_name).parameters():
-        param.requires_grad = False
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
@@ -347,10 +361,7 @@ for epoch in range(num_train_epochs):
     start_logits = start_logits[: len(validation_dataset)]
     end_logits = end_logits[: len(validation_dataset)]
 
-    if args.trial_mode == True:
-        metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets[1])
-    else:
-        metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
+    metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
 
     print(f"epoch {epoch}:", metrics)
 
