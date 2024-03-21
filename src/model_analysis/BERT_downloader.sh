@@ -23,16 +23,5 @@ yes | transformers-cli convert --model_type bert \
 #Renaming the config file.
 `mv "uncased_$BERT_VARIANT_STR/bert_config.json" "uncased_$BERT_VARIANT_STR/config.json"`
 
-
-# Define the key and value
-KEY="model_type"
-VALUE="bert"
-
-# Define the JSON file
-JSON_FILE="uncased_$BERT_VARIANT_STR/config.json"
-
-# Use jq to add the key-value pair to the JSON file
-jq --arg key "$KEY" --arg value "$VALUE" '. + { ($key): $value }' "$JSON_FILE" > output.json.tmp && mv output.json.tmp "$JSON_FILE"
-
 #Removing the zip file
 `rm "uncased_$BERT_VARIANT_STR.zip"`

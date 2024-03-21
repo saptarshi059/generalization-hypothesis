@@ -2,12 +2,15 @@
 # coding: utf-8
 
 import argparse
+import random
 
+import numpy as np
 import pandas as pd
+import torch
 from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
-from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer, logging
+from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer, logging, set_seed
 
 logging.set_verbosity(50)
 
@@ -16,6 +19,12 @@ parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1
 parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
 parser.add_argument('--batch_size', default=40, type=int)
 args = parser.parse_args()
+
+g = torch.Generator()
+g.manual_seed(args.random_state)
+torch.manual_seed(args.random_state)
+random.seed(args.random_state)
+set_seed(args.random_state)
 
 model_checkpoint = args.model_checkpoint
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
@@ -27,6 +36,12 @@ if args.dataset == 'duorc':
     raw_datasets = load_dataset('duorc', 'SelfRC')
 else:
     raw_datasets = load_dataset(args.dataset, use_auth_token=True)
+
+
+def seed_worker(worker_id):
+    worker_seed = torch.initial_seed() % 2 ** 32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 
 class CustomDataset(Dataset):
@@ -46,16 +61,16 @@ class CustomDataset(Dataset):
 
 # Create custom dataset
 dataset = CustomDataset(raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else raw_datasets['validation'])
-dataloader = DataLoader(dataset, batch_size=args.batch_size)
+dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g)
 
 gold_answers = []
 pred_answers = []
 questions = []
 
-
 # Run inference in batches
 for batch_questions, batch_contexts, batch_gold_answers in tqdm(dataloader):
-    pred_batch_answers = nlp(batch_questions, batch_contexts)  # Perform inference on batch
+    pred_batch_answers = nlp(batch_questions, batch_contexts, max_seq_len=384, doc_stride=128,
+                             max_answer_length=1000, handle_impossible_answer=True)
 
     for pred_answer, gold_answer in zip(pred_batch_answers, batch_gold_answers):
         try:
@@ -67,7 +82,6 @@ for batch_questions, batch_contexts, batch_gold_answers in tqdm(dataloader):
             gold_answers.append(gold_answer['answers']['text'] if args.dataset != 'duorc' else gold_answer['answers'])
         except:
             gold_answers.append("")  # For impossible answers
-
 
 print('Saving predictions...')
 pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(
