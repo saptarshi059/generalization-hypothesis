@@ -27,6 +27,7 @@ VALUE="bert"
 # Add the key-value pair to the JSON file using jq
 jq --arg key "$KEY" --arg value "$VALUE" '. + { ($key): $value }' "uncased_${BERT_VARIANT_STR}/config.json" > output.json
 
+
 # Replace the original file with the updated JSON
 mv output.json "uncased_{$BERT_VARIANT_STR}/config.json"
 
