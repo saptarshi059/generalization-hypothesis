@@ -59,7 +59,9 @@ class CustomDataset(Dataset):
         context = record['context'] if args.dataset != 'duorc' else record['plot']
         inputs = tokenizer(question, context, return_tensors="pt", max_length=384, stride=128, padding="max_length",
                            truncation=True)
-        return inputs
+        input_ids = inputs['input_ids']
+        attention_mask = inputs['attention_mask']
+        return input_ids, attention_mask
 
 
 # Create custom dataset
