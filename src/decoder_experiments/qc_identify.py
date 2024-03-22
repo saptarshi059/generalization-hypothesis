@@ -29,7 +29,7 @@ class ChunkDataset(Dataset):
                         flag = 0
                         break
                 if flag == 1:
-                    if args.order == 'normal':
+                    if args.cq_order == 'normal':
                         chat = [{"role": "user",
                                  "content": f"Write the context and question exactly.\nContext: {decoded_chunk}"
                                             f"\nQuestion: {question}"}]
