@@ -62,7 +62,6 @@ class CustomDataset(Dataset):
         return inputs
 
 
-
 # Create custom dataset
 dataset = CustomDataset(raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else raw_datasets['validation'])
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, worker_init_fn=seed_worker, generator=g)
@@ -78,11 +77,10 @@ for row in raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else ra
     except:
         gold_answers.append("")  # For impossible answers
 
-
 # Run inference in batches
 with torch.no_grad():
     for model_inputs in tqdm(dataloader):
-        outputs = model(**model_inputs, max_answer_length=1000, handle_impossible_answer=True)
+        outputs = model(**model_inputs)
         answer_start_index = outputs.start_logits.argmax()
         answer_end_index = outputs.end_logits.argmax()
 
