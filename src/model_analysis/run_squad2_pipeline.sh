@@ -39,6 +39,5 @@ do
      accelerate launch --mixed_precision 'fp16' --gpu_ids '7' squad_ft.py --model_checkpoint "$BERT_VARIANT_STR" \
      --trained_model_name "{$BERT_VARIANT_STR}_squad2"
     python "../answer_length_analysis/noft.py" --model_checkpoint "{$BERT_VARIANT_STR}_squad2" --dataset "$current_dataset"
-
   done
 done
