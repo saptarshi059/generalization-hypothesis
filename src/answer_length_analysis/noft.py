@@ -81,12 +81,12 @@ for row in raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else ra
 
 # Run inference in batches
 with torch.no_grad():
-    for model_inputs in tqdm(dataloader):
-        outputs = model(**model_inputs)
+    for input_ids, attention_mask in tqdm(dataloader):
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
         answer_start_index = outputs.start_logits.argmax()
         answer_end_index = outputs.end_logits.argmax()
 
-        predict_answer_tokens = model_inputs.input_ids[0, answer_start_index: answer_end_index + 1]
+        predict_answer_tokens = input_ids[0, answer_start_index: answer_end_index + 1]
         predicted_answers = tokenizer.batch_decode(predict_answer_tokens)
 
         for pred_answer in predicted_answers:
