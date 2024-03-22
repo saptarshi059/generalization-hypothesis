@@ -57,8 +57,7 @@ class CustomDataset(Dataset):
         record = self.records[idx]
         question = record['question']
         context = record['context'] if args.dataset != 'duorc' else record['plot']
-        inputs = tokenizer(question, context, return_tensors="pt", max_length=384, stride=128,
-                           truncation="only_second" if pad_on_right else "only_first", padding="max_length")
+        inputs = tokenizer(question, context, return_tensors="pt", max_length=384, stride=128, padding="max_length")
         return inputs
 
 
