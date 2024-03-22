@@ -29,9 +29,14 @@ class ChunkDataset(Dataset):
                         flag = 0
                         break
                 if flag == 1:
-                    chat = [{"role": "user",
-                             "content": f"Write the context and question exactly.\nContext: {decoded_chunk}"
-                                        f"\nQuestion: {question}"}]
+                    if args.order == 'normal':
+                        chat = [{"role": "user",
+                                 "content": f"Write the context and question exactly.\nContext: {decoded_chunk}"
+                                            f"\nQuestion: {question}"}]
+                    else:
+                        chat = [{"role": "user",
+                                 "content": f"Write the context and question exactly.\nQuestion: {question}"
+                                            f"\nContext: {decoded_chunk}"}]
                     prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
                     final_tuple = (question, decoded_chunk, prompt)
                     self.samples.append(final_tuple)
@@ -50,9 +55,14 @@ class NoChunkDataset(Dataset):
         for row in tqdm(ds):
             question = row['question']
             context = row['context'] if args.dataset == 'squad' else row['plot']
-            chat = [{"role": "user",
-                     "content": f"Write the context and question exactly.\nContext: {context}"
-                                f"\nQuestion: {question}"}]
+            if args.cq_order == 'normal':
+                chat = [{"role": "user",
+                         "content": f"Write the context and question exactly.\nContext: {context}"
+                                    f"\nQuestion: {question}"}]
+            else:
+                chat = [{"role": "user",
+                         "content": f"Write the context and question exactly.\nQuestion: {question}"
+                                    f"\nContext: {context}"}]
             prompt = tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True)
             final_tuple = (question, context, prompt)
             self.samples.append(final_tuple)
@@ -81,7 +91,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default='Saptarshi7/covid_qa_cleaned_CS')
     parser.add_argument('--model_checkpoint', default='medalpaca/medalpaca-7b')
-    parser.add_argument('--batch_size', type=int, default=40)
+    parser.add_argument('--batch_size', type=int, default=20)
+    parser.add_argument('--cq_order', type=str, default='normal')
     args = parser.parse_args()
 
     checkpoint = args.model_checkpoint
@@ -100,14 +111,17 @@ if __name__ == '__main__':
     elif args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
         dataset['test'] = dataset.pop('train')
 
-    # Keeping only answerable questions for TechQA/DuoRC/CUAD
+    # Keeping only answerable questions for DuoRC
     if args.dataset == 'ibm/duorc':
         dataset['test'] = dataset['test'].filter(lambda x: x['no_answer'] is False)
 
+    # Randomly sampling 100 samples from the datasets
+    sampled_dataset = dataset['test'].shuffle(seed=42).select(range(100))
+
     if args.dataset in ['squad', 'ibm/duorc']:
-        formatted_dataset = NoChunkDataset(dataset['test'])
+        formatted_dataset = NoChunkDataset(sampled_dataset)
     else:
-        formatted_dataset = ChunkDataset(dataset['test'])
+        formatted_dataset = ChunkDataset(sampled_dataset)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
@@ -123,14 +137,14 @@ if __name__ == '__main__':
     contexts = []
     prompts = []
     predictions = []
-    # with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
-    for batch_questions, batch_ctx, batch_prompts in tqdm(dataloader):
-        questions.extend(batch_questions)
-        contexts.extend(batch_ctx)
-        prompts.extend(batch_prompts)
-        set_seed(42)
-        generations = generator(list(batch_prompts), max_new_tokens=450, renormalize_logits=True)
-        predictions.extend([x[0]['generated_text'] for x in generations])
+    with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+        for batch_questions, batch_ctx, batch_prompts in tqdm(dataloader):
+            questions.extend(batch_questions)
+            contexts.extend(batch_ctx)
+            prompts.extend(batch_prompts)
+            set_seed(42)
+            generations = generator(list(batch_prompts), max_new_tokens=450, renormalize_logits=True)
+            predictions.extend([x[0]['generated_text'] for x in generations])
 
     print('Saving predictions...')
     pd.DataFrame(zip(questions, contexts, prompts, predictions),
