@@ -25,7 +25,7 @@ def run_main():
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
-parser.add_argument('--dataset', default="Saptarshi7/covid_qa_cleaned_CS", type=str)
+parser.add_argument('--dataset', default="Saptarshi7/techqa-squad-style", type=str)
 args = parser.parse_args()
 
 model_checkpoint = args.model_checkpoint
@@ -39,13 +39,10 @@ gold_answers = []
 pred_answers = []
 questions = []
 
-if args.dataset == 'Saptarshi7/covid_qa_cleaned_CS':
-    for record in tqdm(raw_datasets['train']):
-        run_main()
-elif args.dataset == 'squad' or args.dataset == 'squad_v2':
+if args.dataset == 'Saptarshi7/techqa-squad-style':
     for record in tqdm(raw_datasets['validation']):
         run_main()
-elif args.dataset == 'cuad':
+elif args.dataset in ['cuad', 'ibm/duorc'] :
     for record in tqdm(raw_datasets['test']):
         run_main()
 
