@@ -125,7 +125,7 @@ if __name__ == '__main__':
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
     generator = pipeline('text-generation', model=checkpoint, tokenizer=tokenizer, device='cuda:0',
-                         pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16, trust_remote_code=True)
+                         pad_token_id=tokenizer.eos_token_id, torch_dtype=torch.bfloat16)
     print(f'Model: {checkpoint} loaded...')
 
     gold_answers = []
