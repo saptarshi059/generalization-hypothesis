@@ -37,7 +37,7 @@ nlp = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=0)
 if args.dataset == 'duorc':
     raw_datasets = load_dataset('duorc', 'SelfRC')
 else:
-    raw_datasets = load_dataset(args.dataset, use_auth_token=True)
+    raw_datasets = load_dataset(args.dataset, token=True)
 
 
 def seed_worker(worker_id):
@@ -59,9 +59,7 @@ class CustomDataset(Dataset):
         context = record['context'] if args.dataset != 'duorc' else record['plot']
         inputs = tokenizer(question, context, return_tensors="pt", max_length=384, stride=128, padding="max_length",
                            truncation=True)
-        input_ids = inputs['input_ids']
-        attention_mask = inputs['attention_mask']
-        return input_ids, attention_mask
+        return inputs
 
 
 # Create custom dataset
@@ -81,12 +79,12 @@ for row in raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else ra
 
 # Run inference in batches
 with torch.no_grad():
-    for input_ids, attention_mask in tqdm(dataloader):
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    for inputs in tqdm(dataloader):
+        outputs = model(input_ids=inputs['input_ids'], attention_mask=inputs['attention_mask'])
         answer_start_index = outputs.start_logits.argmax()
         answer_end_index = outputs.end_logits.argmax()
 
-        predict_answer_tokens = input_ids[0, answer_start_index: answer_end_index + 1]
+        predict_answer_tokens = inputs['input_ids'][0, answer_start_index: answer_end_index + 1]
         predicted_answers = tokenizer.batch_decode(predict_answer_tokens)
 
         for pred_answer in predicted_answers:
