@@ -179,7 +179,7 @@ model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 accelerator = Accelerator()
 device = accelerator.device
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, model_max_length=512)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 data_collator = default_data_collator
 max_length = args.max_length  # The maximum length of a feature (question and context)
 doc_stride = args.stride  # The authorized overlap between two part of the context when splitting it is needed.
