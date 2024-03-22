@@ -80,7 +80,7 @@ for row in raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else ra
 # Run inference in batches
 with torch.no_grad():
     for inputs in tqdm(dataloader):
-        outputs = model(input_ids=inputs['input_ids'], attention_mask=inputs['attention_mask'])
+        outputs = model(**inputs)
         answer_start_index = outputs.start_logits.argmax()
         answer_end_index = outputs.end_logits.argmax()
 
