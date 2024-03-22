@@ -23,7 +23,7 @@ yes | transformers-cli convert --model_type bert \
 #Renaming the config file.
 `mv "uncased_$BERT_VARIANT_STR/bert_config.json" "uncased_$BERT_VARIANT_STR/config.json"`
 
-python add_BERT_field.py --config_file_path "uncased_$BERT_VARIANT_STR/config.json"
+python "`pwd`/add_BERT_field.py" --config_file_path "uncased_$BERT_VARIANT_STR/config.json"
 
 #Removing the zip file
 `rm "uncased_$BERT_VARIANT_STR.zip"`
