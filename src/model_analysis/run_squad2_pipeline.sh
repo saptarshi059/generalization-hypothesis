@@ -1,6 +1,8 @@
+#!/bin/bash
+
 export CUDA_VISIBLE_DEVICES=7
 
-declare -a BERTS=("https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-128_A-2.zip"
+BERTS=("https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-128_A-2.zip"
                 "https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-256_A-4.zip"
                 "https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-512_A-8.zip"
                 "https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-768_A-12.zip"
@@ -30,7 +32,7 @@ declare -a BERTS=("https://storage.googleapis.com/bert_models/2020_02_20/uncased
                 "https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-12_H-512_A-8.zip"
                 )
 
-declare -a DATASETS=('Saptarshi7/techqa-squad-style' 'ibm/duorc' 'cuad')
+DATASETS=('Saptarshi7/techqa-squad-style' 'ibm/duorc' 'cuad')
 
 for current_dataset in "${DATASETS[@]}"
 do
