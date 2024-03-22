@@ -153,7 +153,7 @@ def seed_worker(worker_id):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--impossible_questions', default=False, type=str2bool)
+parser.add_argument('--impossible_questions', default=True, type=str2bool)
 parser.add_argument('--dataset', default='Saptarshi7/techqa-squad-style', type=str)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
 parser.add_argument('--batch_size', default=16, type=int)
@@ -179,7 +179,7 @@ model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 accelerator = Accelerator()
 device = accelerator.device
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, model_max_length=512)
 data_collator = default_data_collator
 max_length = args.max_length  # The maximum length of a feature (question and context)
 doc_stride = args.stride  # The authorized overlap between two part of the context when splitting it is needed.
