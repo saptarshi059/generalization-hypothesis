@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export CUDA_VISIBLE_DEVICES=3
+export CUDA_VISIBLE_DEVICES=0
 
 BERTS=("https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-128_A-2.zip"
                 "https://storage.googleapis.com/bert_models/2020_02_20/uncased_L-2_H-256_A-4.zip"
