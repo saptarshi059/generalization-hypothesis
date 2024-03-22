@@ -329,6 +329,7 @@ for epoch in range(num_train_epochs):
         lr_scheduler.step()
         optimizer.zero_grad()
         progress_bar.update(1)
+        break
 
     # Evaluation
     model.eval()
@@ -361,3 +362,4 @@ for epoch in range(num_train_epochs):
     if accelerator.is_main_process:
         tokenizer.save_pretrained(output_dir)
         # repo.push_to_hub(commit_message=f"Training in progress epoch {epoch}", blocking=False)
+    break
