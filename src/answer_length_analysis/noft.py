@@ -55,8 +55,8 @@ class CustomDataset(Dataset):
         record = self.records[idx]
         question = record['question']
         context = record['context'] if args.dataset != 'duorc' else record['plot']
-        answers = record['answers']
-        return question, context, answers
+        inputs = tokenizer(question, context, return_tensors="pt", truncation=True, max_length=384, stride=128)
+        return inputs
 
 
 # Create custom dataset
@@ -67,21 +67,29 @@ gold_answers = []
 pred_answers = []
 questions = []
 
+for row in raw_datasets['test'] if args.dataset in ['ibm/duorc', 'cuad'] else raw_datasets['validation']:
+    questions.append(row['question'])
+    try:
+        gold_answers.append(row['answers']['text'] if args.dataset != 'duorc' else row['answers'])
+    except:
+        gold_answers.append("")  # For impossible answers
+
+
 # Run inference in batches
-for batch_questions, batch_contexts, batch_gold_answers in tqdm(dataloader):
-    pred_batch_answers = nlp(batch_questions, batch_contexts, max_seq_len=384, doc_stride=128, tokenize=True,
-                             max_answer_length=1000, handle_impossible_answer=True)
+with torch.no_grad():
+    for model_inputs in tqdm(dataloader):
+        outputs = model(**model_inputs, max_answer_length=1000, handle_impossible_answer=True)
+        answer_start_index = outputs.start_logits.argmax()
+        answer_end_index = outputs.end_logits.argmax()
 
-    for pred_answer, gold_answer in zip(pred_batch_answers, batch_gold_answers):
-        try:
-            pred_answers.append(pred_answer['answer'])
-        except:
-            pred_answers.append("")  # For impossible answers
+        predict_answer_tokens = model_inputs.input_ids[0, answer_start_index: answer_end_index + 1]
+        predicted_answers = tokenizer.batch_decode(predict_answer_tokens)
 
-        try:
-            gold_answers.append(gold_answer['answers']['text'] if args.dataset != 'duorc' else gold_answer['answers'])
-        except:
-            gold_answers.append("")  # For impossible answers
+        for pred_answer in predicted_answers:
+            try:
+                pred_answers.append(pred_answer['answer'])
+            except:
+                pred_answers.append("")  # For impossible answers
 
 print('Saving predictions...')
 pd.DataFrame(zip(questions, pred_answers, gold_answers), columns=['question', 'predictions', 'gold_answers']).to_pickle(
