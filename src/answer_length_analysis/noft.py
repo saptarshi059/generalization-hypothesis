@@ -197,7 +197,7 @@ if args.dataset == 'Saptarshi7/techqa-squad-style':  # Only has validation split
                                                         remove_columns=raw_datasets['validation'].column_names)
 # CUAD/DuoRC - both have test splits.
 else:
-    validation_dataset = raw_datasets['test'].map(prepare_validation_features, batched=True,
+    validation_dataset = raw_datasets['validation'].map(prepare_validation_features, batched=True,
                                                   remove_columns=raw_datasets['test'].column_names)
 
 if impossible_questions:
