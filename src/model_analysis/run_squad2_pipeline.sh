@@ -36,13 +36,13 @@ DATASETS=('Saptarshi7/techqa-squad-style' 'ibm/duorc' 'cuad')
 
 for current_dataset in "${DATASETS[@]}"
 do
-  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Current Dataset: {$current_dataset}<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+  echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Current Dataset: $current_dataset<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
   for model in "${BERTS[@]}"
   do
      . ./BERT_downloader.sh "$model"
      accelerate launch --mixed_precision 'fp16' --gpu_ids '7' squad_ft.py --squad_version2 True \
      --model_checkpoint "uncased_$BERT_VARIANT_STR" \
-     --trained_model_name "uncased_{$BERT_VARIANT_STR}_squad2"
-    python "../answer_length_analysis/noft.py" --model_checkpoint "uncased_{$BERT_VARIANT_STR}_squad2" --dataset "$current_dataset"
+     --trained_model_name "uncased_${BERT_VARIANT_STR}_squad2"
+    python "../answer_length_analysis/noft.py" --model_checkpoint "uncased_${BERT_VARIANT_STR}_squad2" --dataset "$current_dataset"
   done
 done
