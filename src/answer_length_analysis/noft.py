@@ -34,6 +34,7 @@ args = parser.parse_args()
 
 model_checkpoint = args.model_checkpoint
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
+model.eval()
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
 nlp = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=0, torch_dtype=torch.float16)
@@ -52,6 +53,10 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 with torch.no_grad():
     for batch in tqdm(dataloader):
+        predictions = nlp(question=batch['question'], context=batch['context'], handle_impossible_answer=True)
+        print(predictions)
+
+        '''
         try:
             pred_answers.append(nlp(question=batch['question'], context=batch['context'],
                                     handle_impossible_answer=True)['answer'])
@@ -62,6 +67,7 @@ with torch.no_grad():
             gold_answers.append(batch['answers']['text'][0])
         except:
             gold_answers.append("")  # For impossible answers
+        '''
 
 print('Saving predictions...')
 with open(f'{model_checkpoint.replace("/", "_")}_{args.dataset.replace("/", "_")}_predictions.csv', "w") as f:
