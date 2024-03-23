@@ -29,6 +29,7 @@ class QADataset(Dataset):
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
 parser.add_argument('--dataset', default="Saptarshi7/techqa-squad-style", type=str)
+parser.add_argument('--batch_size', default=16, type=int)
 args = parser.parse_args()
 
 model_checkpoint = args.model_checkpoint
