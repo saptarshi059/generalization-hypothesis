@@ -8,20 +8,22 @@ import torch
 from datasets import load_dataset
 from tqdm import tqdm
 from transformers import QuestionAnsweringPipeline, AutoModelForQuestionAnswering, AutoTokenizer
+from torch.utils.data import Dataset, DataLoader
 
 
-def run_main():
-    questions.append(record['question'])
+class QADataset(Dataset):
+    def __init__(self, records, tokenizer):
+        self.records = records
+        self.tokenizer = tokenizer
 
-    try:
-        pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'])
-    except:
-        pred_answers.append("")  # For impossible answers
+    def __len__(self):
+        return len(self.records)
 
-    try:
-        gold_answers.append(record['answers']['text'][0])
-    except:
-        gold_answers.append("")  # For impossible answers
+    def __getitem__(self, idx):
+        record = self.records[idx]
+        question = record['question']
+        context = record['context'] if 'context' in record else record['plot']
+        return question, context
 
 
 parser = argparse.ArgumentParser()
@@ -40,20 +42,33 @@ gold_answers = []
 pred_answers = []
 questions = []
 
-
-
-
 if args.dataset == 'Saptarshi7/techqa-squad-style':
-    with torch.no_grad():
-        for record in tqdm(raw_datasets['validation']):
-            run_main()
-elif args.dataset in ['cuad', 'ibm/duorc'] :
-    with torch.no_grad():
-        for record in tqdm(raw_datasets['test']):
-            run_main()
+    dataset = raw_datasets['validation']
+elif args.dataset in ['cuad', 'ibm/duorc']:
+    dataset = raw_datasets['test']
+
+dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
+
+for batch in dataloader:
+    print(batch)
+    break
+
+'''
+with torch.no_grad():
+    for batch in tqdm(dataloader):
+        try:
+            pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'])
+        except:
+            pred_answers.append("")  # For impossible answers
+
+        try:
+            gold_answers.append(record['answers']['text'][0])
+        except:
+            gold_answers.append("")  # For impossible answers
 
 print('Saving predictions...')
 with open(f'{model_checkpoint.replace("/", "_")}_{args.dataset.replace("/", "_")}_predictions.csv', "w") as f:
     writer = csv.writer(f)
     for row in zip(questions, pred_answers, gold_answers):
         writer.writerow(row)
+'''
