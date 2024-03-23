@@ -53,8 +53,11 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 with torch.no_grad():
     for questions, contexts in tqdm(dataloader):
-        predictions = nlp(question=list(questions), context=list(contexts), handle_impossible_answer=True)
-        print(predictions)
+        try:
+            predictions = nlp(question=list(questions), context=list(contexts), handle_impossible_answer=True)
+            print(predictions)
+        except:
+            print(list(questions))
         '''
         try:
             pred_answers.append(nlp(question=batch['question'], context=batch['context'],
