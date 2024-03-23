@@ -45,7 +45,7 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/techqa-squad-style':
-    dataset = QADataset(raw_datasets['validation'], tokenizer)
+    dataset = QADataset(raw_datasets['validation'].filter(lambda x: x['question'] != ''), tokenizer)
 elif args.dataset in ['cuad', 'ibm/duorc']:
     dataset = QADataset(raw_datasets['test'], tokenizer)
 
@@ -53,11 +53,9 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 with torch.no_grad():
     for questions, contexts in tqdm(dataloader):
-        try:
-            predictions = nlp(question=list(questions), context=list(contexts), handle_impossible_answer=True)
-            print(predictions)
-        except:
-            print(list(questions))
+        predictions = nlp(question=list(questions), context=list(contexts), handle_impossible_answer=True)
+        print(predictions)
+        break
         '''
         try:
             pred_answers.append(nlp(question=batch['question'], context=batch['context'],
