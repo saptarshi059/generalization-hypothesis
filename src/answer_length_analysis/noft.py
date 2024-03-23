@@ -52,8 +52,8 @@ elif args.dataset in ['cuad', 'ibm/duorc']:
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 with torch.no_grad():
-    for batch in tqdm(dataloader):
-        predictions = nlp(question=batch['question'], context=batch['context'], handle_impossible_answer=True)
+    for questions, contexts in tqdm(dataloader):
+        predictions = nlp(question=questions, context=contexts, handle_impossible_answer=True)
         print(predictions)
 
         '''
