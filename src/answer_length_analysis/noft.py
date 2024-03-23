@@ -43,9 +43,9 @@ pred_answers = []
 questions = []
 
 if args.dataset == 'Saptarshi7/techqa-squad-style':
-    dataset = raw_datasets['validation']
+    dataset = QADataset(raw_datasets['validation'], tokenizer)
 elif args.dataset in ['cuad', 'ibm/duorc']:
-    dataset = raw_datasets['test']
+    dataset = QADataset(raw_datasets['test'], tokenizer)
 
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
