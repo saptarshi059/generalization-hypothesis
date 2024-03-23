@@ -40,6 +40,9 @@ gold_answers = []
 pred_answers = []
 questions = []
 
+
+
+
 if args.dataset == 'Saptarshi7/techqa-squad-style':
     with torch.no_grad():
         for record in tqdm(raw_datasets['validation']):

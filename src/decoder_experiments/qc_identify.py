@@ -127,8 +127,7 @@ if __name__ == '__main__':
     model = AutoModelForCausalLM.from_pretrained(checkpoint, device_map="auto", attn_implementation="flash_attention_2",
                                                  torch_dtype=torch.bfloat16)
 
-    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, device='cuda:0',
-                         pad_token_id=tokenizer.eos_token_id)
+    generator = pipeline('text-generation', model=model, tokenizer=tokenizer, pad_token_id=tokenizer.eos_token_id)
     print(f'Model: {checkpoint} loaded...')
 
     gold_answers = []
