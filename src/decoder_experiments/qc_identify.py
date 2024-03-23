@@ -137,14 +137,14 @@ if __name__ == '__main__':
     contexts = []
     prompts = []
     predictions = []
-    with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
-        for batch_questions, batch_ctx, batch_prompts in tqdm(dataloader):
-            questions.extend(batch_questions)
-            contexts.extend(batch_ctx)
-            prompts.extend(batch_prompts)
-            set_seed(42)
-            generations = generator(list(batch_prompts), max_new_tokens=450, renormalize_logits=True)
-            predictions.extend([x[0]['generated_text'] for x in generations])
+    #with torch.backends.cuda.sdp_kernel(enable_flash=True, enable_math=False, enable_mem_efficient=False):
+    for batch_questions, batch_ctx, batch_prompts in tqdm(dataloader):
+        questions.extend(batch_questions)
+        contexts.extend(batch_ctx)
+        prompts.extend(batch_prompts)
+        set_seed(42)
+        generations = generator(list(batch_prompts), max_new_tokens=450, renormalize_logits=True)
+        predictions.extend([x[0]['generated_text'] for x in generations])
 
     print('Saving predictions...')
     pd.DataFrame(zip(questions, contexts, prompts, predictions),
