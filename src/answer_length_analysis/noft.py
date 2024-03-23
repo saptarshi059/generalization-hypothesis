@@ -53,7 +53,7 @@ dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
 with torch.no_grad():
     for questions, contexts in tqdm(dataloader):
-        predictions = nlp(question=list(questions[0]), context=list(contexts[0]), handle_impossible_answer=True)
+        predictions = nlp(question=list(questions), context=list(contexts), handle_impossible_answer=True)
         print(predictions)
         '''
         try:
