@@ -124,8 +124,7 @@ if __name__ == '__main__':
         formatted_dataset = ChunkDataset(sampled_dataset)
     dataloader = DataLoader(formatted_dataset, batch_size=args.batch_size, shuffle=False)
 
-    model = AutoModelForCausalLM.from_pretrained(checkpoint, device_map="auto", attn_implementation="flash_attention_2",
-                                                 torch_dtype=torch.bfloat16)
+    model = AutoModelForCausalLM.from_pretrained(checkpoint, device_map="auto", torch_dtype=torch.bfloat16)
 
     generator = pipeline('text-generation', model=model, tokenizer=tokenizer, pad_token_id=tokenizer.eos_token_id)
     print(f'Model: {checkpoint} loaded...')
