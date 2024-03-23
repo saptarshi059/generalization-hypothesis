@@ -36,7 +36,7 @@ model_checkpoint = args.model_checkpoint
 model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-nlp = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=0)
+nlp = QuestionAnsweringPipeline(model=model, tokenizer=tokenizer, device=0, torch_dtype=torch.float16)
 raw_datasets = load_dataset(args.dataset, token=True)
 
 gold_answers = []
@@ -50,20 +50,16 @@ elif args.dataset in ['cuad', 'ibm/duorc']:
 
 dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False)
 
-for batch in dataloader:
-    print(batch)
-    break
-
-'''
 with torch.no_grad():
     for batch in tqdm(dataloader):
         try:
-            pred_answers.append(nlp(question=record['question'], context=record['context'])['answer'])
+            pred_answers.append(nlp(question=batch['question'], context=batch['context'],
+                                    handle_impossible_answer=True)['answer'])
         except:
             pred_answers.append("")  # For impossible answers
 
         try:
-            gold_answers.append(record['answers']['text'][0])
+            gold_answers.append(batch['answers']['text'][0])
         except:
             gold_answers.append("")  # For impossible answers
 
@@ -72,4 +68,3 @@ with open(f'{model_checkpoint.replace("/", "_")}_{args.dataset.replace("/", "_")
     writer = csv.writer(f)
     for row in zip(questions, pred_answers, gold_answers):
         writer.writerow(row)
-'''
