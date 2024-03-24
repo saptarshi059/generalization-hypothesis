@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     for row in tqdm(prediction_df.itertuples(index=False)):
         prediction = row.prediction.split(row.prompt)[1]
-        if row.context in prediction:
+        if re.search(re.escape(row.context), prediction):
             correctly_identified_contexts += 1
         if row.question in prediction:
             correctly_identified_questions += 1
