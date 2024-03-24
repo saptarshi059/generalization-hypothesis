@@ -21,11 +21,11 @@ if __name__ == '__main__':
 
     for row in tqdm(prediction_df.itertuples(index=False)):
         prediction = row.prediction.split(row.prompt)[1]
-        if re.search(row.context, prediction, re.IGNORECASE):
+        if re.search(row.context, prediction):
             correctly_identified_contexts += 1
-        if re.search(row.question, prediction, re.IGNORECASE):
+        if re.search(row.question, prediction):
             correctly_identified_questions += 1
-        if re.search(row.context, prediction, re.IGNORECASE) and re.search(row.question, prediction, re.IGNORECASE):
+        if re.search(row.context, prediction) and re.search(row.question, prediction):
             correctly_identified_both += 1
 
     print(f'Correctly identified Contexts: {np.round(correctly_identified_contexts/total_samples, 2)}%')
