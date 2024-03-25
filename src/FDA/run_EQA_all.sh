@@ -13,7 +13,8 @@ accelerate launch --mixed_precision 'fp16' covidqa_ft.py --model_checkpoint 'ber
 --trained_model_name 'bert-base-uncased-covidqa'
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
---trained_model_name 'bert-base-uncased-techqa' --dataset 'Saptarshi7/techqa_cleaned_for_bert' --impossible_questions True
+--trained_model_name 'bert-base-uncased-techqa' --dataset 'Saptarshi7/techqa_cleaned_for_bert' \
+--impossible_questions True --max_length 512 --stride 50
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
 --trained_model_name 'bert-base-uncased-cuad' --dataset 'cuad' --impossible_questions True
