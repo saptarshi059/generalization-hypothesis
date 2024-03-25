@@ -322,7 +322,6 @@ for epoch in range(num_train_epochs):
 
         start_logits.append(accelerator.gather(outputs.start_logits).cpu().numpy())
         end_logits.append(accelerator.gather(outputs.end_logits).cpu().numpy())
-        break
 
     start_logits = np.concatenate(start_logits)
     end_logits = np.concatenate(end_logits)
