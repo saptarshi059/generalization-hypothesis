@@ -309,7 +309,6 @@ for epoch in range(num_train_epochs):
         lr_scheduler.step()
         optimizer.zero_grad()
         progress_bar.update(1)
-        break
 
     # Evaluation
     model.eval()
