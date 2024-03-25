@@ -9,8 +9,8 @@
 #SBATCH --mail-type=FAIL,BEGIN,END  # Send an email when the job starts, ends, or fails
 #SBATCH --mail-user=saptarshi.sengupta@l3s.de # Email address to send the email to
 
-accelerate launch --mixed_precision 'fp16' covidqa_ft.py --model_checkpoint 'bert-base-uncased' \
---trained_model_name 'bert-base-uncased-covidqa'
+#accelerate launch --mixed_precision 'fp16' covidqa_ft.py --model_checkpoint 'bert-base-uncased' \
+#--trained_model_name 'bert-base-uncased-covidqa'
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
 --trained_model_name 'bert-base-uncased-techqa' --dataset 'Saptarshi7/techqa_cleaned_for_bert' \

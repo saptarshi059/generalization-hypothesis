@@ -327,7 +327,9 @@ for epoch in range(num_train_epochs):
     start_logits = start_logits[: len(validation_dataset)]
     end_logits = end_logits[: len(validation_dataset)]
 
-    metrics = compute_metrics(start_logits, end_logits, validation_dataset, raw_datasets['validation'])
+    metrics = compute_metrics(start_logits, end_logits, validation_dataset,
+                              raw_datasets['validation'] if args.dataset == 'Saptarshi7/techqa_cleaned_for_bert'
+                              else raw_datasets['test'])
 
     print(f"epoch {epoch}:", metrics)
 
