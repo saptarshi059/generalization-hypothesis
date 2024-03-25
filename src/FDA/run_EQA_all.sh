@@ -20,4 +20,5 @@ accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'ber
 --trained_model_name 'bert-base-uncased-duorc' --dataset 'Saptarshi7/duorc_processed' --impossible_questions True
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
---trained_model_name 'bert-base-uncased-cuad' --dataset 'cuad' --impossible_questions True
+--trained_model_name 'bert-base-uncased-cuad' --dataset 'cuad' --impossible_questions True --epochs 1 \
+--learning_rate 3e-5
