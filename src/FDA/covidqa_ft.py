@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from transformers import AutoTokenizer, AutoModelForQuestionAnswering, AutoConfig, logging, default_data_collator, get_scheduler, set_seed
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering, AutoConfig, logging, default_data_collator, \
+    get_scheduler, set_seed
 from datasets import load_dataset, load_metric, DatasetDict, concatenate_datasets
 from sklearn.model_selection import KFold
 from torch.utils.data import DataLoader
@@ -17,7 +18,8 @@ import torch
 
 logging.set_verbosity(50)
 
-#!huggingface-cli login #use datasets passcode here
+
+# !huggingface-cli login #use datasets passcode here
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -30,6 +32,7 @@ def str2bool(v):
         return False
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
+
 
 def prepare_train_features(examples):
     # Some of the questions have lots of whitespace on the left, which is not useful and will make the
@@ -108,12 +111,13 @@ def prepare_train_features(examples):
 
     return tokenized_examples
 
+
 def prepare_validation_features(examples):
     # Some of the questions have lots of whitespace on the left, which is not useful and will make the
     # truncation of the context fail (the tokenized question will take a lots of space). So we remove that
     # left whitespace
-    examples["question"] = [q.lstrip() for q in examples["question"]]   
-    
+    examples["question"] = [q.lstrip() for q in examples["question"]]
+
     # Tokenize our examples with truncation and maybe padding, but keep the overflows using a stride. This results
     # in one example possible giving several features when a context is long, each of those features having a
     # context that overlaps a bit the context of the previous feature.
@@ -153,6 +157,7 @@ def prepare_validation_features(examples):
 
     return tokenized_examples
 
+
 def compute_metrics(start_logits, end_logits, features, examples):
     example_to_features = collections.defaultdict(list)
     for idx, feature in enumerate(features):
@@ -170,8 +175,8 @@ def compute_metrics(start_logits, end_logits, features, examples):
             end_logit = end_logits[feature_index]
             offsets = features[feature_index]["offset_mapping"]
 
-            start_indexes = np.argsort(start_logit)[-1 : -n_best - 1 : -1].tolist()
-            end_indexes = np.argsort(end_logit)[-1 : -n_best - 1 : -1].tolist()
+            start_indexes = np.argsort(start_logit)[-1: -n_best - 1: -1].tolist()
+            end_indexes = np.argsort(end_logit)[-1: -n_best - 1: -1].tolist()
             for start_index in start_indexes:
                 for end_index in end_indexes:
                     # Skip answers that are not fully in the context
@@ -179,13 +184,13 @@ def compute_metrics(start_logits, end_logits, features, examples):
                         continue
                     # Skip answers with a length that is either < 0 or > max_answer_length
                     if (
-                        end_index < start_index
-                        or end_index - start_index + 1 > max_answer_length
+                            end_index < start_index
+                            or end_index - start_index + 1 > max_answer_length
                     ):
                         continue
 
                     answer = {
-                        "text": context[offsets[start_index][0] : offsets[end_index][1]],
+                        "text": context[offsets[start_index][0]: offsets[end_index][1]],
                         "logit_score": start_logit[start_index] + end_logit[end_index],
                     }
                     answers.append(answer)
@@ -202,16 +207,19 @@ def compute_metrics(start_logits, end_logits, features, examples):
     theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
     return metric.compute(predictions=predicted_answers, references=theoretical_answers)
 
+
 def seed_worker(worker_id):
-    worker_seed = torch.initial_seed() % 2**32
+    worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
+
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--model_checkpoint', default="csarron/roberta-base-squad-v1", type=str)
-parser.add_argument('--trained_model_name', default="test-covidqa-trained-saptarshiconnor", type=str) # So that we can KNOW for sure which folder is what.
-parser.add_argument('--batch_size', default=40, type=int)
+parser.add_argument('--trained_model_name', default="test-covidqa-trained-saptarshiconnor",
+                    type=str)  # So that we can KNOW for sure which folder is what.
+parser.add_argument('--batch_size', default=16, type=int)
 parser.add_argument('--max_length', default=384, type=int)
 parser.add_argument('--stride', default=128, type=int)
 parser.add_argument('--learning_rate', default=2e-5, type=float)
@@ -234,14 +242,15 @@ set_seed(args.random_state)
 model_checkpoint = args.model_checkpoint
 batch_size = args.batch_size
 data_collator = default_data_collator
-max_length = args.max_length # The maximum length of a feature (question and context)
-doc_stride = args.stride # The authorized overlap between two part of the context when splitting it is needed.
+max_length = args.max_length  # The maximum length of a feature (question and context)
+doc_stride = args.stride  # The authorized overlap between two part of the context when splitting it is needed.
 max_answer_length = args.max_answer_length
 n_best = args.n_best
-metric = load_metric("squad") # Since the dataset is in the same format, we can use the metrics code from squad itself
+metric = load_metric("squad")  # Since the dataset is in the same format, we can use the metrics code from squad itself
 
 if 'luke' in model_checkpoint:
-    tokenizer = AutoTokenizer.from_pretrained('roberta-base') #since luke doesn't have a fast implementation & it has the same vocab as roberta
+    tokenizer = AutoTokenizer.from_pretrained(
+        'roberta-base')  # since luke doesn't have a fast implementation & it has the same vocab as roberta
 else:
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
@@ -250,23 +259,28 @@ pad_on_right = tokenizer.padding_side == "right"
 raw_datasets = load_dataset("Saptarshi7/covid_qa_cleaned_CS", use_auth_token=True)
 
 kf = KFold(n_splits=5, shuffle=True, random_state=args.random_state)
-f1_1_folds = [] #F1@1 score for each fold
-em_1_folds = [] #EM@1 score for each fold
+f1_1_folds = []  # F1@1 score for each fold
+em_1_folds = []  # EM@1 score for each fold
 
 for fold_number, (train_idx, val_idx) in enumerate(kf.split(raw_datasets['train'])):
     print(f'>>>Running FOLD {fold_number + 1}<<<')
 
-    fold_dataset = DatasetDict({"train":raw_datasets["train"].select(train_idx), "validation":raw_datasets["train"].select(val_idx)})
-  
-    train_dataset = fold_dataset['train'].map(prepare_train_features, batched=True, remove_columns=fold_dataset['train'].column_names)
-    validation_dataset = fold_dataset['validation'].map(prepare_validation_features, batched=True, remove_columns=fold_dataset['validation'].column_names)
-    
+    fold_dataset = DatasetDict(
+        {"train": raw_datasets["train"].select(train_idx), "validation": raw_datasets["train"].select(val_idx)})
+
+    train_dataset = fold_dataset['train'].map(prepare_train_features, batched=True,
+                                              remove_columns=fold_dataset['train'].column_names)
+    validation_dataset = fold_dataset['validation'].map(prepare_validation_features, batched=True,
+                                                        remove_columns=fold_dataset['validation'].column_names)
+
     train_dataset.set_format("torch")
     validation_set = validation_dataset.remove_columns(["example_id", "offset_mapping"])
     validation_set.set_format("torch")
 
-    train_dataloader = DataLoader(train_dataset, shuffle=True, collate_fn=default_data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
-    eval_dataloader = DataLoader(validation_set, collate_fn=default_data_collator, batch_size=batch_size, worker_init_fn=seed_worker, generator=g)
+    train_dataloader = DataLoader(train_dataset, shuffle=True, collate_fn=default_data_collator, batch_size=batch_size,
+                                  worker_init_fn=seed_worker, generator=g)
+    eval_dataloader = DataLoader(validation_set, collate_fn=default_data_collator, batch_size=batch_size,
+                                 worker_init_fn=seed_worker, generator=g)
 
     model = AutoModelForQuestionAnswering.from_pretrained(model_checkpoint)
 
@@ -279,17 +293,19 @@ for fold_number, (train_idx, val_idx) in enumerate(kf.split(raw_datasets['train'
             param.requires_grad = False
 
     optimizer = AdamW(model.parameters(), lr=args.learning_rate)
-    
+
     accelerator = Accelerator()
     device = accelerator.device
 
-    model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader, eval_dataloader)
+    model, optimizer, train_dataloader, eval_dataloader = accelerator.prepare(model, optimizer, train_dataloader,
+                                                                              eval_dataloader)
 
     num_train_epochs = args.epochs
     num_update_steps_per_epoch = len(train_dataloader)
     num_training_steps = num_train_epochs * num_update_steps_per_epoch
 
-    lr_scheduler = get_scheduler("linear", optimizer=optimizer, num_warmup_steps=0, num_training_steps=num_training_steps)
+    lr_scheduler = get_scheduler("linear", optimizer=optimizer, num_warmup_steps=0,
+                                 num_training_steps=num_training_steps)
 
     progress_bar = tqdm(range(num_training_steps))
 
@@ -336,51 +352,51 @@ for fold_number, (train_idx, val_idx) in enumerate(kf.split(raw_datasets['train'
         if accelerator.is_main_process:
             tokenizer.save_pretrained(output_dir)
 
-#Printing Avg. EM@1 across all folds trained till a given epoch
+# Printing Avg. EM@1 across all folds trained till a given epoch
 for e in range(num_train_epochs):
-  e_em = []
-  for v in range(e, len(em_1_folds), num_train_epochs):
-    e_em.append(em_1_folds[v])
-  print(f'Average EM@1 for epoch {e} across all folds: {np.round(np.mean(e_em),2)}')
+    e_em = []
+    for v in range(e, len(em_1_folds), num_train_epochs):
+        e_em.append(em_1_folds[v])
+    print(f'Average EM@1 for epoch {e} across all folds: {np.round(np.mean(e_em), 2)}')
 
-#Printing Avg. F1@1 across all folds trained till a given epoch
+# Printing Avg. F1@1 across all folds trained till a given epoch
 for e in range(num_train_epochs):
-  e_f1 = []
-  for v in range(e, len(f1_1_folds), num_train_epochs):
-    e_f1.append(f1_1_folds[v])
-  print(f'Average F1@1 for epoch {e} across all folds: {np.round(np.mean(e_f1),2)}')
+    e_f1 = []
+    for v in range(e, len(f1_1_folds), num_train_epochs):
+        e_f1.append(f1_1_folds[v])
+    print(f'Average F1@1 for epoch {e} across all folds: {np.round(np.mean(e_f1), 2)}')
 
-#Printing Avg. Folds EM
+# Printing Avg. Folds EM
 counter = 0
 total = 0.0
 all_avg_em = []
 fold_number = 1
 for score in em_1_folds:
-  total += score
-  if counter == num_train_epochs-1:
-    print(f'Avg. EM for Fold {fold_number}: {np.round(total/num_train_epochs, 2)}')
-    fold_number += 1
-    all_avg_em.append(total/num_train_epochs)
-    total = 0.0
-    counter = 0
-  else:
-    counter += 1
+    total += score
+    if counter == num_train_epochs - 1:
+        print(f'Avg. EM for Fold {fold_number}: {np.round(total / num_train_epochs, 2)}')
+        fold_number += 1
+        all_avg_em.append(total / num_train_epochs)
+        total = 0.0
+        counter = 0
+    else:
+        counter += 1
 
-#Printing Avg. Folds F1
+# Printing Avg. Folds F1
 counter = 0
 total = 0.0
 all_avg_f1 = []
 fold_number = 1
 for score in f1_1_folds:
-  total += score
-  if counter == num_train_epochs-1:
-    print(f'Avg. F1 for Fold {fold_number}: {np.round(total/num_train_epochs, 2)}')
-    fold_number += 1
-    all_avg_f1.append(total/num_train_epochs)
-    total = 0.0
-    counter = 0
-  else:
-    counter += 1
+    total += score
+    if counter == num_train_epochs - 1:
+        print(f'Avg. F1 for Fold {fold_number}: {np.round(total / num_train_epochs, 2)}')
+        fold_number += 1
+        all_avg_f1.append(total / num_train_epochs)
+        total = 0.0
+        counter = 0
+    else:
+        counter += 1
 
 print(f'Avg. EM across all folds: {np.round(np.mean(all_avg_em), 2)}')
 print(f'Avg. F1 across all folds: {np.round(np.mean(all_avg_f1), 2)}')

@@ -39,28 +39,16 @@ def prepare_train_features(examples):
     # Tokenize our examples with truncation and padding, but keep the overflows using a stride. This results
     # in one example possible giving several features when a context is long, each of those features having a
     # context that overlaps a bit the context of the previous feature.
-    if args.dataset != 'ibm/duorc':
-        tokenized_examples = tokenizer(
-            examples["question" if pad_on_right else "context"],
-            examples["context" if pad_on_right else "question"],
-            truncation="only_second" if pad_on_right else "only_first",
-            max_length=max_length,
-            stride=doc_stride,
-            return_overflowing_tokens=True,
-            return_offsets_mapping=True,
-            padding="max_length",
-        )
-    else:
-        tokenized_examples = tokenizer(
-            examples["question" if pad_on_right else "context"],
-            examples["plot" if pad_on_right else "question"],
-            truncation="only_second" if pad_on_right else "only_first",
-            max_length=max_length,
-            stride=doc_stride,
-            return_overflowing_tokens=True,
-            return_offsets_mapping=True,
-            padding="max_length",
-        )
+    tokenized_examples = tokenizer(
+        examples["question" if pad_on_right else "context"],
+        examples["context" if pad_on_right else "question"],
+        truncation="only_second" if pad_on_right else "only_first",
+        max_length=max_length,
+        stride=doc_stride,
+        return_overflowing_tokens=True,
+        return_offsets_mapping=True,
+        padding="max_length",
+    )
     # Since one example might give us several features if it has a long context, we need a map from a feature to
     # its corresponding example. This key gives us just that.
     sample_mapping = tokenized_examples.pop("overflow_to_sample_mapping")
@@ -90,10 +78,7 @@ def prepare_train_features(examples):
         else:
             # Start/end character index of the answer in the text.
             start_char = answers["answer_start"][0]
-            if args.dataset != 'ibm/duorc':
-                end_char = start_char + len(answers["text"][0])
-            else:
-                end_char = start_char + len(answers[0])
+            end_char = start_char + len(answers["text"][0])
 
             # Start token index of the current span in the text.
             token_start_index = 0
@@ -131,28 +116,16 @@ def prepare_validation_features(examples):
     # Tokenize our examples with truncation and maybe padding, but keep the overflows using a stride. This results
     # in one example possible giving several features when a context is long, each of those features having a
     # context that overlaps a bit the context of the previous feature.
-    if args.dataset != 'ibm/duorc':
-        tokenized_examples = tokenizer(
-            examples["question" if pad_on_right else "context"],
-            examples["context" if pad_on_right else "question"],
-            truncation="only_second" if pad_on_right else "only_first",
-            max_length=max_length,
-            stride=doc_stride,
-            return_overflowing_tokens=True,
-            return_offsets_mapping=True,
-            padding="max_length",
-        )
-    else:
-        tokenized_examples = tokenizer(
-            examples["question" if pad_on_right else "context"],
-            examples["plot" if pad_on_right else "question"],
-            truncation="only_second" if pad_on_right else "only_first",
-            max_length=max_length,
-            stride=doc_stride,
-            return_overflowing_tokens=True,
-            return_offsets_mapping=True,
-            padding="max_length",
-        )
+    tokenized_examples = tokenizer(
+        examples["question" if pad_on_right else "context"],
+        examples["context" if pad_on_right else "question"],
+        truncation="only_second" if pad_on_right else "only_first",
+        max_length=max_length,
+        stride=doc_stride,
+        return_overflowing_tokens=True,
+        return_offsets_mapping=True,
+        padding="max_length",
+    )
 
     # Since one example might give us several features if it has a long context, we need a map from a feature to
     # its corresponding example. This key gives us just that.
@@ -188,7 +161,7 @@ def compute_metrics(start_logits, end_logits, features, examples):
     predicted_answers = []
     for example in tqdm(examples):
         example_id = example["id"]
-        context = example["context"] if args.dataset != 'ibm/duorc' else example["plot"]
+        context = example["context"]
         answers = []
 
         # Loop through all features associated with that example
@@ -221,14 +194,10 @@ def compute_metrics(start_logits, end_logits, features, examples):
         if len(answers) > 0:
             best_answer = max(answers, key=lambda x: x["logit_score"])
             if impossible_questions:
-                predicted_answers.append({"id": example_id,
-                                          "prediction_text":
-                                              best_answer["text"] if args.dataset != 'ibm/duorc' else best_answer,
+                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"],
                                           "no_answer_probability": 0.0})
             else:
-                predicted_answers.append({"id": example_id,
-                                          "prediction_text":
-                                              best_answer["text"] if args.dataset != 'ibm/duorc' else best_answer})
+                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"]})
         else:
             if impossible_questions:
                 predicted_answers.append({"id": example_id, "prediction_text": "", "no_answer_probability": 1.0})
@@ -258,7 +227,7 @@ parser.add_argument('--learning_rate', default=2e-5, type=float)
 parser.add_argument('--weight_decay', default=0.01, type=float)
 parser.add_argument('--epochs', default=3, type=int)
 parser.add_argument('--n_best', default=20, type=int)
-parser.add_argument('--max_answer_length', default=30, type=int)
+parser.add_argument('--max_answer_length', default=1000, type=int)
 parser.add_argument('--random_state', default=42, type=int)
 
 args = parser.parse_args()
@@ -285,10 +254,7 @@ max_answer_length = args.max_answer_length
 n_best = args.n_best
 pad_on_right = tokenizer.padding_side == "right"
 
-if args.dataset == 'ibm/duorc':
-    raw_datasets = load_dataset('ibm/duorc', 'SelfRC')
-else:
-    raw_datasets = load_dataset(args.dataset, token=True, trust_remote_code=True)
+raw_datasets = load_dataset(args.dataset, token=True, trust_remote_code=True)
 
 train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True,
                                           remove_columns=raw_datasets['train'].column_names)
