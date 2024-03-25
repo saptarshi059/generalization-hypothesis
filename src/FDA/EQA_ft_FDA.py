@@ -194,15 +194,15 @@ def compute_metrics(start_logits, end_logits, features, examples):
         if len(answers) > 0:
             best_answer = max(answers, key=lambda x: x["logit_score"])
             if impossible_questions:
-                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"],
+                predicted_answers.append({"id": str(example_id), "prediction_text": best_answer["text"],
                                           "no_answer_probability": 0.0})
             else:
-                predicted_answers.append({"id": example_id, "prediction_text": best_answer["text"]})
+                predicted_answers.append({"id": str(example_id), "prediction_text": best_answer["text"]})
         else:
             if impossible_questions:
-                predicted_answers.append({"id": example_id, "prediction_text": "", "no_answer_probability": 1.0})
+                predicted_answers.append({"id": str(example_id), "prediction_text": "", "no_answer_probability": 1.0})
             else:
-                predicted_answers.append({"id": example_id, "prediction_text": ""})
+                predicted_answers.append({"id": str(example_id), "prediction_text": ""})
 
     theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
     return metric.compute(predictions=predicted_answers, references=theoretical_answers)
@@ -322,6 +322,7 @@ for epoch in range(num_train_epochs):
 
         start_logits.append(accelerator.gather(outputs.start_logits).cpu().numpy())
         end_logits.append(accelerator.gather(outputs.end_logits).cpu().numpy())
+        break
 
     start_logits = np.concatenate(start_logits)
     end_logits = np.concatenate(end_logits)
