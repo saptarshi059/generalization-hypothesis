@@ -17,7 +17,7 @@ accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'ber
 --impossible_questions True --max_length 512 --stride 50
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
---trained_model_name 'bert-base-uncased-cuad' --dataset 'cuad' --impossible_questions True
+--trained_model_name 'bert-base-uncased-duorc' --dataset 'Saptarshi7/duorc_processed' --impossible_questions True
 
 accelerate launch --mixed_precision 'fp16' EQA_ft_FDA.py --model_checkpoint 'bert-base-uncased' \
---trained_model_name 'bert-base-uncased-duorc' --dataset 'Saptarshi7/duorc_processed' --impossible_questions True
+--trained_model_name 'bert-base-uncased-cuad' --dataset 'cuad' --impossible_questions True
