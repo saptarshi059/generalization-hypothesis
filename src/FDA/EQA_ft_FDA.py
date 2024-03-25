@@ -217,7 +217,7 @@ def seed_worker(worker_id):
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--impossible_questions', default=False, type=str2bool)
-parser.add_argument('--dataset', default='Saptarshi7/techqa-squad-style', type=str)
+parser.add_argument('--dataset', default='Saptarshi7/techqa_cleaned_for_bert', type=str)
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
 parser.add_argument('--trained_model_name', default="distilbert-base-uncased-squad", type=str)
 parser.add_argument('--batch_size', default=16, type=int)
@@ -259,7 +259,7 @@ raw_datasets = load_dataset(args.dataset, token=True, trust_remote_code=True)
 train_dataset = raw_datasets['train'].map(prepare_train_features, batched=True,
                                           remove_columns=raw_datasets['train'].column_names)
 
-if args.dataset == 'Saptarshi7/techqa-squad-style':  # Only has validation split.
+if args.dataset == 'Saptarshi7/techqa_cleaned_for_bert':  # Only has validation split.
     validation_dataset = raw_datasets['validation'].map(prepare_validation_features, batched=True,
                                                         remove_columns=raw_datasets['validation'].column_names)
 # CUAD/DuoRC - both have test splits.
