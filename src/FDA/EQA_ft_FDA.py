@@ -204,7 +204,7 @@ def compute_metrics(start_logits, end_logits, features, examples):
             else:
                 predicted_answers.append({"id": str(example_id), "prediction_text": ""})
 
-    theoretical_answers = [{"id": ex["id"], "answers": ex["answers"]} for ex in examples]
+    theoretical_answers = [{"id": str(ex["id"]), "answers": ex["answers"]} for ex in examples]
     return metric.compute(predictions=predicted_answers, references=theoretical_answers)
 
 
