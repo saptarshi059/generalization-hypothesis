@@ -269,6 +269,8 @@ def main():
                                         config=config,
                                         cache_dir=args.cache_dir if args.cache_dir else None)
 
+    print(tokenizer)
+
     model.to(args.device)
 
     logger.info("Training/evaluation parameters %s", args)
