@@ -20,8 +20,8 @@ from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 from utils_ner import convert_examples_to_features, get_labels, read_examples_from_file
 
-from transformers import AdamW, get_linear_schedule_with_warmup
-from transformers import WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer
+from my_transformers import AdamW, get_linear_schedule_with_warmup
+from my_transformers import WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer
 
 logger = logging.getLogger(__name__)
 

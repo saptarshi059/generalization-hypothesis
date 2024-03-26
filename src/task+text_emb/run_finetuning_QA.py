@@ -24,9 +24,9 @@ except:
 
 from tqdm import tqdm, trange
 
-from transformers import (WEIGHTS_NAME, BertConfig, BertForQuestionAnswering, BertTokenizer)
+from my_transformers import (WEIGHTS_NAME, BertConfig, BertForQuestionAnswering, BertTokenizer)
 
-from transformers import AdamW, get_linear_schedule_with_warmup
+from my_transformers import AdamW, get_linear_schedule_with_warmup
 
 from ..utils import utils_squad
 from utils_squad import (read_squad_examples, convert_examples_to_features,
@@ -154,7 +154,7 @@ def train(args, train_dataset, model, tokenizer):
                       'start_positions': batch[3],
                       'end_positions':   batch[4]}
             outputs = model(**inputs)
-            loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
+            loss = outputs[0]  # model outputs are always tuple in my_transformers (see doc)
 
             if args.n_gpu > 1:
                 loss = loss.mean() # mean() to average on multi-gpu parallel (not distributed) training
@@ -566,7 +566,7 @@ def main():
                 checkpoints = [os.path.join(args.output_dir, 'checkpoint-{}'.format(epoch))]
                 if args.eval_all_checkpoints:
                     checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + '/**/' + WEIGHTS_NAME, recursive=True)))
-                    logging.getLogger("transformers.modeling_utils").setLevel(logging.WARN)  # Reduce model loading logs
+                    logging.getLogger("my_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce model loading logs
                 logger.info("Evaluate the following checkpoints: %s", checkpoints)
                 for checkpoint in checkpoints:
                     global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""

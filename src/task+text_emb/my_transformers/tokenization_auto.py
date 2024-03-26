@@ -23,7 +23,7 @@ from .tokenization_bert import BertTokenizer
 logger = logging.getLogger(__name__)
 
 class AutoTokenizer(object):
-    r""":class:`~transformers.AutoTokenizer` is a generic tokenizer class
+    r""":class:`~my_transformers.AutoTokenizer` is a generic tokenizer class
         that will be instantiated as one of the tokenizer classes of the library
         when created with the `AutoTokenizer.from_pretrained(pretrained_model_name_or_path)`
         class method.
@@ -54,7 +54,7 @@ class AutoTokenizer(object):
             pretrained_model_name_or_path: either:
 
                 - a string with the `shortcut name` of a predefined tokenizer to load from cache or download, e.g.: ``bert-base-uncased``.
-                - a path to a `directory` containing vocabulary files required by the tokenizer, for instance saved using the :func:`~transformers.PreTrainedTokenizer.save_pretrained` method, e.g.: ``./my_model_directory/``.
+                - a path to a `directory` containing vocabulary files required by the tokenizer, for instance saved using the :func:`~my_transformers.PreTrainedTokenizer.save_pretrained` method, e.g.: ``./my_model_directory/``.
                 - (not applicable to all derived classes) a path or url to a single saved vocabulary file if and only if the tokenizer only requires a single vocabulary file (e.g. Bert, XLNet), e.g.: ``./my_model_directory/vocab.txt``.
 
             cache_dir: (`optional`) string:
@@ -69,7 +69,7 @@ class AutoTokenizer(object):
 
             inputs: (`optional`) positional arguments: will be passed to the Tokenizer ``__init__`` method.
 
-            kwargs: (`optional`) keyword arguments: will be passed to the Tokenizer ``__init__`` method. Can be used to set special tokens like ``bos_token``, ``eos_token``, ``unk_token``, ``sep_token``, ``pad_token``, ``cls_token``, ``mask_token``, ``additional_special_tokens``. See parameters in the doc string of :class:`~transformers.PreTrainedTokenizer` for details.
+            kwargs: (`optional`) keyword arguments: will be passed to the Tokenizer ``__init__`` method. Can be used to set special tokens like ``bos_token``, ``eos_token``, ``unk_token``, ``sep_token``, ``pad_token``, ``cls_token``, ``mask_token``, ``additional_special_tokens``. See parameters in the doc string of :class:`~my_transformers.PreTrainedTokenizer` for details.
 
         Examples::
 

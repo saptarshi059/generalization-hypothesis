@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class AutoConfig(object):
-    r""":class:`~transformers.AutoConfig` is a generic configuration class
+    r""":class:`~my_transformers.AutoConfig` is a generic configuration class
         that will be instantiated as one of the configuration classes of the library
         when created with the `AutoConfig.from_pretrained(pretrained_model_name_or_path)`
         class method.
@@ -53,7 +53,7 @@ class AutoConfig(object):
             pretrained_model_name_or_path: either:
 
                 - a string with the `shortcut name` of a pre-trained model configuration to load from cache or download, e.g.: ``bert-base-uncased``.
-                - a path to a `directory` containing a configuration file saved using the :func:`~transformers.PretrainedConfig.save_pretrained` method, e.g.: ``./my_model_directory/``.
+                - a path to a `directory` containing a configuration file saved using the :func:`~my_transformers.PretrainedConfig.save_pretrained` method, e.g.: ``./my_model_directory/``.
                 - a path or url to a saved configuration JSON `file`, e.g.: ``./my_model_directory/configuration.json``.
 
             cache_dir: (`optional`) string:

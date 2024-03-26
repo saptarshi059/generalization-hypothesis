@@ -591,9 +591,9 @@ BERT_START_DOCSTRING = r"""    The BERT model was proposed in
             `model({'input_ids': input_ids, 'token_type_ids': token_type_ids})`
 
     Parameters:
-        config (:class:`~transformers.BertConfig`): Model configuration class with all the parameters of the model. 
+        config (:class:`~my_transformers.BertConfig`): Model configuration class with all the parameters of the model. 
             Initializing with a config file does not load the weights associated with the model, only the configuration.
-            Check out the :meth:`~transformers.PreTrainedModel.from_pretrained` method to load the model weights.
+            Check out the :meth:`~my_transformers.PreTrainedModel.from_pretrained` method to load the model weights.
 """
 
 BERT_INPUTS_DOCSTRING = r"""
@@ -617,9 +617,9 @@ BERT_INPUTS_DOCSTRING = r"""
             Bert is a model with absolute position embeddings so it's usually advised to pad the inputs on
             the right rather than the left.
 
-            Indices can be obtained using :class:`transformers.BertTokenizer`.
-            See :func:`transformers.PreTrainedTokenizer.encode` and
-            :func:`transformers.PreTrainedTokenizer.convert_tokens_to_ids` for details.
+            Indices can be obtained using :class:`my_transformers.BertTokenizer`.
+            See :func:`my_transformers.PreTrainedTokenizer.encode` and
+            :func:`my_transformers.PreTrainedTokenizer.convert_tokens_to_ids` for details.
         **attention_mask**: (`optional`) ``Numpy array`` or ``tf.Tensor`` of shape ``(batch_size, sequence_length)``:
             Mask to avoid performing attention on padding token indices.
             Mask values selected in ``[0, 1]``:
@@ -667,7 +667,7 @@ class TFBertModel(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertModel
+        from my_transformers import BertTokenizer, TFBertModel
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertModel.from_pretrained('bert-base-uncased')
@@ -706,7 +706,7 @@ class TFBertForPreTraining(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForPreTraining
+        from my_transformers import BertTokenizer, TFBertForPreTraining
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForPreTraining.from_pretrained('bert-base-uncased')
@@ -755,7 +755,7 @@ class TFBertForMaskedLM(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForMaskedLM
+        from my_transformers import BertTokenizer, TFBertForMaskedLM
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForMaskedLM.from_pretrained('bert-base-uncased')
@@ -802,7 +802,7 @@ class TFBertForNextSentencePrediction(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForNextSentencePrediction
+        from my_transformers import BertTokenizer, TFBertForNextSentencePrediction
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForNextSentencePrediction.from_pretrained('bert-base-uncased')
@@ -847,7 +847,7 @@ class TFBertForSequenceClassification(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForSequenceClassification
+        from my_transformers import BertTokenizer, TFBertForSequenceClassification
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForSequenceClassification.from_pretrained('bert-base-uncased')
@@ -899,7 +899,7 @@ class TFBertForMultipleChoice(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForMultipleChoice
+        from my_transformers import BertTokenizer, TFBertForMultipleChoice
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForMultipleChoice.from_pretrained('bert-base-uncased')
@@ -984,7 +984,7 @@ class TFBertForTokenClassification(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForTokenClassification
+        from my_transformers import BertTokenizer, TFBertForTokenClassification
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForTokenClassification.from_pretrained('bert-base-uncased')
@@ -1037,7 +1037,7 @@ class TFBertForQuestionAnswering(TFBertPreTrainedModel):
     Examples::
 
         import tensorflow as tf
-        from transformers import BertTokenizer, TFBertForQuestionAnswering
+        from my_transformers import BertTokenizer, TFBertForQuestionAnswering
 
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         model = TFBertForQuestionAnswering.from_pretrained('bert-base-uncased')

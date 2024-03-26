@@ -1,5 +1,19 @@
 # coding=utf-8
-"""PyTorch BERT model for task embeddings"""
+# Copyright 2018 The Google AI Language Team Authors and The HuggingFace Inc. team.
+# Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""PyTorch BERT model. """
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -177,7 +191,7 @@ class BertSelfAttention(nn.Module):
                 "The hidden size (%d) is not a multiple of the number of attention "
                 "heads (%d)" % (config.hidden_size, config.num_attention_heads))
         self.output_attentions = config.output_attentions
-        self.retain_gradients = config.retain_gradients
+
         self.num_attention_heads = config.num_attention_heads
         self.attention_head_size = int(config.hidden_size / config.num_attention_heads)
         self.all_head_size = self.num_attention_heads * self.attention_head_size
@@ -187,8 +201,6 @@ class BertSelfAttention(nn.Module):
         self.value = nn.Linear(config.hidden_size, self.all_head_size)
 
         self.dropout = nn.Dropout(config.attention_probs_dropout_prob)
-
-        self.multihead_output = None
 
     def transpose_for_scores(self, x):
         new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
@@ -236,10 +248,6 @@ class BertSelfAttention(nn.Module):
         context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
         context_layer = context_layer.view(*new_context_layer_shape)
-
-        if self.retain_gradients:
-            self.multihead_output = context_layer
-            self.multihead_output.retain_grad()
 
         outputs = (context_layer, attention_probs) if self.output_attentions else (context_layer,)
         return outputs
@@ -314,19 +322,14 @@ class BertIntermediate(nn.Module):
 class BertOutput(nn.Module):
     def __init__(self, config):
         super(BertOutput, self).__init__()
-        self.retain_gradients = config.retain_gradients
         self.dense = nn.Linear(config.intermediate_size, config.hidden_size)
         self.LayerNorm = BertLayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.layer_output = None
 
     def forward(self, hidden_states, input_tensor):
         hidden_states = self.dense(hidden_states)
         hidden_states = self.dropout(hidden_states)
         hidden_states = self.LayerNorm(hidden_states + input_tensor)
-        if self.retain_gradients:
-            self.layer_output = hidden_states
-            self.layer_output.retain_grad()
         return hidden_states
 
 
@@ -391,8 +394,6 @@ class BertEncoder(nn.Module):
 class BertPooler(nn.Module):
     def __init__(self, config):
         super(BertPooler, self).__init__()
-        self.retain_gradients = config.retain_gradients
-        self.do_pooling = config.do_pooling
         self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         self.activation = nn.Tanh()
 
@@ -400,18 +401,9 @@ class BertPooler(nn.Module):
         # We "pool" the model by simply taking the hidden state corresponding
         # to the first token.
         first_token_tensor = hidden_states[:, 0]
-        if self.do_pooling:
-            pooled_output = self.dense(first_token_tensor)
-            pooled_output = self.activation(pooled_output)
-            if self.retain_gradients:
-                self.cls_output = pooled_output
-                self.cls_output.retain_grad()
-            return pooled_output
-        else:
-            if self.retain_gradients:
-                self.cls_output = first_token_tensor
-                self.cls_output.retain_grad()
-            return first_token_tensor
+        pooled_output = self.dense(first_token_tensor)
+        pooled_output = self.activation(pooled_output)
+        return pooled_output
 
 
 class BertPredictionHeadTransform(nn.Module):
@@ -520,9 +512,9 @@ BERT_START_DOCSTRING = r"""    The BERT model was proposed in
         https://pytorch.org/docs/stable/nn.html#module
 
     Parameters:
-        config (:class:`~transformers.BertConfig`): Model configuration class with all the parameters of the model.
+        config (:class:`~my_transformers.BertConfig`): Model configuration class with all the parameters of the model.
             Initializing with a config file does not load the weights associated with the model, only the configuration.
-            Check out the :meth:`~transformers.PreTrainedModel.from_pretrained` method to load the model weights.
+            Check out the :meth:`~my_transformers.PreTrainedModel.from_pretrained` method to load the model weights.
 """
 
 BERT_INPUTS_DOCSTRING = r"""
@@ -546,9 +538,9 @@ BERT_INPUTS_DOCSTRING = r"""
             Bert is a model with absolute position embeddings so it's usually advised to pad the inputs on
             the right rather than the left.
 
-            Indices can be obtained using :class:`transformers.BertTokenizer`.
-            See :func:`transformers.PreTrainedTokenizer.encode` and
-            :func:`transformers.PreTrainedTokenizer.convert_tokens_to_ids` for details.
+            Indices can be obtained using :class:`my_transformers.BertTokenizer`.
+            See :func:`my_transformers.PreTrainedTokenizer.encode` and
+            :func:`my_transformers.PreTrainedTokenizer.convert_tokens_to_ids` for details.
         **attention_mask**: (`optional`) ``torch.FloatTensor`` of shape ``(batch_size, sequence_length)``:
             Mask to avoid performing attention on padding token indices.
             Mask values selected in ``[0, 1]``:
@@ -633,19 +625,6 @@ class BertModel(BertPreTrainedModel):
         """
         for layer, heads in heads_to_prune.items():
             self.encoder.layer[layer].attention.prune_heads(heads)
-
-    def _get_model_outputs(self, key):
-        if key == 'multihead_output':
-            # get list (layers) of multihead module outputs
-            return [layer.attention.self.multihead_output for layer in self.encoder.layer]
-        elif key == 'layer_output':
-            # get list of encoder LayerNorm layer outputs
-            return [layer.output.layer_output for layer in self.encoder.layer]
-        elif key == 'cls_output':
-            # get the final output of the model
-            return self.pooler.cls_output
-        else:
-            raise ValueError("Key not found: %s" % (key))
 
     def forward(self, input_ids=None, attention_mask=None, token_type_ids=None, position_ids=None,
                 head_mask=None, inputs_embeds=None, encoder_hidden_states=None, encoder_attention_mask=None):
@@ -1014,24 +993,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
     def __init__(self, config):
         super(BertForSequenceClassification, self).__init__(config)
         self.num_labels = config.num_labels
-        self.num_softmax_classifiers = config.num_softmax_classifiers
+
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-
-        if config.num_softmax_classifiers > 1:
-            self.weight = []
-            self.bias = []
-            for i in range(config.num_softmax_classifiers):
-                self.weight.append(nn.Linear(config.hidden_size, self.config.num_labels).weight)
-                self.bias.append(nn.Linear(config.hidden_size, self.config.num_labels).bias)
-
-            self.classifier_weight = torch.cat(self.weight, dim=0).reshape(config.num_softmax_classifiers,
-                                                                           config.num_labels,
-                                                                           config.hidden_size)
-            self.classifier_bias = torch.cat(self.bias, dim=0).reshape(config.num_softmax_classifiers,
-                                                                       config.num_labels)
-        else:
-            self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+        self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
 
         self.init_weights()
 
@@ -1047,16 +1012,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         pooled_output = outputs[1]
 
-        pooled_output = self.dropout(pooled_output) # batch_size x hidden_size
-
-        if self.num_softmax_classifiers > 1:
-            # pooled_output: batch_size x hidden_size
-            # classifier_weight: num_softmax_classifiers x num_labels x hidden_size
-            # logits: num_softmax_classifiers x batch_size x num_labels
-            logits = torch.einsum("mh,nch->nmc", [pooled_output, self.classifier_weight.to(input_ids.device)]) \
-                     + self.classifier_bias.to(input_ids.device).unsqueeze(1)
-        else:
-            logits = self.classifier(pooled_output) # batch_size x num_labels
+        pooled_output = self.dropout(pooled_output)
+        logits = self.classifier(pooled_output)
 
         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
 
@@ -1064,21 +1021,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
             if self.num_labels == 1:
                 #  We are doing regression
                 loss_fct = MSELoss()
-                if self.num_softmax_classifiers > 1:
-                    loss = loss_fct(logits.contiguous().view(-1), labels.repeat(self.num_softmax_classifiers).view(-1))
-                else:
-                    loss = loss_fct(logits.view(-1), labels.view(-1))
+                loss = loss_fct(logits.view(-1), labels.view(-1))
             else:
-                #  We are doing classification
                 loss_fct = CrossEntropyLoss()
-                if self.num_softmax_classifiers > 1:
-                    # logits: num_softmax_classifiers x batch_size x num_labels
-                    # logits.contiguous().view(-1, self.num_labels): (num_softmax_classifiers x batch_size) x num_labels
-                    # labels.repeat(self.num_softmax_classifiers).view(-1): (num_softmax_classifiers x batch_size)
-                    loss = loss_fct(logits.contiguous().view(-1, self.num_labels),
-                                    labels.repeat(self.num_softmax_classifiers).view(-1))
-                else:
-                    loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)
@@ -1197,25 +1143,10 @@ class BertForTokenClassification(BertPreTrainedModel):
     def __init__(self, config):
         super(BertForTokenClassification, self).__init__(config)
         self.num_labels = config.num_labels
-        self.num_softmax_classifiers = config.num_softmax_classifiers
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-
-        if config.num_softmax_classifiers > 1:
-            self.weight = []
-            self.bias = []
-            for i in range(config.num_softmax_classifiers):
-                self.weight.append(nn.Linear(config.hidden_size, self.config.num_labels).weight)
-                self.bias.append(nn.Linear(config.hidden_size, self.config.num_labels).bias)
-
-            self.classifier_weight = torch.cat(self.weight, dim=0).reshape(config.num_softmax_classifiers,
-                                                                           config.num_labels,
-                                                                           config.hidden_size)
-            self.classifier_bias = torch.cat(self.bias, dim=0).reshape(config.num_softmax_classifiers,
-                                                                       config.num_labels)
-        else:
-            self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+        self.classifier = nn.Linear(config.hidden_size, config.num_labels)
 
         self.init_weights()
 
@@ -1231,39 +1162,20 @@ class BertForTokenClassification(BertPreTrainedModel):
 
         sequence_output = outputs[0]
 
-        sequence_output = self.dropout(sequence_output) # batch_size x max_seq_length x hidden_size
-
-        if self.num_softmax_classifiers > 1:
-            # sequence_output: batch_size x max_seq_length x hidden_size
-            # classifier_weight: num_softmax_classifiers x num_labels x hidden_size
-            # logits: num_softmax_classifiers x batch_size x max_seq_length x num_labels
-            logits = torch.einsum("msh,nch->nmsc", [sequence_output, self.classifier_weight.to(input_ids.device)]) \
-                     + self.classifier_bias.to(input_ids.device).unsqueeze(1).unsqueeze(1)
-        else:
-            logits = self.classifier(sequence_output) # batch_size x max_seq_length x num_labels
+        sequence_output = self.dropout(sequence_output)
+        logits = self.classifier(sequence_output)
 
         outputs = (logits,) + outputs[2:]  # add hidden states and attention if they are here
         if labels is not None:
             loss_fct = CrossEntropyLoss()
             # Only keep active parts of the loss
-            if self.num_softmax_classifiers > 1:
-                if attention_mask is not None:
-                    active_loss = attention_mask.view(-1) == 1
-                    active_loss = active_loss.repeat(self.num_softmax_classifiers).view(-1)
-                    active_logits = logits.contiguous().view(-1, self.num_labels)[active_loss]
-                    active_labels = labels.view(-1).repeat(self.num_softmax_classifiers).view(-1)[active_loss]
-                    loss = loss_fct(active_logits, active_labels)
-                else:
-                    loss = loss_fct(logits.contiguous().view(-1, self.num_labels),
-                                    labels.repeat(self.num_softmax_classifiers).view(-1))
+            if attention_mask is not None:
+                active_loss = attention_mask.view(-1) == 1
+                active_logits = logits.view(-1, self.num_labels)[active_loss]
+                active_labels = labels.view(-1)[active_loss]
+                loss = loss_fct(active_logits, active_labels)
             else:
-                if attention_mask is not None:
-                    active_loss = attention_mask.view(-1) == 1
-                    active_logits = logits.view(-1, self.num_labels)[active_loss]
-                    active_labels = labels.view(-1)[active_loss]
-                    loss = loss_fct(active_logits, active_labels)
-                else:
-                    loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
             outputs = (loss,) + outputs
 
         return outputs  # (loss), scores, (hidden_states), (attentions)
@@ -1317,23 +1229,9 @@ class BertForQuestionAnswering(BertPreTrainedModel):
     def __init__(self, config):
         super(BertForQuestionAnswering, self).__init__(config)
         self.num_labels = config.num_labels
-        self.num_softmax_classifiers = config.num_softmax_classifiers
+
         self.bert = BertModel(config)
-
-        if config.num_softmax_classifiers > 1:
-            self.weight = []
-            self.bias = []
-            for i in range(config.num_softmax_classifiers):
-                self.weight.append(nn.Linear(config.hidden_size, self.config.num_labels).weight)
-                self.bias.append(nn.Linear(config.hidden_size, self.config.num_labels).bias)
-
-            self.qa_classifier_weight = torch.cat(self.weight, dim=0).reshape(config.num_softmax_classifiers,
-                                                                              config.num_labels,
-                                                                              config.hidden_size)
-            self.qa_classifier_bias = torch.cat(self.bias, dim=0).reshape(config.num_softmax_classifiers,
-                                                                          config.num_labels)
-        else:
-            self.qa_outputs = nn.Linear(config.hidden_size, config.num_labels)
+        self.qa_outputs = nn.Linear(config.hidden_size, config.num_labels)
 
         self.init_weights()
 
@@ -1349,18 +1247,10 @@ class BertForQuestionAnswering(BertPreTrainedModel):
 
         sequence_output = outputs[0]
 
-        if self.num_softmax_classifiers > 1:
-            # sequence_output: batch_size x max_seq_length x hidden_size
-            # qa_classifier_weight: num_softmax_classifiers x num_labels x hidden_size
-            # logits: num_softmax_classifiers x batch_size x max_seq_length x num_labels
-            logits = torch.einsum("msh,nch->nmsc", [sequence_output, self.qa_classifier_weight.to(input_ids.device)]) \
-                     + self.qa_classifier_bias.to(input_ids.device).unsqueeze(1).unsqueeze(1)
-        else:
-            logits = self.qa_outputs(sequence_output) # batch_size x max_seq_length x num_labels
-
+        logits = self.qa_outputs(sequence_output)
         start_logits, end_logits = logits.split(1, dim=-1)
-        start_logits = start_logits.squeeze(-1) # batch_size x max_seq_length
-        end_logits = end_logits.squeeze(-1) # batch_size x max_seq_length
+        start_logits = start_logits.squeeze(-1)
+        end_logits = end_logits.squeeze(-1)
 
         outputs = (start_logits, end_logits,) + outputs[2:]
         if start_positions is not None and end_positions is not None:
@@ -1369,30 +1259,15 @@ class BertForQuestionAnswering(BertPreTrainedModel):
                 start_positions = start_positions.squeeze(-1)
             if len(end_positions.size()) > 1:
                 end_positions = end_positions.squeeze(-1)
+            # sometimes the start/end positions are outside our model inputs, we ignore these terms
+            ignored_index = start_logits.size(1)
+            start_positions.clamp_(0, ignored_index)
+            end_positions.clamp_(0, ignored_index)
 
-            if self.num_softmax_classifiers > 1:
-                max_seq_length = start_logits.size(2)
-                ignored_index = max_seq_length
-                start_positions.clamp_(0, ignored_index)
-                end_positions.clamp_(0, ignored_index)
-
-                loss_fct = CrossEntropyLoss(ignore_index=ignored_index)
-                start_loss = loss_fct(start_logits.contiguous().view(-1, max_seq_length),
-                                      start_positions.repeat(self.num_softmax_classifiers).view(-1))
-                end_loss = loss_fct(end_logits.contiguous().view(-1, max_seq_length),
-                                    end_positions.repeat(self.num_softmax_classifiers).view(-1))
-            else:
-                # sometimes the start/end positions are outside our model inputs, we ignore these terms
-                ignored_index = start_logits.size(1)
-                start_positions.clamp_(0, ignored_index)
-                end_positions.clamp_(0, ignored_index)
-
-                loss_fct = CrossEntropyLoss(ignore_index=ignored_index)
-                start_loss = loss_fct(start_logits, start_positions)
-                end_loss = loss_fct(end_logits, end_positions)
-
+            loss_fct = CrossEntropyLoss(ignore_index=ignored_index)
+            start_loss = loss_fct(start_logits, start_positions)
+            end_loss = loss_fct(end_logits, end_positions)
             total_loss = (start_loss + end_loss) / 2
             outputs = (total_loss,) + outputs
 
         return outputs  # (loss), start_logits, end_logits, (hidden_states), (attentions)
-

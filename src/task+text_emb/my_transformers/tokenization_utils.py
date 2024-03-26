@@ -237,13 +237,13 @@ class PreTrainedTokenizer(object):
     @classmethod
     def from_pretrained(cls, *inputs, **kwargs):
         r"""
-        Instantiate a :class:`~transformers.PreTrainedTokenizer` (or a derived class) from a predefined tokenizer.
+        Instantiate a :class:`~my_transformers.PreTrainedTokenizer` (or a derived class) from a predefined tokenizer.
 
         Args:
             pretrained_model_name_or_path: either:
 
                 - a string with the `shortcut name` of a predefined tokenizer to load from cache or download, e.g.: ``bert-base-uncased``.
-                - a path to a `directory` containing vocabulary files required by the tokenizer, for instance saved using the :func:`~transformers.PreTrainedTokenizer.save_pretrained` method, e.g.: ``./my_model_directory/``.
+                - a path to a `directory` containing vocabulary files required by the tokenizer, for instance saved using the :func:`~my_transformers.PreTrainedTokenizer.save_pretrained` method, e.g.: ``./my_model_directory/``.
                 - (not applicable to all derived classes) a path or url to a single saved vocabulary file if and only if the tokenizer only requires a single vocabulary file (e.g. Bert, XLNet), e.g.: ``./my_model_directory/vocab.txt``.
 
             cache_dir: (`optional`) string:
@@ -258,7 +258,7 @@ class PreTrainedTokenizer(object):
 
             inputs: (`optional`) positional arguments: will be passed to the Tokenizer ``__init__`` method.
 
-            kwargs: (`optional`) keyword arguments: will be passed to the Tokenizer ``__init__`` method. Can be used to set special tokens like ``bos_token``, ``eos_token``, ``unk_token``, ``sep_token``, ``pad_token``, ``cls_token``, ``mask_token``, ``additional_special_tokens``. See parameters in the doc string of :class:`~transformers.PreTrainedTokenizer` for details.
+            kwargs: (`optional`) keyword arguments: will be passed to the Tokenizer ``__init__`` method. Can be used to set special tokens like ``bos_token``, ``eos_token``, ``unk_token``, ``sep_token``, ``pad_token``, ``cls_token``, ``mask_token``, ``additional_special_tokens``. See parameters in the doc string of :class:`~my_transformers.PreTrainedTokenizer` for details.
 
         Examples::
 
@@ -434,7 +434,7 @@ class PreTrainedTokenizer(object):
             This won't save modifications other than (added tokens and special token mapping) you may have
             applied to the tokenizer after the instantiation (e.g. modifying tokenizer.do_lower_case after creation).
 
-            This method make sure the full tokenizer can then be re-loaded using the :func:`~transformers.PreTrainedTokenizer.from_pretrained` class method.
+            This method make sure the full tokenizer can then be re-loaded using the :func:`~my_transformers.PreTrainedTokenizer.from_pretrained` class method.
         """
         if not os.path.isdir(save_directory):
             logger.error("Saving directory ({}) should be a directory".format(save_directory))
@@ -471,7 +471,7 @@ class PreTrainedTokenizer(object):
         """ Save the tokenizer vocabulary to a directory. This method does *NOT* save added tokens
             and special token mappings.
 
-            Please use :func:`~transformers.PreTrainedTokenizer.save_pretrained` `()` to save the full Tokenizer state if you want to reload it using the :func:`~transformers.PreTrainedTokenizer.from_pretrained` class method.
+            Please use :func:`~my_transformers.PreTrainedTokenizer.save_pretrained` `()` to save the full Tokenizer state if you want to reload it using the :func:`~my_transformers.PreTrainedTokenizer.from_pretrained` class method.
         """
         raise NotImplementedError
 

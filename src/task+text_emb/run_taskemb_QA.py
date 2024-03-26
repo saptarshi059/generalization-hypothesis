@@ -25,12 +25,12 @@ except:
 
 from tqdm import tqdm, trange
 
-from transformers import (WEIGHTS_NAME,
-                          BertConfig_TaskEmbeddings as BertConfig,
-                          BertForQuestionAnswering_TaskEmbeddings as BertForQuestionAnswering,
-                          BertTokenizer)
+from my_transformers import (WEIGHTS_NAME,
+                             BertConfig_TaskEmbeddings as BertConfig,
+                             BertForQuestionAnswering_TaskEmbeddings as BertForQuestionAnswering,
+                             BertTokenizer)
 
-from transformers import AdamW, get_linear_schedule_with_warmup
+from my_transformers import AdamW, get_linear_schedule_with_warmup
 
 from utils_squad import (read_squad_examples, convert_examples_to_features)
 

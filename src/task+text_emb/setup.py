@@ -25,7 +25,7 @@ To create the package for pypi.
    (pypi suggest using twine as other methods upload files via plaintext.)
 
    Check that you can install it in a virtualenv by running:
-   pip install -i https://testpypi.python.org/pypi transformers
+   pip install -i https://testpypi.python.org/pypi my_transformers
 
 6. Upload the final version to actual pypi:
    twine upload dist/* -r pypi
@@ -37,7 +37,7 @@ from io import open
 from setuptools import find_packages, setup
 
 setup(
-    name="transformers",
+    name="my_transformers",
     version="2.1.1",
     author="Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Google AI Language Team Authors, Open AI team Authors, Facebook AI Authors, Carnegie Mellon University Authors",
     author_email="thomas@huggingface.co",
@@ -55,7 +55,7 @@ setup(
                       'tqdm',],
     entry_points={
       'console_scripts': [
-        "transformers=transformers.__main__:main",
+        "my_transformers=my_transformers.__main__:main",
       ]
     },
     # python_requires='>=3.5.0',

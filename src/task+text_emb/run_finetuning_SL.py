@@ -20,8 +20,8 @@ from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 from utils_ner import convert_examples_to_features, get_labels, read_examples_from_file
 
-from transformers import AdamW, get_linear_schedule_with_warmup
-from transformers import WEIGHTS_NAME, BertConfig, BertForTokenClassification, BertTokenizer
+from my_transformers import AdamW, get_linear_schedule_with_warmup
+from my_transformers import WEIGHTS_NAME, BertConfig, BertForTokenClassification, BertTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -137,7 +137,7 @@ def train(args, train_dataset, model, tokenizer, labels, pad_token_label_id):
                       "token_type_ids": batch[2],
                       "labels": batch[3]}
             outputs = model(**inputs)
-            loss = outputs[0]  # model outputs are always tuple in pytorch-transformers (see doc)
+            loss = outputs[0]  # model outputs are always tuple in pytorch-my_transformers (see doc)
 
             if args.n_gpu > 1:
                 loss = loss.mean()  # mean() to average on multi-gpu parallel training

@@ -24,7 +24,7 @@ import collections
 from io import open
 from tqdm import tqdm
 
-from transformers.tokenization_bert import BasicTokenizer, whitespace_tokenize
+from my_transformers.tokenization_bert import BasicTokenizer, whitespace_tokenize
 from datasets import load_dataset
 
 logger = logging.getLogger(__name__)

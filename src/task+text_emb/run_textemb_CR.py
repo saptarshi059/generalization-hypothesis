@@ -23,14 +23,14 @@ except:
 
 from tqdm import tqdm, trange
 
-from transformers import (WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer)
+from my_transformers import (WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer)
 
-from transformers import AdamW, get_linear_schedule_with_warmup
+from my_transformers import AdamW, get_linear_schedule_with_warmup
 
-from transformers import glue_compute_metrics as compute_metrics
-from transformers import glue_output_modes as output_modes
-from transformers import glue_processors as processors
-from transformers import glue_convert_examples_to_features as convert_examples_to_features
+from my_transformers import glue_compute_metrics as compute_metrics
+from my_transformers import glue_output_modes as output_modes
+from my_transformers import glue_processors as processors
+from my_transformers import glue_convert_examples_to_features as convert_examples_to_features
 
 logger = logging.getLogger(__name__)
 
