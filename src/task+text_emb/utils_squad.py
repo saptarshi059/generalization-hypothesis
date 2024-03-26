@@ -25,6 +25,7 @@ from io import open
 from tqdm import tqdm
 
 from transformers.tokenization_bert import BasicTokenizer, whitespace_tokenize
+from datasets import load_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -107,8 +108,10 @@ class InputFeatures(object):
 
 def read_squad_examples(input_file, is_training, version_2_with_negative):
     """Read a SQuAD json file into a list of SquadExample."""
-    with open(input_file, "r", encoding='utf-8') as reader:
-        input_data = json.load(reader)["data"]
+    #with open(input_file, "r", encoding='utf-8') as reader:
+    #    input_data = json.load(reader)["data"]
+
+    input_data = load_dataset('json', data_files=input_file, split='train')
 
     def is_whitespace(c):
         if c == " " or c == "\t" or c == "\r" or c == "\n" or ord(c) == 0x202F:
