@@ -10,6 +10,7 @@ export OUTPUT_DIR="../../data/json_data/squad/"
 python ./run_textemb_QA.py \
     --model_type ${MODEL_TYPE} \
     --model_name_or_path ${MODEL_NAME_OR_PATH} \
+    --overwrite_output_dir \
     --do_lower_case \
     --version_2_with_negative ${VERSION_2_WITH_NEGATIVE} \
     --train_file ${DATA_DIR}/train.json \
