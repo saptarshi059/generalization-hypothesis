@@ -1,6 +1,6 @@
 export CUDA_VISIBLE_DEVICES=1
 export SEED_ID=42
-export DATA_DIR="../../data/json_data/squad/"
+export DATA_DIR="../../data/json_data/squad"
 export MODEL_TYPE='bert'
 export MODEL_NAME_OR_PATH='bert-base-uncased'
 export VERSION_2_WITH_NEGATIVE=False
