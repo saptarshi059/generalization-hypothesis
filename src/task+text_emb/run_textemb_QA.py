@@ -24,7 +24,7 @@ except:
 
 from tqdm import tqdm, trange
 
-from transformers import (WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer)
+from my_transformers import (WEIGHTS_NAME, BertConfig, BertModel, BertTokenizer)
 
 from transformers import AdamW, get_linear_schedule_with_warmup
 
