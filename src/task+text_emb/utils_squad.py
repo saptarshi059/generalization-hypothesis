@@ -136,71 +136,70 @@ def read_squad_examples(input_file, is_training, version_2_with_negative):
                 prev_is_whitespace = False
             char_to_word_offset.append(len(doc_tokens) - 1)
 
-        for qa in entry["qas"]:
-            qas_id = qa["id"]
-            question_text = qa["question"]
-            start_position = None
-            end_position = None
-            orig_answer_text = None
-            is_impossible = False
-            if is_training:
-                if version_2_with_negative:
-                    is_impossible = qa["is_impossible"]
-                if (len(qa["answers"]) > 1) and (not is_impossible):
-                    # For comparability with this model implementation, if more than one answer exists
-                    # we will choose the first one as the correct gold answer.
-                    qa["answers"] = [qa["answers"][0]]
-                    # raise ValueError(
-                    #   "For training, each question should have exactly 1 answer.")
-                elif (len(qa["answers"]) == 0) and (not is_impossible):
-                    # In the none SQuAD datasets, it may very well be possible that no gold answer has
-                    # been found for an example. In these cases we just discard the example in training.
+        qas_id = entry["id"]
+        question_text = entry["question"]
+        start_position = None
+        end_position = None
+        orig_answer_text = None
+        is_impossible = False
+        if is_training:
+            if version_2_with_negative:
+                is_impossible = entry["is_impossible"]
+            if (len(entry["answers"]) > 1) and (not is_impossible):
+                # For comparability with this model implementation, if more than one answer exists
+                # we will choose the first one as the correct gold answer.
+                entry["answers"] = [entry["answers"][0]]
+                # raise ValueError(
+                #   "For training, each question should have exactly 1 answer.")
+            elif (len(entry["answers"]) == 0) and (not is_impossible):
+                # In the none SQuAD datasets, it may very well be possible that no gold answer has
+                # been found for an example. In these cases we just discard the example in training.
+                continue
+
+            if not is_impossible:
+                answer = entry["answers"][0]
+                orig_answer_text = answer["text"]
+                answer_offset = answer["answer_start"]
+                answer_length = len(orig_answer_text)
+
+                if answer_offset + answer_length - 1 >= len(char_to_word_offset):
+                    # In some datasets we get this edge case... s
                     continue
 
-                if not is_impossible:
-                    answer = qa["answers"][0]
-                    orig_answer_text = answer["text"]
-                    answer_offset = answer["answer_start"]
-                    answer_length = len(orig_answer_text)
-
-                    if answer_offset + answer_length - 1 >= len(char_to_word_offset):
-                        # In some datasets we get this edge case... s
+                start_position = char_to_word_offset[answer_offset]
+                end_position = char_to_word_offset[answer_offset + answer_length - 1]
+                # Only add answers where the text can be exactly recovered from the
+                # document. If this CAN'T happen it's likely due to weird Unicode
+                # stuff so we will just skip the example.
+                #
+                # Note that this means for training mode, every example is NOT
+                # guaranteed to be preserved.
+                actual_text = " ".join(doc_tokens[start_position:(end_position + 1)]).lower()
+                cleaned_answer_text = " ".join(
+                    whitespace_tokenize(orig_answer_text)).lower()
+                if actual_text.find(cleaned_answer_text) == -1:
+                    actual_text_1 = " ".join(doc_tokens[(start_position-1):end_position]).lower()
+                    if actual_text_1.find(cleaned_answer_text) == -1:
+                        logger.warning("Could not find answer: '%s' vs. '%s'",
+                                       actual_text, cleaned_answer_text)
                         continue
+                    else:
+                        start_position = start_position - 1
+                        end_position = end_position - 1
+            else:
+                start_position = -1
+                end_position = -1
+                orig_answer_text = ""
 
-                    start_position = char_to_word_offset[answer_offset]
-                    end_position = char_to_word_offset[answer_offset + answer_length - 1]
-                    # Only add answers where the text can be exactly recovered from the
-                    # document. If this CAN'T happen it's likely due to weird Unicode
-                    # stuff so we will just skip the example.
-                    #
-                    # Note that this means for training mode, every example is NOT
-                    # guaranteed to be preserved.
-                    actual_text = " ".join(doc_tokens[start_position:(end_position + 1)]).lower()
-                    cleaned_answer_text = " ".join(
-                        whitespace_tokenize(orig_answer_text)).lower()
-                    if actual_text.find(cleaned_answer_text) == -1:
-                        actual_text_1 = " ".join(doc_tokens[(start_position-1):end_position]).lower()
-                        if actual_text_1.find(cleaned_answer_text) == -1:
-                            logger.warning("Could not find answer: '%s' vs. '%s'",
-                                           actual_text, cleaned_answer_text)
-                            continue
-                        else:
-                            start_position = start_position - 1
-                            end_position = end_position - 1
-                else:
-                    start_position = -1
-                    end_position = -1
-                    orig_answer_text = ""
-
-            example = SquadExample(
-                qas_id=qas_id,
-                question_text=question_text,
-                doc_tokens=doc_tokens,
-                orig_answer_text=orig_answer_text,
-                start_position=start_position,
-                end_position=end_position,
-                is_impossible=is_impossible)
-            examples.append(example)
+        example = SquadExample(
+            qas_id=qas_id,
+            question_text=question_text,
+            doc_tokens=doc_tokens,
+            orig_answer_text=orig_answer_text,
+            start_position=start_position,
+            end_position=end_position,
+            is_impossible=is_impossible)
+        examples.append(example)
     return examples
 
 
