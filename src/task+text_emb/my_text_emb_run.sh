@@ -1,3 +1,4 @@
+export CUDA_VISIBLE_DEVICES=2
 export SEED_ID=42
 export DATA_DIR="../../data/json_data/squad"
 export MODEL_TYPE='bert'
@@ -18,4 +19,5 @@ python ./run_textemb_QA.py \
     --doc_stride 128 \
     --output_dir ${OUTPUT_DIR} \
     --cache_dir ${CACHE_DIR} \
-    --seed ${SEED_ID}
+    --seed ${SEED_ID} \
+    --overwrite_output_dir
