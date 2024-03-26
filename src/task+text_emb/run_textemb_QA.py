@@ -38,7 +38,7 @@ from utils_squad_evaluate import EVAL_OPTS, main as evaluate_on_squad
 logger = logging.getLogger(__name__)
 
 ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) \
-                  for conf in (BertConfig,)), ())
+                  for conf in (BertConfig, )), ())
 
 MODEL_CLASSES = {
     'bert': (BertConfig, BertModel, BertTokenizer)
@@ -52,12 +52,13 @@ def set_seed(args):
     if args.n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
 
-
+        
 def to_list(tensor):
     return tensor.detach().cpu().tolist()
 
-
+  
 def compute_textemb(args, train_dataset, model):
+
     tb_writer = SummaryWriter()
 
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
@@ -86,9 +87,9 @@ def compute_textemb(args, train_dataset, model):
             batch = tuple(t.to(args.device) for t in batch)
 
             with torch.no_grad():
-                inputs = {'input_ids': batch[0],
-                          'attention_mask': batch[1],
-                          'token_type_ids': batch[2]}
+                inputs = {'input_ids':       batch[0],
+                          'attention_mask':  batch[1],
+                          'token_type_ids':  batch[2]}
 
                 input_mask = inputs['attention_mask']
                 outputs = model(**inputs)
@@ -132,8 +133,8 @@ def load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=Fal
     else:
         logger.info("Creating features from dataset file at %s", input_file)
         examples = read_squad_examples(input_file=input_file,
-                                       is_training=not evaluate,
-                                       version_2_with_negative=args.version_2_with_negative)
+                                                is_training=not evaluate,
+                                                version_2_with_negative=args.version_2_with_negative)
         features = convert_examples_to_features(examples=examples,
                                                 tokenizer=tokenizer,
                                                 max_seq_length=args.max_seq_length,
@@ -178,8 +179,7 @@ def main():
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
     parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
-                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(
-                            ALL_MODELS))
+                        help="Path to pre-trained model or shortcut name selected in the list: " + ", ".join(ALL_MODELS))
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model checkpoints and predictions will be written.")
 
@@ -233,9 +233,7 @@ def main():
     args = parser.parse_args()
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and not args.overwrite_output_dir:
-        raise ValueError(
-            "Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(
-                args.output_dir))
+        raise ValueError("Output directory ({}) already exists and is not empty. Use --overwrite_output_dir to overcome.".format(args.output_dir))
 
     # Create output directory if needed
     if not os.path.exists(args.output_dir):
@@ -269,17 +267,16 @@ def main():
                                         config=config,
                                         cache_dir=args.cache_dir if args.cache_dir else None)
 
-    print(tokenizer)
-
     model.to(args.device)
 
     logger.info("Training/evaluation parameters %s", args)
+
 
     train_dataset = load_and_cache_examples(args, tokenizer, evaluate=False, output_examples=False)
     if args.train_data_subset > 0:
         train_dataset = Subset(train_dataset, list(range(min(args.train_data_subset, len(train_dataset)))))
     compute_textemb(args, train_dataset, model)
 
-
+    
 if __name__ == "__main__":
     main()
