@@ -1,3 +1,4 @@
+export CUDA_VISIBLE_DEVICES=3
 export SEED_ID=42
 export DATA_DIR="../../data/json_data/squad"
 export MODEL_TYPE="bert"
@@ -6,8 +7,8 @@ export USE_LABELS=True # set to False to sample from the model's predictive dist
 export CACHE_DIR="../../data/json_data/squad"
 export MODEL_NAME_OR_PATH="deepset/bert-base-uncased-squad2"
 # we start from a fine-tuned task-specific BERT so no need for further fine-tuning
-export FURTHER_FINETUNE_CLASSIFIER=False
-export FURTHER_FINETUNE_FEATURE_EXTRACTOR=False
+export FURTHER_FINETUNE_CLASSIFIER="False"
+export FURTHER_FINETUNE_FEATURE_EXTRACTOR="False"
 export OUTPUT_DIR="../../data/json_data/squad"
 
 python ./run_taskemb_QA.py \
