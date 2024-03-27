@@ -157,8 +157,8 @@ def read_squad_examples(input_file, is_training, version_2_with_negative):
 
             if not is_impossible:
                 answer = entry["answers"]
-                orig_answer_text = answer["text"]
-                answer_offset = answer["answer_start"]
+                orig_answer_text = answer["text"][0]
+                answer_offset = answer["answer_start"][0]
                 answer_length = len(orig_answer_text)
 
                 if answer_offset + answer_length - 1 >= len(char_to_word_offset):
