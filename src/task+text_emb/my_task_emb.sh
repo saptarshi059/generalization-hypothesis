@@ -26,4 +26,5 @@ python ./run_taskemb_QA.py \
     --doc_stride 128 \
     --output_dir ${OUTPUT_DIR} \
     --cache_dir ${CACHE_DIR} \
-    --seed ${SEED_ID}
+    --seed ${SEED_ID} \
+    --overwrite_output_dir
