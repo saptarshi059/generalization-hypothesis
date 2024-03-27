@@ -119,7 +119,7 @@ def read_squad_examples(input_file, is_training, version_2_with_negative):
         return False
 
     examples = []
-    for entry in input_data:
+    for entry in tqdm(input_data):
         paragraph_text = entry["context"]
         doc_tokens = []
         char_to_word_offset = []
