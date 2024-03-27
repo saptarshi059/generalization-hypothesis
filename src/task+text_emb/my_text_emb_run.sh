@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=2
+export CUDA_VISIBLE_DEVICES=3
 export SEED_ID=42
 export DATA_DIR="../../data/json_data/squad"
 export MODEL_TYPE='bert'
