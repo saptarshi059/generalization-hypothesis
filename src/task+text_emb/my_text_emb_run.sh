@@ -1,10 +1,10 @@
-JSON_DATASET_PATHS=(
-                    "../../data/json_data/squad"
+#!/bin/bash
+
+JSON_DATASET_PATHS=("../../data/json_data/squad"
                     "../../data/json_data/covidqa"
                     "../../data/json_data/techqa"
                     "../../data/json_data/duorc"
-                    "../../data/json_data/cuad"
-)
+                    "../../data/json_data/cuad")
 
 for dataset_path in "${JSON_DATASET_PATHS[@]}"
 do
