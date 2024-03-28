@@ -6,7 +6,7 @@ JSON_DATASET_PATHS=("../../data/json_data/squad"
 
 for dataset_path in "${JSON_DATASET_PATHS[@]}"
 do
-  export CUDA_VISIBLE_DEVICES=3
+  export CUDA_VISIBLE_DEVICES=0
   export SEED_ID=42
   export DATA_DIR=$dataset_path
   export CACHE_DIR=$dataset_path
