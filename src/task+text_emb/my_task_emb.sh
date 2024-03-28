@@ -8,7 +8,7 @@ JSON_DATASET_PATHS=("../../data/json_data/squad/task_emb"
 
 for dataset_path in "${JSON_DATASET_PATHS[@]}"
 do
-  export CUDA_VISIBLE_DEVICES=1
+  export CUDA_VISIBLE_DEVICES=2
   export SEED_ID=42
   export DATA_DIR=$dataset_path
   export MODEL_TYPE="bert"
