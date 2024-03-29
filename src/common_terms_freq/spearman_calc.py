@@ -55,8 +55,8 @@ def compute_overlap(ds1_texts, ds2_texts):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('dataset1', type=str)
-    parser.add_argument('dataset2', type=str)
+    parser.add_argument('--dataset1', type=str)
+    parser.add_argument('--dataset2', type=str)
     args = parser.parse_args()
 
     dataset1 = pd.read_csv(args.dataset1)
