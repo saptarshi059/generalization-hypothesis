@@ -14,10 +14,10 @@ do
   export MODEL_TYPE="bert"
   export USE_LABELS=True # set to False to sample from the model's predictive distribution
   export CACHE_DIR=$dataset_path
-  export MODEL_NAME_OR_PATH="bert-base-uncased"
+  export MODEL_NAME_OR_PATH="/gpuhome/sks6765/generalization-hypothesis/src/task+text_emb/bert-base-uncased-squad-v1"
   # we start from a fine-tuned task-specific BERT so no need for further fine-tuning
-  export FURTHER_FINETUNE_CLASSIFIER="True"
-  export FURTHER_FINETUNE_FEATURE_EXTRACTOR="True"
+  export FURTHER_FINETUNE_CLASSIFIER="False"
+  export FURTHER_FINETUNE_FEATURE_EXTRACTOR="False"
   export OUTPUT_DIR=$dataset_path
 
   if [[ $dataset_path == *"squad"* ]] || [[ $dataset_path == *"covidqa"* ]]; then
