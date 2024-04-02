@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     vocab = compute_overlap(dataset1_texts, dataset2_texts)
 
-    vectorizer = CountVectorizer(vocabulary=vocab)
+    vectorizer = CountVectorizer(vocabulary=vocab, lowercase=False)
     dataset1_vector = vectorizer.fit_transform([' '.join(x for x in dataset1_texts)])
     dataset2_vector = vectorizer.fit_transform([' '.join(x for x in dataset2_texts)])
 
