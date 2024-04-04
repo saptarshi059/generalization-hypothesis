@@ -17,15 +17,15 @@ if __name__ == '__main__':
     torch.manual_seed(args.random_state)
     random.seed(args.random_state)
 
+    device = "cuda:0"
+
     model_checkpoint = args.model_checkpoint
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-    model = AutoModelForCausalLM.from_pretrained(model_checkpoint)
+    model = AutoModelForCausalLM.from_pretrained(model_checkpoint).to(device)
 
     corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
     encodings = tokenizer("\n\n".join(corpus_dataset['train']["text"]), return_tensors="pt")
     print('Corpus Loaded...')
-
-    device = "cuda"
 
     import torch
     from tqdm import tqdm
