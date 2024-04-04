@@ -53,8 +53,8 @@ if __name__ == '__main__':
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
-    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
-    model.eval()
+    #model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.bfloat16).to(device)
+    #model.eval()
 
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
     texts = test_dataset["text"]
@@ -65,6 +65,9 @@ if __name__ == '__main__':
     dataset = TextDataset(texts, tokenizer, max_length)
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
                             generator=g, shuffle=False)
+
+    print(dataset[0])
+    exit()
 
     nlls = []
     with torch.no_grad():
