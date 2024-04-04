@@ -59,7 +59,7 @@ if __name__ == '__main__':
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
     texts = test_dataset["text"]
 
-    max_length = model.config.n_positions
+    max_length = model.config.max_position_embeddings
     stride = 512
 
     dataset = TextDataset(texts, tokenizer, max_length)
