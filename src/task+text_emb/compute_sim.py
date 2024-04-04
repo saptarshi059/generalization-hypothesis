@@ -13,4 +13,4 @@ if __name__ == '__main__':
 
     cos = torch.nn.CosineSimilarity(dim=0)
     print(f'Cosine Similarity between {args.embedding1_file} and '
-          f'{args.embedding2_file}: {np.round(cos(vector1, vector2).item(),2)}')
+          f'{args.embedding2_file}: {cos(vector1, vector2).item()}')
