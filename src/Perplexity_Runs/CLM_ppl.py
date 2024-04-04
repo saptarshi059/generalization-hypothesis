@@ -53,8 +53,8 @@ if __name__ == '__main__':
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
-    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
-    model.eval()
+    #model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
+    #model.eval()
 
     # Load dataset
     corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
@@ -67,6 +67,8 @@ if __name__ == '__main__':
     nlls = []
     for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
+            print(input_ids, labels)
+            exit()
             set_seed(args.random_state)
             outputs = model(input_ids.to(device), labels=labels)
             nlls.append(outputs.loss)
