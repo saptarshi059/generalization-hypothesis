@@ -16,20 +16,20 @@ def seed_worker(worker_id):
 
 
 class TextDataset(Dataset):
-    def __init__(self, texts, tokenizer, max_length):
-        self.encodings = tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
+    def __init__(self, texts):
+        self.input_ids = []
+        self.attention_mask = []
+        for sample in tqdm(texts):
+            tokenized_chunks = tokenizer(sample, return_tensors="pt", padding='max_length', truncation=True,
+                                         max_length=max_length, stride=512, return_overflowing_tokens=True)
+            self.input_ids.extend(tokenized_chunks['input_ids'])
+            self.attention_mask.extend(tokenized_chunks['attention_mask'])
 
     def __len__(self):
-        return len(self.encodings.input_ids)
+        return len(self.input_ids)
 
     def __getitem__(self, idx):
-        return {'input_ids': self.encodings['input_ids'][idx], 'attention_mask': self.encodings['attention_mask'][idx]}
-
-
-def collate_fn(batch):
-    input_ids = torch.stack([example['input_ids'] for example in batch])
-    attention_mask = torch.stack([example['attention_mask'] for example in batch])
-    return {'input_ids': input_ids, 'attention_mask': attention_mask}
+        return {'input_ids': self.input_ids[idx], 'attention_mask': self.attention_mask[idx]}
 
 
 if __name__ == '__main__':
@@ -61,9 +61,8 @@ if __name__ == '__main__':
 
     max_length = 2048  # Otherwise it's freaking out on other models. - Falcon fine, others not.
 
-    dataset = TextDataset(texts, tokenizer, max_length)
-    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
-                            generator=g, shuffle=False)
+    dataset = TextDataset(texts)
+    dataloader = DataLoader(dataset, batch_size=batch_size, worker_init_fn=seed_worker, generator=g, shuffle=False)
 
     nlls = []
     with torch.no_grad():
