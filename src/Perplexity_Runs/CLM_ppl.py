@@ -20,7 +20,7 @@ class CLMDataset(Dataset):
         self.chunks = []
         for chunk in text_chunks:
             tokenized_texts = tokenizer(chunk, return_tensors="pt", padding=True, truncation=True, max_length=1024)
-            input_ids = tokenized_texts['input_ids'].to(device)
+            input_ids = tokenized_texts['input_ids']
             labels = input_ids.clone()
             labels[:, :-1] = -100  # Set unwanted tokens to -100 in-place
             self.chunks.append((input_ids, labels))
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
             set_seed(args.random_state)
-            outputs = model(input_ids, labels=labels)
+            outputs = model(input_ids.to(device), labels=labels)
             nlls.append(outputs.loss)
 
     # Compute PPL
