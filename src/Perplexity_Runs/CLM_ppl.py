@@ -1,12 +1,12 @@
 import argparse
 import random
 
+import numpy as np
 import torch
 from datasets import load_dataset
-from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer, default_data_collator
 from torch.utils.data import Dataset, DataLoader
-import numpy as np
+from tqdm import tqdm
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
 def seed_worker(worker_id):
@@ -62,7 +62,6 @@ if __name__ == '__main__':
     chunk_size = 10000
     chunk_dataset = CLMDataset([texts[i:i + chunk_size] for i in range(0, len(texts), chunk_size)])
     chunk_dataset_dataloader = DataLoader(chunk_dataset, shuffle=False, batch_size=batch_size,
-                                          collate_fn=default_data_collator,
                                           worker_init_fn=seed_worker, generator=g)
 
     nlls = []
