@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--corpus_file', default="Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv",
                         type=str)
     parser.add_argument('--random_state', default=42, type=int)
-    parser.add_argument('--batch_size', default=8, type=int)
+    parser.add_argument('--batch_size', default=4, type=int)
     args = parser.parse_args()
 
     # Set random seeds
