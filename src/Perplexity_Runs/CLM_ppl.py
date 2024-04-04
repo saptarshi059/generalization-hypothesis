@@ -1,5 +1,6 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
 from datasets import load_dataset
+from tqdm import tqdm
 import argparse
 import random
 import torch
@@ -27,10 +28,7 @@ if __name__ == '__main__':
     encodings = tokenizer("\n\n".join(corpus_dataset['train']["text"]), return_tensors="pt")
     print('Corpus Loaded...')
 
-    import torch
-    from tqdm import tqdm
-
-    max_length = model.config.n_positions
+    max_length = model.config.max_position_embeddings
     stride = 512
     seq_len = encodings.input_ids.size(1)
 
