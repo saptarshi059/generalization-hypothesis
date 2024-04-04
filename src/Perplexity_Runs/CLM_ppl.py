@@ -1,16 +1,14 @@
-import argparse
 from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
 from datasets import load_dataset
-import torch
+import argparse
 import random
+import torch
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_checkpoint', default="tiiuae/falcon-7b-instruct", type=str)
     parser.add_argument('--corpus_file', default="Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv", type=str)
     parser.add_argument('--random_state', default=42, type=int)
-    parser.add_argument('--batch_size', default=40, type=int)
-    parser.add_argument('--learning_rate', default=5e-5, type=float)
 
     args = parser.parse_args()
 
@@ -24,7 +22,7 @@ if __name__ == '__main__':
     model = AutoModelForCausalLM.from_pretrained(model_checkpoint)
 
     corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
-    encodings = tokenizer("\n\n".join(corpus_dataset["text"]), return_tensors="pt")
+    encodings = tokenizer("\n\n".join(corpus_dataset['train']["text"]), return_tensors="pt")
     print('Corpus Loaded...')
 
     device = "cuda"
