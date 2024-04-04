@@ -66,10 +66,6 @@ if __name__ == '__main__':
     dataloader = DataLoader(dataset, batch_size=batch_size, worker_init_fn=seed_worker, generator=g, shuffle=False)
 
     nlls = []
-    torch.backends.cuda.matmul.allow_tf32 = True
-    torch.backends.cuda.matmul.enable_flash = True
-    torch.backends.cuda.matmul.enable_math = False
-    torch.backends.cuda.matmul.enable_mem_efficient = False
     with torch.no_grad():
         for batch in tqdm(dataloader):
             input_ids = batch['input_ids']
