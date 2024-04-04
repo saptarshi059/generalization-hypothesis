@@ -53,14 +53,13 @@ if __name__ == '__main__':
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
-    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.bfloat16).to(device)
+    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.float16).to(device)
     model.eval()
 
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
     texts = test_dataset["text"]
 
     max_length = model.config.max_position_embeddings
-    stride = 512
 
     dataset = TextDataset(texts, tokenizer, max_length)
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
@@ -79,4 +78,4 @@ if __name__ == '__main__':
             nlls.append(neg_log_likelihood)
 
     ppl = torch.exp(torch.stack(nlls).mean())
-    print(f'Perplexity: {ppl.item()}')
+    print(f'Perplexity of model {args.model_checkpoint} on dataset {args.corpus_file}: {ppl.item()}')
