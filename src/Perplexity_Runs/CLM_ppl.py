@@ -18,10 +18,10 @@ def seed_worker(worker_id):
 class CLMDataset(Dataset):
     def __init__(self, text_chunks):
         self.chunks = []
-        for chunk in text_chunks:
+        for chunk in tqdm(text_chunks):
             tokenized_texts = tokenizer(chunk, return_tensors="pt", padding=True, truncation=True, max_length=1024)
-            input_ids = tokenized_texts['input_ids']
-            labels = input_ids.clone()
+            input_ids = tokenized_texts['input_ids'][0]
+            labels = input_ids.clone()[0]
             labels[:, :-1] = -100  # Set unwanted tokens to -100 in-place
             self.chunks.append((input_ids, labels))
 
@@ -53,8 +53,8 @@ if __name__ == '__main__':
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
-    #model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
-    #model.eval()
+    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
+    model.eval()
 
     # Load dataset
     corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
@@ -67,8 +67,6 @@ if __name__ == '__main__':
     nlls = []
     for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
-            print(input_ids, labels)
-            exit()
             set_seed(args.random_state)
             outputs = model(input_ids.to(device), labels=labels)
             nlls.append(outputs.loss)
