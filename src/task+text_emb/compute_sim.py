@@ -31,4 +31,4 @@ if __name__ == '__main__':
             embedding2_file = os.path.abspath(f'../../data/json_data/{args.dataset2}/task_emb/'
                                               f'encoder.layer.{i}.layer_output.npy')
             sim = compute_sim(embedding1_file, embedding2_file)
-            print(f'Task Similarity between {args.dataset1} and {args.dataset2} in Layer {i}: {sim}')
+            print(f'Task Similarity between {args.dataset1} and {args.dataset2} in Layer {i+1}: {sim}')
