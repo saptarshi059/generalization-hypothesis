@@ -54,7 +54,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
     model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.float16,
-                                                 device_map="auto").to(device)
+                                                 device_map="auto")
     model.eval()
 
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
@@ -72,8 +72,8 @@ if __name__ == '__main__':
     torch.backends.cuda.matmul.enable_mem_efficient = False
     with torch.no_grad():
         for batch in tqdm(dataloader):
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
+            input_ids = batch['input_ids']
+            attention_mask = batch['attention_mask']
             labels = input_ids.clone()
             labels[:, :-1] = -100
             set_seed(args.random_state)
