@@ -23,7 +23,7 @@ class TextDataset(Dataset):
         return len(self.encodings.input_ids)
 
     def __getitem__(self, idx):
-        return {key: tensor[idx] for key, tensor in self.encodings.items()}
+        return {'input_ids': self.encodings['input_ids'][idx], 'attention_mask': self.encodings['attention_mask'][idx]}
 
 
 def collate_fn(batch):
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--corpus_file', default="Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv",
                         type=str)
     parser.add_argument('--random_state', default=42, type=int)
-    parser.add_argument('--batch_size', default=16, type=int)
+    parser.add_argument('--batch_size', default=8, type=int)
     args = parser.parse_args()
 
     # Set random seeds
@@ -53,21 +53,18 @@ if __name__ == '__main__':
     # Load tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
-    #model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.bfloat16).to(device)
-    #model.eval()
+    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.bfloat16).to(device)
+    model.eval()
 
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
     texts = test_dataset["text"]
 
-    max_length = 2048
+    max_length = model.config.max_position_embeddings
     stride = 512
 
     dataset = TextDataset(texts, tokenizer, max_length)
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
                             generator=g, shuffle=False)
-
-    print(dataset[0])
-    exit()
 
     nlls = []
     with torch.no_grad():
