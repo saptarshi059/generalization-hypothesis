@@ -54,7 +54,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(args.model_checkpoint)
     tokenizer.pad_token = tokenizer.eos_token  # Set padding token to eos_token
     model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, torch_dtype=torch.float16,
-                                                 device_map="auto", attn_implementation="flash_attention_2")
+                                                 device_map="auto")
     model.eval()
 
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
