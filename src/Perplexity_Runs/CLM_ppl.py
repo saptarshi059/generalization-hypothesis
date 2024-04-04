@@ -63,7 +63,8 @@ if __name__ == '__main__':
     stride = 512
 
     dataset = TextDataset(texts, tokenizer, max_length)
-    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
+    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
+                            generator=g, shuffle=False)
 
     nlls = []
     with torch.no_grad():
