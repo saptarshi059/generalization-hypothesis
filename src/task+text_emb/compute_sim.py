@@ -1,16 +1,24 @@
 import argparse
 import numpy as np
 import torch
+import os
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--embedding1_file', type=str)
-    parser.add_argument('--embedding2_file', type=str)
+    parser.add_argument('--dataset1', type=str)
+    parser.add_argument('--dataset2', type=str)
+    parser.add_argument('--embedding_type', default='text', choices=['text', 'task'])
     args = parser.parse_args()
 
-    vector1 = torch.from_numpy(np.load(args.embedding1_file))
-    vector2 = torch.from_numpy(np.load(args.embedding2_file))
+    if args.embedding_type == 'text':
+        embedding1_file = os.path.abspath(f'../../data/json_data/{args.dataset1}/avg_sequence_output.npy')
+        embedding2_file = os.path.abspath(f'../../data/json_data/{args.dataset2}/avg_sequence_output.npy')
 
-    cos = torch.nn.CosineSimilarity(dim=0)
-    print(f'Cosine Similarity between {args.embedding1_file} and '
-          f'{args.embedding2_file}: {cos(vector1, vector2).item()}')
+        vector1 = torch.from_numpy(np.load(embedding1_file))
+        vector2 = torch.from_numpy(np.load(embedding2_file))
+
+        cos = torch.nn.CosineSimilarity(dim=0)
+        print(f'Cosine Similarity between {args.embedding1_file} and '
+              f'{args.embedding2_file}: {cos(vector1, vector2).item()}')
+    else:
+        pass
