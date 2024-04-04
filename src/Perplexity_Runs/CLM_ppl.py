@@ -15,21 +15,21 @@ def seed_worker(worker_id):
     random.seed(worker_seed)
 
 
-class CLMDataset(Dataset):
-    def __init__(self, text_chunks):
-        self.chunks = []
-        for chunk in tqdm(text_chunks):
-            tokenized_texts = tokenizer(chunk, return_tensors="pt", padding=True, truncation=True, max_length=1024)
-            input_ids = tokenized_texts['input_ids'][0]
-            labels = input_ids.clone()[0]
-            labels[:, :-1] = -100  # Set unwanted tokens to -100 in-place
-            self.chunks.append((input_ids, labels))
-
-    def __getitem__(self, idx):
-        return self.chunks[idx]
+class TextDataset(Dataset):
+    def __init__(self, texts, tokenizer, max_length):
+        self.encodings = tokenizer(texts, return_tensors="pt", padding=True, truncation=True, max_length=max_length)
 
     def __len__(self):
-        return len(self.chunks)
+        return len(self.encodings.input_ids)
+
+    def __getitem__(self, idx):
+        return {key: tensor[idx] for key, tensor in self.encodings.items()}
+
+
+def collate_fn(batch):
+    input_ids = torch.stack([example['input_ids'] for example in batch])
+    attention_mask = torch.stack([example['attention_mask'] for example in batch])
+    return {'input_ids': input_ids, 'attention_mask': attention_mask}
 
 
 if __name__ == '__main__':
@@ -56,22 +56,26 @@ if __name__ == '__main__':
     model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint).to(device)
     model.eval()
 
-    # Load dataset
-    corpus_dataset = load_dataset("csv", data_files=args.corpus_file)
-    texts = "\n\n".join(corpus_dataset['train']["text"])
-    chunk_size = 10000
-    chunk_dataset = CLMDataset([texts[i:i + chunk_size] for i in range(0, len(texts), chunk_size)])
-    chunk_dataset_dataloader = DataLoader(chunk_dataset, shuffle=False, batch_size=batch_size,
-                                          worker_init_fn=seed_worker, generator=g)
+    test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
+    texts = test_dataset["text"]
+
+    max_length = model.config.n_positions
+    stride = 512
+
+    dataset = TextDataset(texts, tokenizer, max_length)
+    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
 
     nlls = []
-    for input_ids, labels in tqdm(chunk_dataset_dataloader):
-        with torch.no_grad():
+    with torch.no_grad():
+        for batch in tqdm(dataloader):
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
+            labels = input_ids.clone()
+            labels[:, :-1] = -100
             set_seed(args.random_state)
-            outputs = model(input_ids.to(device), labels=labels)
-            nlls.append(outputs.loss)
+            outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
+            neg_log_likelihood = outputs.loss
+            nlls.append(neg_log_likelihood)
 
-    # Compute PPL
-    avg_nll = torch.stack(nlls).mean()
-    ppl = torch.exp(avg_nll)
-    print(f'PPL of {args.model_checkpoint} on {args.corpus_file}: {ppl}')
+    ppl = torch.exp(torch.stack(nlls).mean())
+    print(f'Perplexity: {ppl.item()}')
