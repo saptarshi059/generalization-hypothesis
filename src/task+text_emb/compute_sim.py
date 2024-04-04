@@ -1,5 +1,5 @@
-import argparse
 import numpy as np
+import argparse
 import torch
 import os
 
@@ -9,7 +9,7 @@ def compute_sim(v1, v2):
     vector2 = torch.from_numpy(np.load(v2))
 
     cos = torch.nn.CosineSimilarity(dim=0)
-    print(f'Cosine Similarity between {args.dataset1} and {args.dataset2}: {cos(vector1, vector2).item()}')
+    return cos(vector1, vector2).item()
 
 
 if __name__ == '__main__':
@@ -22,12 +22,13 @@ if __name__ == '__main__':
     if args.embedding_type == 'text':
         embedding1_file = os.path.abspath(f'../../data/json_data/{args.dataset1}/avg_sequence_output.npy')
         embedding2_file = os.path.abspath(f'../../data/json_data/{args.dataset2}/avg_sequence_output.npy')
-        compute_sim(embedding1_file, embedding2_file)
-
+        sim = compute_sim(embedding1_file, embedding2_file)
+        print(f'Text Similarity between {args.dataset1} and {args.dataset2}: {sim}')
     else:
         for i in range(12):
             embedding1_file = os.path.abspath(f'../../data/json_data/{args.dataset1}/'
                                               f'task_emb/encoder.layer.{i}.layer_output.npy')
             embedding2_file = os.path.abspath(f'../../data/json_data/{args.dataset2}/task_emb/'
                                               f'encoder.layer.{i}.layer_output.npy')
-            compute_sim(embedding1_file, embedding2_file)
+            sim = compute_sim(embedding1_file, embedding2_file)
+            print(f'Task Similarity between {args.dataset1} and {args.dataset2} in Layer {i}: {sim}')
