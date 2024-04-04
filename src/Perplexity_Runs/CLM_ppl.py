@@ -65,9 +65,9 @@ if __name__ == '__main__':
                                           worker_init_fn=seed_worker, generator=g)
 
     nlls = []
-    for batch in tqdm(chunk_dataset_dataloader):
+    for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
-            outputs = model(batch[0], labels=batch[1])
+            outputs = model(input_ids, labels=labels)
             nlls.append(outputs.loss)
 
     # Compute PPL
