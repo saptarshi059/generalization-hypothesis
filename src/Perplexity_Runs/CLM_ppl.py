@@ -67,7 +67,7 @@ if __name__ == '__main__':
     nlls = []
     for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
-            set_seed(args.radom_state)
+            set_seed(args.random_state)
             outputs = model(input_ids, labels=labels)
             nlls.append(outputs.loss)
 
