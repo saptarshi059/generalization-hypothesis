@@ -54,4 +54,4 @@ for tup in tqdm(most_common_entities):
 
 print('Saving mini_corpus...')
 
-pd.DataFrame(zip(selected_ents_text_dict.keys(), selected_ents_text_dict.values()), columns = ['ent', 'text']).to_csv('extended-PT-galactica-MLM-mini_corpus.csv', index=False)
+pd.DataFrame(zip(selected_ents_text_dict.keys(), selected_ents_text_dict.values()), columns = ['ent', 'text']).to_csv('Perplexity_Runs-galactica-MLM-mini_corpus.csv', index=False)

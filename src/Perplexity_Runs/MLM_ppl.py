@@ -7,10 +7,12 @@ from accelerate import Accelerator
 from datasets import load_dataset
 from torch.optim import AdamW
 from tqdm import tqdm
+import numpy as np
 import argparse
 import random
 import torch
 import math
+
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -24,11 +26,13 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+
 def tokenize_function(examples):
     result = tokenizer(examples["text"])
     if tokenizer.is_fast:
         result["word_ids"] = [result.word_ids(i) for i in range(len(result["input_ids"]))]
     return result
+
 
 def group_texts(examples):
     # Concatenate all texts
@@ -39,12 +43,13 @@ def group_texts(examples):
     total_length = (total_length // chunk_size) * chunk_size
     # Split by chunks of max_len
     result = {
-        k: [t[i : i + chunk_size] for i in range(0, total_length, chunk_size)]
+        k: [t[i: i + chunk_size] for i in range(0, total_length, chunk_size)]
         for k, t in concatenated_examples.items()
     }
     # Create a new labels column
     result["labels"] = result["input_ids"].copy()
     return result
+
 
 def insert_random_mask(batch):
     features = [dict(zip(batch, t)) for t in zip(*batch.values())]
@@ -52,10 +57,12 @@ def insert_random_mask(batch):
     # Create a new "masked" column for each column in the dataset
     return {"masked_" + k: v.numpy() for k, v in masked_inputs.items()}
 
+
 def seed_worker(worker_id):
-    worker_seed = torch.initial_seed() % 2**32
+    worker_seed = torch.initial_seed() % 2 ** 32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_checkpoint', default="distilbert-base-uncased", type=str)
@@ -89,23 +96,24 @@ lm_dataset = lm_dataset.map(insert_random_mask, batched=True, remove_columns=lm_
 if 'masked_token_type_ids' in lm_dataset.column_names:
     lm_dataset = lm_dataset.rename_columns(
         {
-        "masked_input_ids": "input_ids",
-        "masked_attention_mask": "attention_mask",
-        "masked_labels": "labels",
-        'masked_token_type_ids': "token_type_ids"
+            "masked_input_ids": "input_ids",
+            "masked_attention_mask": "attention_mask",
+            "masked_labels": "labels",
+            'masked_token_type_ids': "token_type_ids"
         }
-)
+    )
 else:
     lm_dataset = lm_dataset.rename_columns(
         {
-        "masked_input_ids": "input_ids",
-        "masked_attention_mask": "attention_mask",
-        "masked_labels": "labels",
+            "masked_input_ids": "input_ids",
+            "masked_attention_mask": "attention_mask",
+            "masked_labels": "labels",
         }
-)
+    )
 
 batch_size = args.batch_size
-eval_dataloader = DataLoader(lm_dataset, batch_size=batch_size, collate_fn=default_data_collator, worker_init_fn=seed_worker, generator=g)
+eval_dataloader = DataLoader(lm_dataset, batch_size=batch_size, collate_fn=default_data_collator,
+                             worker_init_fn=seed_worker, generator=g)
 
 optimizer = AdamW(model.parameters(), lr=args.learning_rate)
 
@@ -115,7 +123,7 @@ model, optimizer, eval_dataloader = accelerator.prepare(model, optimizer, eval_d
 # Evaluation
 model.eval()
 losses = []
-for step, batch in enumerate(eval_dataloader):
+for step, batch in tqdm(enumerate(eval_dataloader)):
     with torch.no_grad():
         outputs = model(**batch)
 
