@@ -18,7 +18,6 @@ if __name__ == '__main__':
         vector2 = torch.from_numpy(np.load(embedding2_file))
 
         cos = torch.nn.CosineSimilarity(dim=0)
-        print(f'Cosine Similarity between {args.embedding1_file} and '
-              f'{args.embedding2_file}: {cos(vector1, vector2).item()}')
+        print(f'Cosine Similarity between {args.dataset1} and {args.dataset2}: {cos(vector1, vector2).item()}')
     else:
         pass
