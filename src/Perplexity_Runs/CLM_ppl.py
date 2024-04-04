@@ -59,7 +59,7 @@ if __name__ == '__main__':
     test_dataset = load_dataset("csv", data_files=args.corpus_file, split='train')
     texts = test_dataset["text"]
 
-    max_length = model.config.max_position_embeddings
+    max_length = 2048  # Otherwise it's freaking out on other models. - Falcon fine, others not.
 
     dataset = TextDataset(texts, tokenizer, max_length)
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn, worker_init_fn=seed_worker,
