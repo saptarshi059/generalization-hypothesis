@@ -6,7 +6,7 @@ import torch
 from datasets import load_dataset
 from torch.utils.data import Dataset, DataLoader
 from tqdm import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, set_seed
 
 
 def seed_worker(worker_id):
@@ -20,7 +20,7 @@ class CLMDataset(Dataset):
         self.chunks = []
         for chunk in text_chunks:
             tokenized_texts = tokenizer(chunk, return_tensors="pt", padding=True, truncation=True, max_length=1024)
-            input_ids = tokenized_texts.input_ids.to(device)
+            input_ids = tokenized_texts['input_ids'].to(device)
             labels = input_ids.clone()
             labels[:, :-1] = -100  # Set unwanted tokens to -100 in-place
             self.chunks.append((input_ids, labels))
@@ -67,6 +67,7 @@ if __name__ == '__main__':
     nlls = []
     for input_ids, labels in tqdm(chunk_dataset_dataloader):
         with torch.no_grad():
+            set_seed(args.radom_state)
             outputs = model(input_ids, labels=labels)
             nlls.append(outputs.loss)
 
