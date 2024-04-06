@@ -9,7 +9,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_checkpoint', default="tiiuae/falcon-7b-instruct", type=str)
     parser.add_argument('--corpus_file',
-                        default="../common_terms_freq/Saptarshi7-covid_qa_cleaned_CS_for_PPL_eval.csv", type=str)
+                        default="../common_terms_freq/Saptarshi7-covid_qa_cleaned_CS_train_for_PPL_eval.csv", type=str)
     parser.add_argument('--random_state', default=42, type=int)
     args = parser.parse_args()
 
