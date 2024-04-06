@@ -23,7 +23,7 @@ if __name__ == '__main__':
     test = load_dataset("csv", data_files=args.corpus_file, split="train")
     encodings = tokenizer("\n\n".join(test["text"]), return_tensors="pt")
 
-    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, device_map='auto', torch_dtype=torch.bfloat16,
+    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, device_map='auto', torch_dtype=torch.float16,
                                                  attn_implementation="flash_attention_2")
     max_length = model.config.max_position_embeddings
     stride = 128
@@ -49,7 +49,7 @@ if __name__ == '__main__':
             neg_log_likelihood = outputs.loss
 
         nlls.append(neg_log_likelihood)
-
+        break
         prev_end_loc = end_loc
         if end_loc == seq_len:
             break
