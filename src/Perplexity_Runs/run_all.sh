@@ -25,6 +25,7 @@ do
 done
 
 #MLM
+DATASETS="../common_terms_freq/Saptarshi7-techqa-squad-style_for_PPL_eval.csv"
 MLMs=("roberta-base"
       "bert-base-uncased")
 for ds in $DATASETS
