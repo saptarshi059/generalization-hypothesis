@@ -49,7 +49,6 @@ if __name__ == '__main__':
             neg_log_likelihood = outputs.loss
 
         nlls.append(neg_log_likelihood)
-        break
         prev_end_loc = end_loc
         if end_loc == seq_len:
             break
