@@ -17,5 +17,5 @@ if __name__ == '__main__':
         total = list(set(dataset[args.split]['context'])) + list(set(dataset[args.split]['question']))
 
     pd.DataFrame(zip(list(range(len(total))), total), columns=['ent', 'text']).to_csv(
-        f"{args.dataset.replace('/', '-')}_for_PPL_eval.csv", index=False)
+        f"{args.dataset.replace('/', '-')}_{args.split}_for_PPL_eval.csv", index=False)
     print('Saving dataset...')

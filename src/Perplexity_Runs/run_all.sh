@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #SBATCH --nodes=1                   # Number of nodes to request
+#SBATCH --nodelist=gpunode05        # Because I want the A100's
 #SBATCH --gpus=3                    # Number of GPUs to request
 #SBATCH --cpus-per-task=4           # Number of CPUs per node to request
 #SBATCH --job-name="PPL"   	        # A nice readable name of your job, to see it in the queue, instead of numbers
@@ -20,12 +21,12 @@ for ds in $DATASETS
 do
    for model in "${CLMs[@]}"
    do
-     python CLM_ppl.py --model_checkpoint "$model" --corpus_file "$ds"
+     python CLM_v2.py --model_checkpoint "$model" --corpus_file "$ds"
    done
 done
 
 #MLM
-DATASETS="../common_terms_freq/Saptarshi7-techqa-squad-style_for_PPL_eval.csv"
+DATASETS=$(ls ../common_terms_freq/*.csv)
 MLMs=("roberta-base"
       "bert-base-uncased")
 for ds in $DATASETS

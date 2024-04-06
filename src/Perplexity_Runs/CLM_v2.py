@@ -26,7 +26,7 @@ if __name__ == '__main__':
     model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, device_map='auto', torch_dtype=torch.bfloat16,
                                                  attn_implementation="flash_attention_2")
     max_length = model.config.max_position_embeddings
-    stride = 512
+    stride = 128
     seq_len = encodings.input_ids.size(1)
 
     nlls = []
@@ -55,3 +55,4 @@ if __name__ == '__main__':
             break
 
     ppl = torch.exp(torch.stack(nlls).mean())
+    print(f'Perplexity of model {args.model_checkpoint} on dataset {args.corpus_file}: {ppl.item()}')
