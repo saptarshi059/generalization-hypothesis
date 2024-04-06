@@ -23,7 +23,8 @@ if __name__ == '__main__':
     test = load_dataset("csv", data_files=args.corpus_file, split="train")
     encodings = tokenizer("\n\n".join(test["text"]), return_tensors="pt")
 
-    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, device_map='auto')
+    model = AutoModelForCausalLM.from_pretrained(args.model_checkpoint, device_map='auto', torch_dtype=torch.bfloat16,
+                                                 attn_implementation="flash_attention_2")
     max_length = model.config.max_position_embeddings
     stride = 512
     seq_len = encodings.input_ids.size(1)
