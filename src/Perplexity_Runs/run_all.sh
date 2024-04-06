@@ -2,7 +2,7 @@
 
 #SBATCH --nodes=1                   # Number of nodes to request
 #SBATCH --nodelist=gpunode05        # Because I want the A100's
-#SBATCH --gpus=2                    # Number of GPUs to request
+#SBATCH --gpus-per-node=A100:2
 #SBATCH --cpus-per-task=4           # Number of CPUs per node to request
 #SBATCH --job-name="PPL"   	        # A nice readable name of your job, to see it in the queue, instead of numbers
 #SBATCH --output=jobName.%J.out     # Store the output console text to a file called jobName.<assigned job number>.out
