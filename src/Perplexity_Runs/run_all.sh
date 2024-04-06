@@ -10,12 +10,12 @@
 #SBATCH --mail-user=saptarshi.sengupta@l3s.de # Email address to send the email to
 
 DATASETS=$(ls ../common_terms_freq/*.csv)
+
+#CLM
 CLMs=("tiiuae/falcon-7b-instruct"
       "garage-bAInd/Platypus2-7B"
       "google/gemma-7b-it"
       "mistralai/Mistral-7B-Instruct-v0.2")
-
-#CLM
 for ds in $DATASETS
 do
    for model in "${CLMs[@]}"
@@ -25,7 +25,12 @@ do
 done
 
 #MLM
+MLMs=("roberta-base"
+      "bert-base-uncased")
 for ds in $DATASETS
 do
-  python MLM_ppl.py --model_checkpoint "roberta-base" --corpus_file "$ds"
+   for model in "${MLMs[@]}"
+   do
+     python CLM_ppl.py --model_checkpoint "$model" --corpus_file "$ds"
+   done
 done
