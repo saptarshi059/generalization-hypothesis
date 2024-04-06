@@ -31,6 +31,6 @@ for ds in $DATASETS
 do
    for model in "${MLMs[@]}"
    do
-     python CLM_ppl.py --model_checkpoint "$model" --corpus_file "$ds"
+     python MLM_ppl.py --model_checkpoint "$model" --corpus_file "$ds"
    done
 done
