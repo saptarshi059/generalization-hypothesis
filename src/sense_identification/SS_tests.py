@@ -84,22 +84,20 @@ else:
                 if ('Ġ' + base_word.lower()) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word.lower()] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word.lower()
-                        print(base_word, modified_word, 1)
+
                 elif ('Ġ' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word
-                        print(base_word, modified_word, 2)
+
                 # For Platypus/Gemma/Mistral
                 elif ('▁' + base_word.lower()) in tokenizer.vocab.keys():
-                    print('.........................', (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0])
                     if (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word.lower()
-                        print(base_word, modified_word, 3)
+
                 elif ('▁' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word
-                        print(base_word, modified_word, 4)
-                print('..............................', modified_word)
+
                 return tokenizer.vocab[modified_word]
 
             else:  # For BERT
@@ -118,15 +116,15 @@ else:
                 indexA = comb[0]
                 indexB = comb[1]
 
-                tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt')
-                tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt')
+                tokenized_inputA = tokenizer(df.iloc[indexA].example.lower(), return_tensors='pt')
+                tokenized_inputB = tokenizer(df.iloc[indexB].example.lower(), return_tensors='pt')
 
                 with torch.no_grad():
                     contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
                     contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
 
-                wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
-                wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
+                wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word.lower(), tokenized_inputA)
+                wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word.lower(), tokenized_inputB)
 
                 entity_embeddingA = contextualized_embeddingsA[0][
                     tokenized_inputA['input_ids'].tolist()[0].index(wordA_vocab_idx)]
