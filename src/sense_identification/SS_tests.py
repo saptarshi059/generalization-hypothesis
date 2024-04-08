@@ -96,7 +96,7 @@ else:
                 elif ('▁' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word
-                print(modified_word)
+                print(base_word, modified_word)
                 return tokenizer.vocab[modified_word]
 
             else:  # For BERT
