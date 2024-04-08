@@ -84,21 +84,20 @@ else:
                 if ('Ġ' + base_word.lower()) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word.lower()] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word.lower()
-                    print('..............................', modified_word)
+                        print(1)
                 elif ('Ġ' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word
-                    print('..............................', modified_word)
+                        print(2)
                 # For Platypus/Gemma/Mistral
                 elif ('▁' + base_word.lower()) in tokenizer.vocab.keys():
                     if (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word.lower()
-
-                    print('..............................', modified_word)
-
+                        print(3)
                 elif ('▁' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word
+                        print(4)
                 print('..............................', modified_word)
                 return tokenizer.vocab[modified_word]
 
