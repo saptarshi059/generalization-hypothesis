@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from itertools import combinations
 
+
 def find_vocab_idx(word, tokenization):
     if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
                             'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
@@ -32,4 +33,8 @@ for word in df['word'].unique():
         indexA = comb[0]
         indexB = comb[1]
 
-        print(comb)
+        tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt')
+        tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt')
+
+        wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
+        wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
