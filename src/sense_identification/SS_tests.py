@@ -4,6 +4,7 @@
 from transformers import AutoTokenizer, AutoModel, logging
 from collections import defaultdict
 from itertools import combinations
+import torch.nn.functional as F
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
@@ -72,7 +73,6 @@ if args.pooler == True:
 else:
     if model_checkpoint != 'sensebert-base-uncased':
         cos = torch.nn.CosineSimilarity(dim=0)
-        sim_scores = defaultdict(list)
 
         def find_vocab_idx(word, tokenization):
             if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
@@ -128,13 +128,11 @@ else:
                 entity_embeddingB = contextualized_embeddingsB[0][
                     tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
 
-                import torch.nn.functional as F
+                entity_embeddingA = F.normalize(entity_embeddingA, dim=0)
+                entity_embeddingB = F.normalize(entity_embeddingB, dim=0)
 
-                print(entity_embeddingA, entity_embeddingB)
-                print(cos(F.normalize(entity_embeddingA, dim=0), F.normalize(entity_embeddingB, dim=0)))
-
-                sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
-                    cos(entity_embeddingA, entity_embeddingB).item())
+                sim_scores[(word, df.iloc[indexA].sense_def,
+                            df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
 
 
 
