@@ -128,6 +128,8 @@ else:
                 entity_embeddingB = contextualized_embeddingsB[0][
                     tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
 
+                print(entity_embeddingA, entity_embeddingB)
+
                 sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
                     cos(entity_embeddingA, entity_embeddingB).item())
 
