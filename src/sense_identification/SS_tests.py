@@ -38,6 +38,7 @@ if model_checkpoint != 'sensebert-base-uncased':
     model = AutoModel.from_pretrained(model_checkpoint)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model.eval()
     model.to(device)
 
 df = pd.read_csv(os.path.abspath(f'../../data/sense_data/{args.dataset}'))
@@ -54,10 +55,11 @@ if args.pooler == True:
             indexB = comb[1]
 
             tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt')
-            pooler_outputA = model(**tokenized_inputA.to(device)).pooler_output
-
             tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt')
-            pooler_outputB = model(**tokenized_inputB.to(device)).pooler_output
+
+            with torch.no_grad():
+                pooler_outputA = model(**tokenized_inputA.to(device)).pooler_output
+                pooler_outputB = model(**tokenized_inputB.to(device)).pooler_output
 
             sim_scores[(word, df.iloc[comb[0]].sense_def, df.iloc[comb[1]].sense_def)].append(
                 cos(pooler_outputA, pooler_outputB).item())
@@ -114,10 +116,11 @@ else:
                 indexB = comb[1]
 
                 tokenized_inputA = tokenizer(df.iloc[indexA].example, return_tensors='pt')
-                contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
-
                 tokenized_inputB = tokenizer(df.iloc[indexB].example, return_tensors='pt')
-                contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
+
+                with torch.no_grad():
+                    contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
+                    contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
 
                 wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
                 wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
