@@ -160,7 +160,7 @@ else:
                     sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
                         cos(torch.FloatTensor(entity_embeddingA), torch.FloatTensor(entity_embeddingB)).item())
 
-print(f'Model: {model_checkpoint}')
+print(f'Model: {model_checkpoint} for Dataset: {args.dataset}')
 
 for key, val in sim_scores.items():
     print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
