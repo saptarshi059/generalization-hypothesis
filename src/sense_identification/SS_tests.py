@@ -127,7 +127,7 @@ else:
                     tokenized_inputA['input_ids'].tolist()[0].index(wordA_vocab_idx)]
                 entity_embeddingB = contextualized_embeddingsB[0][
                     tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
-                cos = torch.nn.CosineSimilarity()
+                cos = torch.nn.CosineSimilarity(dim=0)
                 print(cos(entity_embeddingA.reshape(1,-1), entity_embeddingB.reshape(1,-1)))
 
                 sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
