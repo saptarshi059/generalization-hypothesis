@@ -134,7 +134,8 @@ else:
                 sim_scores[(word, df.iloc[indexA].sense_def,
                             df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
 
-
+            for key, val in sim_scores.items():
+                print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
 
     else:
         import sys
