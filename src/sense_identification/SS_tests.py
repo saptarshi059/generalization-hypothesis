@@ -77,31 +77,31 @@ else:
         def find_vocab_idx(word, tokenization):
             if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
                                     'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
-                if word in tokenizer.vocab.keys():
-                    if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
-                        return tokenizer.vocab[word]
+                if ((word in tokenizer.vocab.keys()) and
+                        (tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0])):
+                    return tokenizer.vocab[word]
 
                 # For Falcon & RoBERTA
-                if ('Ġ' + word.lower()) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['Ġ' + word.lower()] in tokenization['input_ids'].tolist()[0]:
-                        word = 'Ġ' + word.lower()
-                        return tokenizer.vocab[word]
+                if ((('Ġ' + word.lower()) in tokenizer.vocab.keys()) and
+                        (tokenizer.vocab['Ġ' + word.lower()] in tokenization['input_ids'].tolist()[0])):
+                    word = 'Ġ' + word.lower()
+                    return tokenizer.vocab[word]
 
-                if ('Ġ' + word) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['Ġ' + word] in tokenization['input_ids'].tolist()[0]:
-                        word = 'Ġ' + word
-                        return tokenizer.vocab[word]
+                if ((('Ġ' + word) in tokenizer.vocab.keys()) and
+                        (tokenizer.vocab['Ġ' + word] in tokenization['input_ids'].tolist()[0])):
+                    word = 'Ġ' + word
+                    return tokenizer.vocab[word]
 
                 # For Platypus/Gemma/Mistral
-                if ('▁' + word.lower()) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['▁' + word.lower()] in tokenization['input_ids'].tolist()[0]:
-                        word = '▁' + word.lower()
-                        return tokenizer.vocab[word]
+                if ((('▁' + word.lower()) in tokenizer.vocab.keys()) and
+                        (tokenizer.vocab['▁' + word.lower()] in tokenization['input_ids'].tolist()[0])):
+                    word = '▁' + word.lower()
+                    return tokenizer.vocab[word]
 
-                if ('▁' + word) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]:
-                        word = '▁' + word
-                        return tokenizer.vocab[word]
+                if (('▁' + word) in tokenizer.vocab.keys()) and (tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]):
+                    word = '▁' + word
+                    return tokenizer.vocab[word]
+
             else:  # For BERT
                 if word in tokenizer.vocab.keys():
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
@@ -134,6 +134,9 @@ else:
 
                 sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
                     cos(entity_embeddingA, entity_embeddingB).item())
+
+            for key, val in sim_scores.items():
+                print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
 
     else:
         import sys
