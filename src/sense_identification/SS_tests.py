@@ -96,7 +96,7 @@ else:
                 elif ('▁' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word
-                print(modified_word, tokenizer.vocab[modified_word])
+                print(modified_word)
                 return tokenizer.vocab[modified_word]
 
             else:  # For BERT
@@ -135,6 +135,7 @@ else:
 
                 sim_scores[(word, df.iloc[indexA].sense_def,
                             df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
+                break
 
     else:
         import sys
