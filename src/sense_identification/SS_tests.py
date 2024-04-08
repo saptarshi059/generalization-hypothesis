@@ -131,7 +131,7 @@ else:
                 import torch.nn.functional as F
 
                 print(entity_embeddingA, entity_embeddingB)
-                print(cos(F.normalize(entity_embeddingA), F.normalize(entity_embeddingB)))
+                print(cos(F.normalize(entity_embeddingA, dim=0), F.normalize(entity_embeddingB, dim=0)))
 
                 sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
                     cos(entity_embeddingA, entity_embeddingB).item())
