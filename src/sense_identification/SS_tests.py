@@ -128,14 +128,12 @@ else:
                 entity_embeddingB = contextualized_embeddingsB[0][
                     tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
 
+                # Mainly needed for Gemma & Mistral
                 entity_embeddingA = F.normalize(entity_embeddingA, dim=0)
                 entity_embeddingB = F.normalize(entity_embeddingB, dim=0)
 
                 sim_scores[(word, df.iloc[indexA].sense_def,
                             df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
-
-            for key, val in sim_scores.items():
-                print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
 
     else:
         import sys
