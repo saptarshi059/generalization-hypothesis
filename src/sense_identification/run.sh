@@ -13,7 +13,7 @@ MODELS=('tiiuae/falcon-7b-instruct'
         'google/gemma-7b-it'
         'mistralai/Mistral-7B-Instruct-v0.2')
 
-DATASETS=$(ls ../data/sense_data/*.csv)
+DATASETS=$(ls ../..data/sense_data/*.csv)
 
 for ds in $DATASETS
 do
