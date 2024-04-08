@@ -120,6 +120,8 @@ else:
                     contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
                     contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
 
+                print(word)
+
                 wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
                 wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
 
