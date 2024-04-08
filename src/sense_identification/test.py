@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer
 import pandas as pd
+import os
 from itertools import combinations
 
 def find_vocab_idx(word, tokenization):
@@ -23,7 +24,7 @@ def find_vocab_idx(word, tokenization):
 model_checkpoint = 'tiiuae/falcon-7b-instruct'
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-df = pd.read_csv('../../data/sense_data/sense_data-covidqa')
+df = pd.read_csv(os.path.abspath(f'../../data/sense_data/sense_data-covidqa.csv'))
 
 for word in df['word'].unique():
     word_indices = df[df['word'] == word].index
