@@ -138,6 +138,8 @@ else:
                 sim_scores[(word, df.iloc[indexA].sense_def,
                             df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
 
+                break
+
     else:
         import sys
         import tensorflow as tf
@@ -187,3 +189,7 @@ print(f'Model: {model_checkpoint} for Dataset: {args.dataset}')
 
 for key, val in sim_scores.items():
     print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
+
+print(sim_scores)
+
+#pd.DataFrame(columns=['word', 'sense1', 'sense2', 'score'],)
