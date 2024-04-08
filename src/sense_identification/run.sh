@@ -8,9 +8,7 @@ python SS_tests.py --dataset sense_data-cuad.csv --model_name nlpaueb/legal-bert
 python SS_tests.py --dataset sense_data-techqa.csv --model_name allenai/scibert_scivocab_uncased
 '
 
-MODELS=('bert-base-uncased'
-        'roberta-base'
-        'tiiuae/falcon-7b-instruct'
+MODELS=('tiiuae/falcon-7b-instruct'
         'garage-bAInd/Platypus2-7B'
         'mistralai/Mistral-7B-Instruct-v0.2'
         'google/gemma-7b-it')
