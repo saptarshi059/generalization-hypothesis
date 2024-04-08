@@ -10,8 +10,8 @@ python SS_tests.py --dataset sense_data-techqa.csv --model_name allenai/scibert_
 
 MODELS=('tiiuae/falcon-7b-instruct'
         'garage-bAInd/Platypus2-7B'
-        'google/gemma-7b-it'
-        'mistralai/Mistral-7B-Instruct-v0.2')
+        'mistralai/Mistral-7B-Instruct-v0.2'
+        'google/gemma-7b-it')
 
 DATASETS=$(ls ../../data/sense_data/*.csv)
 

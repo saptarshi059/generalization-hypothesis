@@ -74,7 +74,6 @@ else:
         cos = torch.nn.CosineSimilarity(dim=0)
         sim_scores = defaultdict(list)
 
-
         def find_vocab_idx(word, tokenization):
             if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
                                     'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
@@ -103,7 +102,7 @@ else:
                     if tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]:
                         word = '▁' + word
                         return tokenizer.vocab[word]
-            else:
+            else:  # For BERT
                 if word in tokenizer.vocab.keys():
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                         return tokenizer.vocab[word]
@@ -111,7 +110,6 @@ else:
                 if word.lower() in tokenizer.vocab.keys():
                     if tokenizer.vocab[word.lower()] in tokenization['input_ids'].tolist()[0]:
                         return tokenizer.vocab[word.lower()]
-
 
         for word in tqdm(df['word'].unique()):
             word_indices = df[df['word'] == word].index
