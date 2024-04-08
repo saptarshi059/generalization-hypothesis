@@ -187,9 +187,11 @@ else:
 
 print(f'Model: {model_checkpoint} for Dataset: {args.dataset}')
 
+final_list = []
 for key, val in sim_scores.items():
     print(key, np.round(torch.mean(torch.Tensor(val)).item(), 2))
+    final_list.append((key[0], key[1], key[2], np.round(torch.mean(torch.Tensor(val)).item(), 2)))
 
-print(sim_scores)
+print(final_list)
 
 #pd.DataFrame(columns=['word', 'sense1', 'sense2', 'score'],)
