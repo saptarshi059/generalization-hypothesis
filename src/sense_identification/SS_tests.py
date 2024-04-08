@@ -35,7 +35,12 @@ model_checkpoint = args.model_name
 
 if model_checkpoint != 'sensebert-base-uncased':
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-    model = AutoModel.from_pretrained(model_checkpoint)
+    if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
+                            'mistralai/Mistral-7B-Instruct-v0.2']:
+        model = AutoModel.from_pretrained(model_checkpoint, device_map='auto', torch_dtype=torch.float16,
+                                          attn_implementation="flash_attention_2")
+    else:
+        model = AutoModel.from_pretrained(model_checkpoint)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model.eval()
