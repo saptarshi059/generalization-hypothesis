@@ -82,6 +82,7 @@ else:
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                         return tokenizer.vocab[word]
 
+                # For Falcon & RoBERTA
                 if ('Ġ' + word.lower()) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + word.lower()] in tokenization['input_ids'].tolist()[0]:
                         word = 'Ġ' + word.lower()
@@ -92,7 +93,7 @@ else:
                         word = 'Ġ' + word
                         return tokenizer.vocab[word]
 
-                # For Platypus
+                # For Platypus/Gemma/Mistral
                 if ('▁' + word.lower()) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + word.lower()] in tokenization['input_ids'].tolist()[0]:
                         word = '▁' + word.lower()
@@ -102,8 +103,6 @@ else:
                     if tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]:
                         word = '▁' + word
                         return tokenizer.vocab[word]
-
-
             else:
                 if word in tokenizer.vocab.keys():
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
