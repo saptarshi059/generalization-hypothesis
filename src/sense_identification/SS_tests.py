@@ -84,6 +84,19 @@ else:
                     if tokenizer.vocab['Ġ' + word] in tokenization['input_ids'].tolist()[0]:
                         word = 'Ġ' + word
                         return tokenizer.vocab[word]
+
+                # For Platypus
+                if ('▁' + word.lower()) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['▁' + word.lower()] in tokenization['input_ids'].tolist()[0]:
+                        word = '▁' + word.lower()
+                        return tokenizer.vocab[word]
+
+                if ('▁' + word) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]:
+                        word = '▁' + word
+                        return tokenizer.vocab[word]
+
+
             else:
                 if word in tokenizer.vocab.keys():
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
