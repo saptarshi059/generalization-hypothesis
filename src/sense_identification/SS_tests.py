@@ -127,7 +127,7 @@ else:
                     tokenized_inputA['input_ids'].tolist()[0].index(wordA_vocab_idx)]
                 entity_embeddingB = contextualized_embeddingsB[0][
                     tokenized_inputB['input_ids'].tolist()[0].index(wordB_vocab_idx)]
-
+                cos = torch.nn.CosineSimilarity()
                 print(entity_embeddingA, entity_embeddingB)
                 print(cos(entity_embeddingA, entity_embeddingB))
 
