@@ -91,6 +91,7 @@ else:
                         print(base_word, modified_word, 2)
                 # For Platypus/Gemma/Mistral
                 elif ('▁' + base_word.lower()) in tokenizer.vocab.keys():
+                    print('here')
                     if (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word.lower()
                         print(base_word, modified_word, 3)
