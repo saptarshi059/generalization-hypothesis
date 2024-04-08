@@ -74,29 +74,30 @@ else:
     if model_checkpoint != 'sensebert-base-uncased':
         cos = torch.nn.CosineSimilarity(dim=0)
 
-        def find_vocab_idx(word, tokenization):
+        def find_vocab_idx(base_word, tokenization):
             if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
                                     'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
+                modified_word = base_word
 
                 # For Falcon & RoBERTA
-                if ('Ġ' + word.lower()) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['Ġ' + word.lower()] in tokenization['input_ids'].tolist()[0]:
-                        word = 'Ġ' + word.lower()
+                if ('Ġ' + base_word.lower()) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['Ġ' + base_word.lower()] in tokenization['input_ids'].tolist()[0]:
+                        modified_word = 'Ġ' + base_word.lower()
 
-                elif ('Ġ' + word) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['Ġ' + word] in tokenization['input_ids'].tolist()[0]:
-                        word = 'Ġ' + word
+                elif ('Ġ' + base_word) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['Ġ' + base_word] in tokenization['input_ids'].tolist()[0]:
+                        modified_word = 'Ġ' + base_word
 
                 # For Platypus/Gemma/Mistral
-                elif ('▁' + word.lower()) in tokenizer.vocab.keys():
-                    if (tokenizer.vocab['▁' + word.lower()]) in tokenization['input_ids'].tolist()[0]:
-                        word = '▁' + word.lower()
+                elif ('▁' + base_word.lower()) in tokenizer.vocab.keys():
+                    if (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0]:
+                        modified_word = '▁' + base_word.lower()
 
-                elif ('▁' + word) in tokenizer.vocab.keys():
-                    if tokenizer.vocab['▁' + word] in tokenization['input_ids'].tolist()[0]:
-                        word = '▁' + word
-
-                return tokenizer.vocab[word]
+                elif ('▁' + base_word) in tokenizer.vocab.keys():
+                    if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
+                        modified_word = '▁' + base_word
+                print(modified_word, tokenizer.vocab[modified_word])
+                return tokenizer.vocab[modified_word]
 
             else:  # For BERT
                 if word in tokenizer.vocab.keys():
@@ -119,8 +120,6 @@ else:
                 with torch.no_grad():
                     contextualized_embeddingsA = model(**tokenized_inputA.to(device)).last_hidden_state
                     contextualized_embeddingsB = model(**tokenized_inputB.to(device)).last_hidden_state
-
-                print(word)
 
                 wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
                 wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
