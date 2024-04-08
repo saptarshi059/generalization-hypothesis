@@ -96,7 +96,7 @@ else:
 
         for word in tqdm(df['word'].unique()):
             word_indices = df[df['word'] == word].index
-            for comb in list(combinations(list(range(word_indices[0], word_indices[-1] + 1)), 2)):
+            for comb in tqdm(list(combinations(list(range(word_indices[0], word_indices[-1] + 1)), 2))):
                 indexA = comb[0]
                 indexB = comb[1]
 
