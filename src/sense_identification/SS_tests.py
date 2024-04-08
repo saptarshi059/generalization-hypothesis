@@ -131,7 +131,7 @@ else:
                 sim_scores[(word, df.iloc[indexA].sense_def, df.iloc[indexB].sense_def)].append( \
                     cos(entity_embeddingA, entity_embeddingB).item())
 
-                print(sim_scores)
+                print(cos(entity_embeddingA, entity_embeddingB))
 
     else:
         import sys
