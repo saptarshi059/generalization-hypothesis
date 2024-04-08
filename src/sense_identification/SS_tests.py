@@ -68,7 +68,8 @@ else:
 
 
         def find_vocab_idx(word, tokenization):
-            if 'roberta' in model_checkpoint:
+            if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
+                                    'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
                 if word in tokenizer.vocab.keys():
                     if tokenizer.vocab[word] in tokenization['input_ids'].tolist()[0]:
                         return tokenizer.vocab[word]
