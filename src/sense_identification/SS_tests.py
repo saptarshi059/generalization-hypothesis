@@ -74,6 +74,7 @@ else:
     if model_checkpoint != 'sensebert-base-uncased':
         cos = torch.nn.CosineSimilarity(dim=0)
 
+
         def find_vocab_idx(base_word, tokenization):
             if model_checkpoint in ['tiiuae/falcon-7b-instruct', 'garage-bAInd/Platypus2-7B', 'google/gemma-7b-it',
                                     'mistralai/Mistral-7B-Instruct-v0.2', 'roberta-base']:
@@ -83,20 +84,22 @@ else:
                 if ('Ġ' + base_word.lower()) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word.lower()] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word.lower()
-
+                    print('..............................', modified_word)
                 elif ('Ġ' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['Ġ' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = 'Ġ' + base_word
-
+                    print('..............................', modified_word)
                 # For Platypus/Gemma/Mistral
                 elif ('▁' + base_word.lower()) in tokenizer.vocab.keys():
                     if (tokenizer.vocab['▁' + base_word.lower()]) in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word.lower()
 
+                    print('..............................', modified_word)
+
                 elif ('▁' + base_word) in tokenizer.vocab.keys():
                     if tokenizer.vocab['▁' + base_word] in tokenization['input_ids'].tolist()[0]:
                         modified_word = '▁' + base_word
-                print('..............................',base_word, '▁' + base_word.lower() ,modified_word)
+                print('..............................', modified_word)
                 return tokenizer.vocab[modified_word]
 
             else:  # For BERT
@@ -107,6 +110,7 @@ else:
                 if word.lower() in tokenizer.vocab.keys():
                     if tokenizer.vocab[word.lower()] in tokenization['input_ids'].tolist()[0]:
                         return tokenizer.vocab[word.lower()]
+
 
         for word in tqdm(df['word'].unique()):
             word_indices = df[df['word'] == word].index
