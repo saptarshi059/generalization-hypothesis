@@ -38,3 +38,5 @@ for word in df['word'].unique():
 
         wordA_vocab_idx = find_vocab_idx(df.iloc[indexA].word, tokenized_inputA)
         wordB_vocab_idx = find_vocab_idx(df.iloc[indexB].word, tokenized_inputB)
+
+        print(df.iloc[indexA].word, df.iloc[indexB].word, wordA_vocab_idx, wordB_vocab_idx)
