@@ -192,5 +192,4 @@ for key, val in sim_scores.items():
 
 pd.DataFrame(final_list,
              columns=['word', 'sense1', 'sense2', 'score']).to_csv(f'{model_checkpoint.replace("/", "_")}'
-                                                                   f'_{args.dataset.replace("../../data/sense_data",
-                                                                                            "_")}')
+                                                                   f'_{args.dataset.replace("../../data/sense_data", "_")}')
