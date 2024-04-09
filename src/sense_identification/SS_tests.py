@@ -137,6 +137,7 @@ else:
 
                 sim_scores[(word, df.iloc[indexA].sense_def,
                             df.iloc[indexB].sense_def)].append(cos(entity_embeddingA, entity_embeddingB).item())
+                break
 
     else:
         import sys
@@ -192,4 +193,4 @@ for key, val in sim_scores.items():
 
 pd.DataFrame(final_list,
              columns=['word', 'sense1', 'sense2', 'score']).to_csv(f'{model_checkpoint.replace("/", "_")}'
-                                                                   f'_{args.dataset.replace("../../data/sense_data", "_")}')
+                                                                   f'_{args.dataset.replace("../../data/sense_data/", "-")}')
