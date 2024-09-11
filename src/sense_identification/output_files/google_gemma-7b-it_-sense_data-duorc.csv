@@ -1,0 +1,16 @@
+,word,sense1,sense2,score
+0,film,movie,movie,0.87
+1,film,movie,verb,0.73
+2,film,verb,verb,0.68
+3,shoot,bullet,bullet,0.79
+4,shoot,bullet,record,0.75
+5,shoot,record,record,0.76
+6,hand,anatomy,anatomy,0.96
+7,hand,anatomy,situation,0.96
+8,hand,situation,situation,0.97
+9,couple,pair,pair,0.79
+10,couple,pair,few,0.75
+11,couple,few,few,0.85
+12,past,time,time,0.97
+13,past,time,pass,0.73
+14,past,pass,pass,0.76

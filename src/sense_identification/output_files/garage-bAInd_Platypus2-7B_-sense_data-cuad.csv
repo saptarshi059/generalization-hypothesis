@@ -1,0 +1,16 @@
+,word,sense1,sense2,score
+0,party,group,group,0.57
+1,party,group,occasion,0.4
+2,party,occasion,occasion,0.62
+3,Agreement,contract,contract,0.67
+4,Agreement,contract,understanding,0.56
+5,Agreement,understanding,understanding,0.63
+6,Company,organization,organization,0.54
+7,Company,organization,companionship,0.17
+8,Company,companionship,companionship,0.58
+9,Product,goods,goods,0.47
+10,Product,goods,consequence,0.36
+11,Product,consequence,consequence,0.57
+12,notice,announcement,announcement,0.7
+13,notice,announcement,observing,0.38
+14,notice,observing,observing,0.61

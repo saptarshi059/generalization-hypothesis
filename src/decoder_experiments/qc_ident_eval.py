@@ -28,6 +28,6 @@ if __name__ == '__main__':
         if re.search(re.escape(row.context), prediction) and re.search(re.escape(row.question), prediction):
             correctly_identified_both += 1
 
-    print(f'Correctly identified Contexts: {np.round(correctly_identified_contexts/total_samples, 2)}%')
-    print(f'Correctly identified Questions: {np.round(correctly_identified_questions / total_samples, 2)}%')
-    print(f'Correctly identified Both: {np.round(correctly_identified_both / total_samples, 2)}%')
+    print(f'Correctly identified Contexts: {np.round(correctly_identified_contexts/total_samples, 2) * 100}%')
+    print(f'Correctly identified Questions: {np.round(correctly_identified_questions / total_samples, 2) * 100}%')
+    print(f'Correctly identified Both: {np.round(correctly_identified_both / total_samples, 2) * 100}%')

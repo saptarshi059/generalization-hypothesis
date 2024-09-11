@@ -1,0 +1,19 @@
+,word,sense1,sense2,score
+0,cell,bio,bio,0.7
+1,cell,bio,room,0.66
+2,cell,bio,phone,0.71
+3,cell,room,room,0.86
+4,cell,room,phone,0.83
+5,cell,phone,phone,0.86
+6,expression,bio,bio,0.87
+7,expression,bio,Non-verbal,0.83
+8,expression,Non-verbal,Non-verbal,0.86
+9,study,experiment,experiment,0.92
+10,study,experiment,room,0.79
+11,study,room,room,0.77
+12,treatment,medical care,medical care,0.85
+13,treatment,medical care,behavior,0.83
+14,treatment,behavior,behavior,0.93
+15,host,organism,organism,0.82
+16,host,organism,organizer,0.77
+17,host,organizer,organizer,0.88
